@@ -1,0 +1,38 @@
+.settingsContainer {
+	padding-top: 20px;
+	font-size: 0;
+
+	+ .settingsContainer {
+		padding-top: 5px;
+	}
+
+	> * {
+		display: inline-block;
+		vertical-align: middle;
+		box-sizing: border-box;
+	}
+
+	&.has-options {
+
+		.title {
+			width: ~'calc(100% - 100px)';
+		}
+	}
+
+	.title {
+		padding-right: 15px;
+		width: ~'calc(100% - 63px)';
+		font-size: 14px;
+	}
+
+	.options {
+		padding: 0 8px;
+		width: 37px;
+		opacity: .5;
+		transition: all .3s;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+}

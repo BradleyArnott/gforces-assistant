@@ -1,0 +1,30 @@
+{
+	"manifest_version": 2,
+	"name": "GForces CSS Assistant",
+	"short_name": "GFA",
+	"description": "Assistant to help with daily GForces CSS tasks",
+	"version": "0.0.1",
+
+	"icons": { 
+		"210": "img/icon.png" 
+	},
+
+	"content_scripts": [{
+		"matches": ["<all_urls>"],
+		"js": [
+			"lib/jquery.min.js",
+			"lib/auth.js"
+		],
+		"run_at": "document_end"
+	}],
+
+	"browser_action": {
+		"default_icon": "img/icon.png",
+		"default_popup": "popup.html"
+	},
+
+	"permissions": [
+		"activeTab",
+		"storage"
+	]
+}
