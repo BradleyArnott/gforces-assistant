@@ -13,7 +13,7 @@
 	<div class="settingsContainer has-options">
 		<div class="title">Auto-login</div>
 		<a href="#" class="options"><img src="img/options.png" alt="Setting options"></a>
-		<div class="test-switch switch unchecked" value="0" enabled="1" form-name="checkbox1">
+		<div class="switch" data-option="autoLogin" enabled="false">
 			<div class="icon tick"></div>
 			<div class="icon cross"></div>
 			<div class="slider checked"></div>
@@ -21,8 +21,8 @@
 	</div>
 
 	<div class="settingsContainer">
-		<div class="title">JIRA Styles</div>
-		<div class="switch unchecked" value="0" enabled="1" form-name="checkbox2">
+		<div class="title">Sub-task Organiser</div>
+		<div class="switch" data-option="checkSubTasks" enabled="false">
 			<div class="icon tick"></div>
 			<div class="icon cross"></div>
 			<div class="slider checked"></div>
@@ -30,23 +30,25 @@
 	</div>
 
 	<div class="settingsContainer">
-		<div class="title">Site Editor</div>
-		<div class="switch unchecked" value="0" enabled="1" form-name="checkbox3">
+		<div class="title">Ticket Organiser</div>
+		<div class="switch" data-option="checkTickets" enabled="false">
 			<div class="icon tick"></div>
 			<div class="icon cross"></div>
 			<div class="slider checked"></div>
 		</div>	
 	</div>
+
 
 	<div class="settingsContainer">
 		<div class="title">Dropdown Generator</div>
-		<div class="switch unchecked" value="0" enabled="1" form-name="checkbox4">
+		<div class="switch" enabled="false">
 			<div class="icon tick"></div>
 			<div class="icon cross"></div>
 			<div class="slider checked"></div>
 		</div>	
 	</div>
-	<script type="text/javascript" src="lib/jquery.min.js"></script>
-	<script type="text/javascript" src="lib/settings.js"></script>
+	<script type="text/javascript" src="js/lib/jquery.min.js"></script>
+	<script type="text/javascript" src="js/settings.js"></script>
+	<script type="text/javascript" src="js/popup.js"></script>
 </body>
 </html>

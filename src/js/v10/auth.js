@@ -5,7 +5,9 @@ var currentDate = Math.round((new Date()).getTime() / 1000);
 var isOnND = $('link[href="//images.netdirector.co.uk"]');
 var loginAttempts = 0;
 
-function backendLogin() {
+auth = {};
+
+auth.login = function() {
 	$.ajax({
 		url: 'http://' + window.location.hostname + backendPath,
 		data: {
@@ -25,7 +27,7 @@ function backendLogin() {
 	})
 }
 
-function checkAutoFillExpiry() {
+auth.checkExpiry = function() {
 	var expiryTime = 24 * 3600;
 	var expiryDate = localStorage.getItem('NDAutoLog') ? parseInt(localStorage.getItem('NDAutoLog')) + expiryTime : 0;
 
@@ -35,10 +37,14 @@ function checkAutoFillExpiry() {
 	});
 }
 
-var checkExpiry = checkAutoFillExpiry();
-
-if (isOnND.length) {
-	checkExpiry.then(function() {
-		backendLogin();
+auth.init = function() {
+	if (!isOnND.length) return;
+	Settings.get('autoLogin').then(function(autoLogin) {
+		if (!autoLogin) return;
+		auth.checkExpiry().then(function() {
+			auth.login();
+		});
 	});
 }
+
+auth.init();
