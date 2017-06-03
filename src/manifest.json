@@ -9,18 +9,33 @@
 		"210": "img/icon.png" 
 	},
 
-	"content_scripts": [{
-		"matches": ["<all_urls>"],
-		"js": [
-			"js/lib/jquery.min.js",
-			"js/lib/moment.min.js",
-			"js/settings.js",
-			"js/v10/auth.js",
-			"js/jira/subtasks.js",
-			"js/jira/tickets.js"
-		],
-		"run_at": "document_end"
-	}],
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": [
+				"js/lib/jquery.min.js",
+				"js/settings.js",
+				"js/v10/auth.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://jira.netdirector.co.uk/secure/Dashboard.jspa*"],
+			"css": ["css/jira.min.css"],
+			"js": [
+				"js/lib/moment.min.js",
+				"js/jira/tickets.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://jira.netdirector.co.uk/browse/*"],
+			"js": [
+				"js/jira/subtasks.js"
+			],
+			"run_at": "document_end"
+		}
+	],
 
 	"background": {
 		"scripts": ["js/background.js"],
@@ -33,6 +48,7 @@
 	},
 
 	"permissions": [
+		"tabs",
 		"activeTab",
 		"storage"
 	]

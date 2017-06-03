@@ -1,27 +1,18 @@
 var subtasks = {},
-	subtasksToDo = [
-		'Queued',
-		'Not Started',
-		'Quote requested',
-		'Quoted',
-		'More information',
-		'In Progress'
-	],
-	subtasksToDoColours = [
-		'#C8E1FB', // Queued
-		'#C8E1FB', // Not Started
-		'#C8E1FB', // Quote requested 
-		'#C8E1FB', // Quoted 
-		'#FFFFD5', // More Information 
-		'#BAF3C3'  // In Progress
-	],
+	subtasksToDo = {
+		'Queued': '#C8E1FB',
+		'Not Started': '#C8E1FB',
+		'Quote requested': '#C8E1FB',
+		'Quoted': '#C8E1FB',
+		'More information': '#FFFFD5',
+		'In Progress': '#BAF3C3'
+	},
 	subtasksDone = [
 		'Closed',
 		'Resolved',
 		'Rejected'
 	],
-	subtasksDoneColour = '#b2d8b9',
-	subtaskUrl = 'https://jira.netdirector.co.uk/browse/';
+	subtasksDoneColour = '#b2d8b9';
 
 $.extend($.expr[':'], {
 	'contains': function(elem, i, match, array) {
@@ -31,8 +22,6 @@ $.extend($.expr[':'], {
 });
 
 subtasks.init = function() {
-	var currentPage = window.location.href;
-	if (!currentPage.startsWith(subtaskUrl)) return;
 	Settings.get('checkSubTasks').then(function(checkSubTasks) {
 		if (!checkSubTasks) return;
 		subtasks.loopList();
@@ -54,7 +43,7 @@ subtasks.loopList = function() {
 subtasks.checkComplete = function(el, value) {
 	arrayPos = $.inArray(value, subtasksDone);
 	if (arrayPos === -1) return;
-	el.hide().css('background', subtasksDoneColour).appendTo('#issuetable');
+	el.hide().css('background', subtasksToDo[value]).appendTo('#issuetable');
 }
 
 subtasks.hidePM = function(el) {
@@ -66,9 +55,8 @@ subtasks.hidePM = function(el) {
 subtasks.identifyCSS = function(el, value) {
 	var isCSS = el.find(".stsummary a").is(':contains("CSS")');
 	if (!isCSS) return;
-	arrayPos = $.inArray(value, subtasksToDo);
-	if (arrayPos === -1) return;
-	el.css('background', subtasksToDoColours[arrayPos]);
+	if (!subtasksToDo.hasOwnProperty(value)) return;
+	el.css('background', subtasksToDo[value]);
 }
 
 subtasks.addButton = function() {
