@@ -169,6 +169,17 @@ img {
 .button:nth-child(2n-1) {
   padding-right: 5px;
 }
+.button.speed-test {
+  padding: 0;
+  width: 100%;
+}
+.button.speed-test .btn {
+  color: #404040;
+  background: yellow;
+}
+.button.speed-test .btn:hover {
+  background: #dbdb00;
+}
 .btn {
   display: block;
   cursor: pointer;

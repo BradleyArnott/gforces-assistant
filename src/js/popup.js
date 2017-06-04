@@ -3,8 +3,11 @@ var frontendActions = {};
 frontendActions.setSwitches = function() {
 
 	$('.switch').each(function() {
-		var option = $(this).attr('data-option');
-		var $this = $(this);
+		var option = $(this).attr('data-option'),
+			$this = $(this);
+
+		if (option == undefined) return;
+
 		Settings.get(option).then(function(result) {
 			if (!result) return;
 			$this.attr('enabled', result);
@@ -17,9 +20,13 @@ frontendActions.clickSwitches = function() {
 
 	$('.switch').click(function() {
 		$(this).toggleClass('checked');
-		var isActive = $(this).hasClass('checked');
+
+		if ($(this).attr('data-option') == undefined) return;
+
 		$(this).attr('enabled', isActive);
-		var option = $(this).attr('data-option');
+
+		var isActive = $(this).hasClass('checked'),
+			option = $(this).attr('data-option');
 
 		chrome.runtime.sendMessage({
 			action: 'saveSetting',
@@ -65,25 +72,25 @@ frontendActions.checkLogIn = function(hostname) {
 frontendActions.getDeploy = function(hostname) {
 
 	$.ajax({
-        url: 'http://' + hostname + '/backend/assets/',
-        type: 'GET'
-    }).done(function(response) {
+		url: 'http://' + hostname + '/backend/assets/',
+		type: 'GET'
+	}).done(function(response) {
 
-	    if(response) {
-	    	var html = $($.parseHTML(response)),
-		    	options = html.find('#Site_assets_path option');
+		if(response) {
+			var html = $($.parseHTML(response)),
+				options = html.find('#Site_assets_path option');
 
-		    $(options).each(function() {
-		    	if (!$(this).attr('selected')) return;
-		    	var timestamp = $(this).text();
-	    		$('.timestamp').text(timestamp);
-		    });
+			$(options).each(function() {
+				if (!$(this).attr('selected')) return;
+				var timestamp = $(this).text();
+				$('.timestamp').text(timestamp);
+			});
 
-        }
+		}
 
 	}).fail(function(jqXHR, textStatus) {
 		console.log(jqXHR)
-        return false;
+		return false;
 	});
 }
 
@@ -97,21 +104,55 @@ frontendActions.buttons = function(hostname) {
 	});
 }
 
-frontendActions.checkDevMode = function(hostname) {
+frontendActions.checkDevMode = function(data) {
+	var links = $(data.dom).filter('link');
+	links.each(function(index) {
+		if ($(links[index]).attr('href').indexOf('temp-production.s3.amazonaws.com') == -1) return;
+		$('.devmode.switch').addClass('checked').attr('enabled', 'true');
+	});
+
 }
 
-frontendActions.setDevMode = function(hostname, devMode) {
+frontendActions.setDevMode = function(hostname) {
 
-	$.ajax({
-        url: 'http://' + hostname + '/backend/assets/set-development-mode?mode=' + !devMode,
-        type: 'GET'
-    }).done(function(response) {
-		chrome.runtime.sendMessage({
-			action: 'reloadPage'
+	$('.devmode.switch').click(function() {
+		var devMode = $(this).attr('enabled') == 'true'; // Convert string to boolean
+		$.ajax({
+			url: 'http://' + hostname + '/backend/assets/set-development-mode?mode=' + !devMode,
+			type: 'GET'
+		}).done(function(response) {
+			$(this).attr('enabled', !devMode);
+			chrome.runtime.sendMessage({
+				action: 'reloadPage'
+			});
+		}).fail(function(jqXHR, textStatus) {
+			console.log(jqXHR)
+			return false;
 		});
-	}).fail(function(jqXHR, textStatus) {
-		console.log(jqXHR)
-        return false;
+	});
+}
+
+frontendActions.speedTest = function(hostname) {
+
+	return new Promise(function(resolve) {
+
+		$('.speed-test').click(function() {
+			$.ajax({
+				url: 'http://www.webpagetest.org/runtest.php',
+				data: {
+					url: hostname,
+					k: 'A.f860abf3c5a1c9c511a1e0b39f7302b5',
+					f: 'json',
+					location: 'London_EC2:Chrome'
+				},
+				type: 'POST'
+			}).done (function(data){
+				chrome.runtime.sendMessage({
+					action: 'openPage',
+					url: data.data.userUrl
+				});
+			})
+		});
 	});
 }
 
@@ -119,9 +160,13 @@ frontendActions.init = function() {
 	frontendActions.setSwitches();
 	frontendActions.clickSwitches();
 	frontendActions.checkPage().then(function(data) {
-		frontendActions.checkLogIn(data.url);
-		frontendActions.getDeploy(data.url);
-		frontendActions.buttons(data.url);
+		frontendActions.checkLogIn(data.url).then(function() {
+			frontendActions.getDeploy(data.url);
+			frontendActions.setDevMode(data.url);
+			frontendActions.checkDevMode(data);
+			frontendActions.buttons(data.url);
+			frontendActions.speedTest(data.url);
+		});
 	});
 }
 

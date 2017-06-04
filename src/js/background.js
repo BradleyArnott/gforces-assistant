@@ -17,6 +17,13 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
 				sendResponse(data);
 			});
 			break;
+		case 'openPage':
+			background.openTab(data);
+			break;
+		case 'reloadPage':
+			chrome.tabs.reload();
+			break;
+
 	}
 
 	return true;
@@ -37,6 +44,11 @@ background.get = function(data) {
 			resolve(result);
 		});	
 	});
+}
+
+background.openTab = function(data) {
+	pageUrl = data.url;
+	chrome.tabs.create({ url: pageUrl });
 }
 
 background.scrape = function() {
