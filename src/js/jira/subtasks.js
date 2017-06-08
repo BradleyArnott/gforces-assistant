@@ -4,8 +4,8 @@ var subtasks = {},
 		'Not Started': '#C8E1FB',
 		'Quote requested': '#C8E1FB',
 		'Quoted': '#C8E1FB',
-		'More information': '#FFFFD5',
-		'In Progress': '#BAF3C3'
+		'In Progress': '#BAF3C3',
+		'More information': '#FFFFD5'
 	},
 	subtasksDone = [
 		'Closed',
@@ -34,16 +34,16 @@ subtasks.loopList = function() {
 		var $this = $(this),
 			taskStatus = $this.find(".status span").html();
 
-		subtasks.checkComplete($this, taskStatus);
-		subtasks.hidePM($this);
 		subtasks.identifyCSS($this, taskStatus);
+		subtasks.hidePM($this);
+		subtasks.checkComplete($this, taskStatus);
 	});
 }
 
 subtasks.checkComplete = function(el, value) {
 	arrayPos = $.inArray(value, subtasksDone);
 	if (arrayPos === -1) return;
-	el.hide().css('background', subtasksToDo[value]).appendTo('#issuetable');
+	el.hide().css('background', subtasksDoneColour);
 }
 
 subtasks.hidePM = function(el) {
@@ -56,6 +56,7 @@ subtasks.identifyCSS = function(el, value) {
 	var isCSS = el.find(".stsummary a").is(':contains("CSS")');
 	if (!isCSS) return;
 	if (!subtasksToDo.hasOwnProperty(value)) return;
+	if (value == 'More information') el.appendTo('#issuetable');
 	el.css('background', subtasksToDo[value]);
 }
 

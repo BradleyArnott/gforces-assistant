@@ -38,7 +38,11 @@
 	],
 
 	"background": {
-		"scripts": ["js/background.js"],
+		"scripts": [
+			"js/lib/cryptoJS/pbkdf2.js",
+			"js/lib/cryptoJS/aes.js",
+			"js/background.js"
+		],
 		"persistent": true
 	},
 

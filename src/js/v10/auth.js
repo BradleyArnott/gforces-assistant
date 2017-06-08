@@ -1,17 +1,15 @@
-var login = 'beau.august@gforces.co.uk';
-var pass = 'Brown-lamp12';
 var backendPath = '/backend/auth/';
 var currentDate = Math.round((new Date()).getTime() / 1000);
 var loginAttempts = 0;
 
 auth = {};
 
-auth.login = function() {
+auth.login = function(data) {
 	$.ajax({
 		url: 'http://' + window.location.hostname + backendPath,
 		data: {
-			'Components_Auth_LoginForm[username]': login,
-			'Components_Auth_LoginForm[password]': pass
+			'Components_Auth_LoginForm[username]': data.username,
+			'Components_Auth_LoginForm[password]': data.password
 		},
 		type: 'POST'
 	})
@@ -41,8 +39,12 @@ auth.init = function() {
 	if (!isOnND.length) return;
 	Settings.get('autoLogin').then(function(autoLogin) {
 		if (!autoLogin) return;
-		auth.checkExpiry().then(function() {
-			auth.login();
+		chrome.runtime.sendMessage({
+			action: 'getAuthData'
+			}, function(result) {
+				auth.checkExpiry().then(function() {
+					auth.login(result);
+				});
 		});
 	});
 }

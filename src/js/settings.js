@@ -6,7 +6,6 @@ Settings.get = function(option) {
 			action: 'getSetting', 
 			label: option
 			}, function(result) {
-				console.log('Setting retrieved, ' + option + ': ' + result[option]);
 				resolve(result[option]);
 		});
 	});

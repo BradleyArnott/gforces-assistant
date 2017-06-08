@@ -94,6 +94,36 @@ frontendActions.getDeploy = function(hostname) {
 	});
 }
 
+frontendActions.modal = function() {
+
+	$('.options').click(function(e) {
+		e.preventDefault();
+		$('.modal').show();
+	});
+
+	$('.modal .btn').click(function(e) {
+		e.preventDefault();
+		var modal = $(this).parents('.modal');
+
+		if ($(this).hasClass('cancel')) {
+			modal.find('input').val('');
+			modal.hide();
+			return;
+		}
+
+		var username = $(this).parents('.modal').find('input.username').val(),
+			password = $(this).parents('.modal').find('input.password').val();
+
+		chrome.runtime.sendMessage({
+			action: 'sendAuthData',
+			username: username,
+			password: password
+		});	
+
+		modal.hide();
+	});	
+}
+
 frontendActions.buttons = function(hostname) {
 
 	$('.button').each(function() {
@@ -158,6 +188,7 @@ frontendActions.speedTest = function(hostname) {
 
 frontendActions.init = function() {
 	frontendActions.setSwitches();
+	frontendActions.modal();
 	frontendActions.clickSwitches();
 	frontendActions.checkPage().then(function(data) {
 		frontendActions.checkLogIn(data.url).then(function() {
@@ -171,4 +202,3 @@ frontendActions.init = function() {
 }
 
 frontendActions.init();
-
