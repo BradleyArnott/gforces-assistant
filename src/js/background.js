@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
 			});
 			break;
 		case 'generateDropdown':
-			chrome.tabs.executeScript({file:"js/v10/dropdown.js"})
+			chrome.tabs.executeScript({file:"js/v10/frontend/dropdown.js"})
 			break;
 	}
 
