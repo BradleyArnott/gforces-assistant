@@ -134,13 +134,23 @@ frontendActions.buttons = function(hostname) {
 	});
 }
 
+frontendActions.dropdownButton = function() {
+	$('.sprite .btn').click(function() {
+		chrome.runtime.sendMessage({
+			action: 'generateDropdown'
+		});	
+	});
+}
+
+
 frontendActions.checkDevMode = function(data) {
 	var links = $(data.dom).filter('link');
+
 	links.each(function(index) {
 		if ($(links[index]).attr('href').indexOf('temp-production.s3.amazonaws.com') == -1) return;
 		$('.devmode.switch').addClass('checked').attr('enabled', 'true');
+		devModeOn = true;
 	});
-
 }
 
 frontendActions.setDevMode = function(hostname) {
@@ -196,6 +206,7 @@ frontendActions.init = function() {
 			frontendActions.setDevMode(data.url);
 			frontendActions.checkDevMode(data);
 			frontendActions.buttons(data.url);
+			frontendActions.dropdownButton();
 			frontendActions.speedTest(data.url);
 		});
 	});

@@ -342,8 +342,6 @@ table td {
   width: 46%;
   font-size: 12px;
   text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
-  -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.15);
   box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.15);
 }
 .ticket-count.tomorrow {

@@ -32,6 +32,7 @@ tickets.loopTables = function() {
 }
 
 tickets.loopTickets = function(table) {
+	var ticketsObj = {};
 	table.find(".issuerow").each(function() {
 		var $this = $(this),
 			ticketTimestamp = $this.find('.livestamp'),
@@ -46,21 +47,48 @@ tickets.loopTickets = function(table) {
 			timeData.ticketUpdatedTime = moment(ticketUpdatedDateTime).format('HH:mm');
 
 		if (!ticketTimestamp.length) return;
+		tickets.group(timeData, $this, ticketsObj);
 		tickets.good(timeData, $this);
 		tickets.late(timeData, $this);
 		tickets.modified(timeData, $this);
 		ticketsToday += tickets.today(timeData, $this);
 		ticketsNext += tickets.next(timeData, $this);
 	});
+	tickets.colorGroups(ticketsObj);
 }
 
 tickets.checkNext = function() {
 	var nextDay = moment().add(1, 'days').weekday();
 	var numDays = 1;
-
-	if (nextDay == 6 || nextDay == 7) numDays = 5 - nextDay;
-	nextWord = numDays == 1 ? 'Tomorrow' : moment(nextDate).format('dddd');
+	if (nextDay == 6 || nextDay == 7) numDays += (nextDay - 5) + 1;
 	nextDate = moment().add(numDays, 'days').format('MM DD YYYY');
+	nextWord = numDays == 1 ? 'Tomorrow' : moment(nextDate).format('dddd');
+}
+
+tickets.group = function(timeData, el, obj) {
+	var issueKey = el.attr('data-issuekey'),
+		keyString = issueKey.split('-')[0];
+		color = '#'+Math.floor(Math.random()*16777215).toString(16);
+
+	if(obj[keyString]) obj[keyString].items.push(el);
+	else obj[keyString] = { 'color': color, 'items': [el]}
+}
+
+tickets.colorGroups = function(obj) {
+
+	Object.keys(obj).forEach(function(key) {
+
+		var items = obj[key].items,
+			color = obj[key].color;
+
+		if(items.length > 1) {
+
+			for (var n = 0; n < items.length; n++) {
+				var el = items[n];
+				el.find('.issuetype').css('background-color', color);
+			}
+		}
+	});
 }
 
 tickets.late = function(timeData, el) {
@@ -84,10 +112,10 @@ tickets.modified = function(timeData, el) {
 tickets.today = function(timeData, el) {
 	if (currentDate != timeData.ticketDate) return 0;
 	if (el.find('.status span').text() == 'In Progress') return 0;
-	var estimate = parseFloat(el.find('.timeoriginalestimate').text()),
-		worked = tickets.timeSpent(el.find('.timespent').text());
-		hours = estimate - worked;
+	var estimate = parseFloat(el.find('.timeoriginalestimate').text());
 	if (isNaN(estimate)) return 0;
+	var worked = tickets.timeSpent(el.find('.timespent').text());
+		hours = estimate - worked;
 	if (hours < 0) return 0;
 	hoursToday += hours;
 	return 1;
@@ -96,10 +124,11 @@ tickets.today = function(timeData, el) {
 tickets.next = function(timeData, el) {
 	if (nextDate != timeData.ticketDate) return 0;
 	if (el.find('.status span').text() == 'In Progress') return 0;
-	var estimate = parseFloat(el.find('.timeoriginalestimate').text()),
-		worked = tickets.timeSpent(el.find('.timespent').text());
-		hours = estimate - worked;
+	var estimate = parseFloat(el.find('.timeoriginalestimate').text());
+	el.css('background', '#e5e5e5');
 	if (isNaN(estimate)) return 0;
+	var worked = tickets.timeSpent(el.find('.timespent').text()),
+		hours = estimate - worked;
 	if (hours < 0) return 0;
 	hoursNext += hours;
 	return 1;
