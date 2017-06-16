@@ -25,7 +25,7 @@
 		{
 			"matches": ["https://jira.netdirector.co.uk/secure/Dashboard.jspa*"],
 			"css": [
-				"css/jira.min.css"
+				"css/jira-tickets.min.css"
 			],
 			"js": [
 				"js/lib/moment.min.js",
@@ -35,6 +35,9 @@
 		},
 		{
 			"matches": ["https://jira.netdirector.co.uk/browse/*"],
+			"css": [
+				"css/jira-subtasks.min.css"
+			],
 			"js": [
 				"js/jira/subtasks.js"
 			],

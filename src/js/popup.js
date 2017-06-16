@@ -147,7 +147,7 @@ frontendActions.checkDevMode = function(data) {
 	var links = $(data.dom).filter('link');
 
 	links.each(function(index) {
-		if ($(links[index]).attr('href').indexOf('temp-production.s3.amazonaws.com') == -1) return;
+		if ($(links[index]).attr('href').indexOf('temp-') == -1) return;
 		$('.devmode.switch').addClass('checked').attr('enabled', 'true');
 		devModeOn = true;
 	});
