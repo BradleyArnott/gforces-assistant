@@ -32,6 +32,13 @@
 				"js/jira/tickets.js"
 			],
 			"run_at": "document_end"
+		},		
+		{
+			"matches": ["https://jira.netdirector.co.uk/secure/RapidBoard.jspa*"],
+			"css": [
+				"css/jira-subtasks-board.min.css"
+			],
+			"run_at": "document_end"
 		},
 		{
 			"matches": ["https://jira.netdirector.co.uk/browse/*"],
@@ -44,7 +51,6 @@
 			"run_at": "document_end"
 		}
 	],
-
 	"background": {
 		"scripts": [
 			"js/lib/jquery.min.js",
