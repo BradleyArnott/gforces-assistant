@@ -85,6 +85,9 @@ frontendActions.getDeploy = function(hostname) {
 		if(response) {
 			var html = $($.parseHTML(response)),
 				options = html.find('#Site_assets_path option');
+				hash = html.find('.nd-widget-box .alert-info').text().split('/').slice(-1)[0];
+
+			$('.backendHash').text(hash);
 
 			$(options).each(function() {
 				if (!$(this).attr('selected')) return;
