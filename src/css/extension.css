@@ -74,6 +74,16 @@ img {
   text-align: center;
   font-weight: bold;
 }
+.splitTests {
+  display: none;
+  text-align: center;
+  line-height: 26px;
+  font-weight: bold;
+  background: #FF9800;
+}
+.splitTests.active {
+  display: block;
+}
 .switch {
   display: inline-block;
   vertical-align: middle;

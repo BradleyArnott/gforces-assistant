@@ -66,11 +66,13 @@ background.scrape = function() {
 
 	function getDOM() {
 		var pageUrl = window.location.hostname,
-			pageDOM =  document.head.innerHTML,
+			pageHead =  document.head.innerHTML,
+			pageDOM =  document.body.innerHTML,
 			data = {};
 
 		data.url = pageUrl;
-		data.dom = pageDOM;
+		data.head = pageHead;
+		data.body = pageDOM;
 
 		return data;
 	}

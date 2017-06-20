@@ -17,7 +17,7 @@ auth.login = function(data) {
 		if (data.includes('Components_Auth_LoginForm[username]')) {
 			loginAttempts++;
 			if (loginAttempts == 3) return;
-			setTimeout(function() { backendLogin() }, 2000);
+			setTimeout(function() { auth.login() }, 2000);
 		} else {
 			sessionStorage.setItem('NDAutoLog', currentDate);
 		}

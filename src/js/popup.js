@@ -40,7 +40,7 @@ frontendActions.checkPage = function() {
 	var isOnND = '<link href="//images.netdirector.co.uk" rel="preconnect">';
 	return new Promise(function(resolve) {
 		chrome.runtime.sendMessage({action: 'getPageData'}, function(data) {
-			var DOMHead = data[0].dom;
+			var DOMHead = data[0].head;
 			if (DOMHead.indexOf(isOnND) == -1) return;
 			resolve(data[0]);
 		});
@@ -67,6 +67,12 @@ frontendActions.checkLogIn = function(hostname) {
 			resolve();
 		});
 	});
+}
+
+frontendActions.checkSplit = function(data) {
+	var isSplitTest = (data.body).includes('vwo_loaded');
+	if (!isSplitTest) return;
+	$('.backend .splitTests').addClass('active');
 }
 
 frontendActions.getDeploy = function(hostname) {
@@ -144,7 +150,7 @@ frontendActions.dropdownButton = function() {
 
 
 frontendActions.checkDevMode = function(data) {
-	var links = $(data.dom).filter('link');
+	var links = $(data.head).filter('link');
 
 	links.each(function(index) {
 		if ($(links[index]).attr('href').indexOf('temp-') == -1) return;
@@ -202,6 +208,7 @@ frontendActions.init = function() {
 	frontendActions.clickSwitches();
 	frontendActions.checkPage().then(function(data) {
 		frontendActions.checkLogIn(data.url).then(function() {
+			frontendActions.checkSplit(data);
 			frontendActions.getDeploy(data.url);
 			frontendActions.setDevMode(data.url);
 			frontendActions.checkDevMode(data);
