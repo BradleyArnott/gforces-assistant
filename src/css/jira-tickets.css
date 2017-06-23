@@ -1,6 +1,9 @@
 table td {
   vertical-align: middle !important;
 }
+#announcement-banner {
+  display: none;
+}
 #dashboard {
   border-top: 1px solid #cfcfcf;
 }
@@ -28,7 +31,7 @@ table td {
   margin-top: -11px !important;
 }
 .gadget .dashboard-item-header {
-  border-radius: 8px 8px 0 0;
+  border-radius: 0 !important;
 }
 .gadget.color1 .dashboard-item-header {
   border-color: #009879;
@@ -331,21 +334,29 @@ table td {
 #gadget-72011-chrome .dashboard-item-title:before {
   content: "Device Champion - iPhone";
 }
-.ticket-count {
-  background: #cfe9b6;
-  border: 1px solid #7ca654;
-  border-radius: 5px;
-  color: #547831;
-  display: inline-block;
-  margin: 1%;
-  padding: 0.5%;
-  width: 46%;
-  font-size: 12px;
-  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
-  box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.15);
+.ticket-count-container {
+  padding: 20px;
 }
-.ticket-count.tomorrow {
-  background-color: #e5e5e5;
-  border-color: #969696;
-  color: #555;
+.ticket-count {
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: center;
+  width: 33.33%;
+  font-size: 12px;
+  padding: 0 20px;
+}
+.ticket-count:hover {
+  text-decoration: none;
+}
+.ticket-count .inner {
+  padding: 0 20px;
+  line-height: 38px;
+  color: #000;
+  background: #cfe9b6;
+}
+.ticket-count.tomorrow .inner {
+  background: #e5e5e5;
+}
+.ticket-count.champion .inner {
+  background: #ffc672;
 }

@@ -12,11 +12,25 @@ var tickets = {},
 	nextWord,
 	nextDate;
 
+var champions = [
+	{
+		name: 'matt.mumford',
+		type: 'Mazda',
+		table: '#gadget-72006-renderbox'
+	},
+	{
+		name: 'beau.august',
+		type: 'Vauxhall',
+		table: '#gadget-72006-renderbox'
+	}
+]
+
 tickets.init = function() {
 	Settings.get('checkTickets').then(function(checkTickets) {
 		if (!checkTickets) return;
 		setTimeout(function() {
 			tickets.loopTables();
+			tickets.Champions();
 		}, 1000);
 	});
 }
@@ -149,10 +163,27 @@ tickets.timeSpent = function(time) {
 	return newTimeSpent;
 }
 
+tickets.Champions = function() {
+	var username = $('#header-details-user-fullname').attr("data-username");
+	for (champion in champions) {
+		var user = champions[champion];
+		if (user.name != username) continue;
+		var champTickets = $(user.table).find('.issuerow').length,
+			plural = champTickets == 1 ? 'is' : 'are',
+			pluralTickets = champTickets == 1 ? 'ticket' : 'tickets',
+			text = 'There ' + plural + ' <strong>' + champTickets + '</strong> ' + user.type + '-related ' + pluralTickets,
+			el = $('<div class="ticket-count champion"><div class="inner">' + text + '</div></div>');
+		el.appendTo('.ticket-count-container');
+	}
+}
+
 tickets.showData = function() {
-	var todayContent = (ticketsToday == 0) ? '<div class="ticket-count today completed">All Tickets Done For Today</div>' : '<div class="ticket-count today">Total Hours Today <strong>' + hoursToday.toFixed(1) + '</strong> Total Tickets Today <strong>' + ticketsToday + '</strong></div>';
-    $('.page-type-dashboard #content').prepend('<div class="ticket-count tomorrow">Total Hours ' + nextWord + ' <strong>' + hoursNext.toFixed(1) + '</strong> Total Tickets ' + nextWord + ' <strong>' + ticketsNext + '</strong></div>');
-    $('.page-type-dashboard #content').prepend(todayContent);
+	var todayContentContainer = $('<div class="ticket-count-container"></div>');
+	var todayContent = (ticketsToday == 0) ? '<div class="ticket-count today completed"><div class="inner">All Tickets Done For Today</div></div>' : '<div class="ticket-count today"><div class="inner">Total Hours Today <strong>' + hoursToday.toFixed(1) + '</strong> Total Tickets Today <strong>' + ticketsToday + '</strong></div></div>';
+    var nextContent = '<div class="ticket-count tomorrow"><div class="inner">Total Hours ' + nextWord + ' <strong>' + hoursNext.toFixed(1) + '</strong> Total Tickets ' + nextWord + ' <strong>' + ticketsNext + '</strong></div></div>';
+    $(todayContent).appendTo(todayContentContainer);
+    $(nextContent).appendTo(todayContentContainer);
+    $('.page-type-dashboard #content').prepend(todayContentContainer);
 }
 
 tickets.init();
