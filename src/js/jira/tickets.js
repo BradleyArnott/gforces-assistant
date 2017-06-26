@@ -74,7 +74,8 @@ tickets.loopTickets = function(table) {
 tickets.checkNext = function() {
 	var nextDay = moment().add(1, 'days').weekday();
 	var numDays = 1;
-	if (nextDay == 6 || nextDay == 7) numDays += (nextDay - 5) + 1;
+	if (nextDay == 6) numdays += 3;
+	if (nextDay == 0) numDays += 1;
 	nextDate = moment().add(numDays, 'days').format('MM DD YYYY');
 	nextWord = numDays == 1 ? 'Tomorrow' : moment(nextDate).format('dddd');
 }
@@ -179,8 +180,8 @@ tickets.Champions = function() {
 
 tickets.showData = function() {
 	var todayContentContainer = $('<div class="ticket-count-container"></div>');
-	var todayContent = (ticketsToday == 0) ? '<div class="ticket-count today completed"><div class="inner">All Tickets Done For Today</div></div>' : '<div class="ticket-count today"><div class="inner">Total Hours Today <strong>' + hoursToday.toFixed(1) + '</strong> Total Tickets Today <strong>' + ticketsToday + '</strong></div></div>';
-    var nextContent = '<div class="ticket-count tomorrow"><div class="inner">Total Hours ' + nextWord + ' <strong>' + hoursNext.toFixed(1) + '</strong> Total Tickets ' + nextWord + ' <strong>' + ticketsNext + '</strong></div></div>';
+	var todayContent = (ticketsToday == 0) ? '<div class="ticket-count today completed"><div class="inner">All tickets done for today</div></div>' : '<div class="ticket-count today"><div class="inner">Total Hours Today <strong>' + hoursToday.toFixed(1) + '</strong> Total Tickets Today <strong>' + ticketsToday + '</strong></div></div>';
+    var nextContent = '<div class="ticket-count tomorrow"><div class="inner">Total hours ' + nextWord + ' <strong>' + hoursNext.toFixed(1) + '</strong> Total tickets ' + nextWord + ' <strong>' + ticketsNext + '</strong></div></div>';
     $(todayContent).appendTo(todayContentContainer);
     $(nextContent).appendTo(todayContentContainer);
     $('.page-type-dashboard #content').prepend(todayContentContainer);
