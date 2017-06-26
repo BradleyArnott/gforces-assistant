@@ -110,27 +110,36 @@ frontendActions.modal = function() {
 		$('.modal').show();
 	});
 
+	$('.modal input').keydown(function (event) {
+		var keypress = event.keyCode || event.which;
+		if (keypress != 13) return;
+		frontendActions.sendAuth();
+	});
+
 	$('.modal .btn').click(function(e) {
 		e.preventDefault();
-		var modal = $(this).parents('.modal');
+		var modal = $('.modal');
 
 		if ($(this).hasClass('cancel')) {
 			modal.find('input').val('');
 			modal.hide();
 			return;
 		}
-
-		var username = $(this).parents('.modal').find('input.username').val(),
-			password = $(this).parents('.modal').find('input.password').val();
-
-		chrome.runtime.sendMessage({
-			action: 'sendAuthData',
-			username: username,
-			password: password
-		});	
-
-		modal.hide();
+		frontendActions.sendAuth();
 	});	
+}
+
+frontendActions.sendAuth = function() {
+	var modal = $('.modal'),
+		username = modal.find('input.username').val(),
+		password = modal.find('input.password').val();
+
+	chrome.runtime.sendMessage({
+		action: 'sendAuthData',
+		username: username,
+		password: password
+	});	
+	modal.hide();
 }
 
 frontendActions.buttons = function(hostname) {
