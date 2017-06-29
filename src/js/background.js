@@ -37,6 +37,9 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
 		case 'generateDropdown':
 			chrome.tabs.executeScript({file:"js/v10/frontend/dropdown.js"})
 			break;
+		case 'checkSlashes':
+			chrome.tabs.executeScript({file:"js/v10/frontend/checkSlashes.js"})
+			break;
 	}
 
 	return true;

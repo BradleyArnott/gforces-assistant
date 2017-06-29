@@ -1,3 +1,7 @@
+/* ==========================================================================
+   Dropdown Overlay 
+   ========================================================================== */
+
 .gforces-assistant--overlay {
 	position: fixed;
 	z-index: 9997;
@@ -53,7 +57,7 @@
 	z-index: 9998;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translateZ(0) translate(-50%, -50%);
 	padding: 15px;
 	width: 300px;
 	background: #f1f1f1;
@@ -105,6 +109,44 @@
 				color: #fff;
 				background: darken(#D8334A, 5%);
 			}
+		}
+	}
+}
+
+/* ==========================================================================
+   Slashes Overlay 
+   ========================================================================== */
+
+.gforces-assistant--slashes {
+	position: fixed;
+	z-index: 9999;
+	padding: 10px;
+	top: 30px;
+	left: 30px;
+	width: 300px;
+	background: #f1f1f1;
+	font-family: Arial;
+
+	.title {
+		display: block;
+		padding: 5px;
+		margin-bottom: 5px;
+		font-weight: bold;
+		font-size: 16px;
+	}
+
+	a {
+		display: block;
+		padding: 5px;
+		margin-bottom: 5px;
+		text-decoration: none;
+		color: #000;
+		background: #fff;
+		font-family: Arial;
+		font-size: 13px;
+
+		&:last-child {
+			margin: 0;
 		}
 	}
 }

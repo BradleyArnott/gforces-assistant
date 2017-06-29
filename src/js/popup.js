@@ -75,6 +75,15 @@ frontendActions.checkSplit = function(data) {
 	$('.backend .splitTests').addClass('active');
 }
 
+frontendActions.trailingSlashes = function() {
+	$('.trailing-slashes').click(function(e) {
+		e.preventDefault();
+		chrome.runtime.sendMessage({
+			action: 'checkSlashes'
+		});
+	});
+}
+
 frontendActions.getDeploy = function(hostname) {
 
 	$.ajax({
@@ -226,6 +235,7 @@ frontendActions.init = function() {
 			frontendActions.checkDevMode(data);
 			frontendActions.buttons(data.url);
 			frontendActions.dropdownButton();
+			frontendActions.trailingSlashes();
 			frontendActions.speedTest(data.url);
 		});
 	});

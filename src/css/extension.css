@@ -209,12 +209,11 @@ img {
   padding: 0;
   width: 100%;
 }
-.button.speed-test .btn {
-  color: #404040;
-  background: yellow;
+.button.frontend .btn {
+  background: #6e4dd0;
 }
-.button.speed-test .btn:hover {
-  background: #dbdb00;
+.button.frontend .btn:hover {
+  background: #5934c5;
 }
 .btn {
   display: block;
