@@ -74,7 +74,7 @@ tickets.loopTickets = function(table) {
 tickets.checkNext = function() {
 	var nextDay = moment().add(1, 'days').weekday();
 	var numDays = 1;
-	if (nextDay == 6) numdays += 3;
+	if (nextDay == 6) numDays += 2;
 	if (nextDay == 0) numDays += 1;
 	nextDate = moment().add(numDays, 'days').format('MM DD YYYY');
 	nextWord = numDays == 1 ? 'Tomorrow' : moment(nextDate).format('dddd');

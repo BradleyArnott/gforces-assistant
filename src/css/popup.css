@@ -115,23 +115,49 @@
   background: #f1f1f1;
   font-family: Arial;
 }
+.gforces-assistant--slashes.double-width {
+  width: 600px;
+}
+.gforces-assistant--slashes.double-width a {
+  float: left;
+  width: calc(50% - 2px);
+}
+.gforces-assistant--slashes.double-width a:nth-child(even) {
+  margin-right: 2px;
+}
+.gforces-assistant--slashes.double-width a:nth-child(odd) {
+  margin-left: 2px;
+}
 .gforces-assistant--slashes .title {
   display: block;
   padding: 5px;
+  color: #000;
   margin-bottom: 5px;
   font-weight: bold;
   font-size: 16px;
 }
 .gforces-assistant--slashes a {
   display: block;
-  padding: 5px;
-  margin-bottom: 5px;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 40px 0 5px;
+  margin-top: 5px;
+  line-height: 30px;
   text-decoration: none;
   color: #000;
   background: #fff;
   font-family: Arial;
   font-size: 13px;
 }
-.gforces-assistant--slashes a:last-child {
-  margin: 0;
+.gforces-assistant--slashes a .value {
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  right: 5px;
+}
+.gforces-assistant--slashes a:hover {
+  color: #000;
 }
