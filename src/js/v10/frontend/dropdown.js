@@ -5,11 +5,10 @@ var dropdown = {},
 dropdown.modal = function(options) {
 	var modal = $('<div class="gforces-assistant--modal"><label for="dropdown">Dropdown select</label><select class="dropdown-list"></select><label for="variable">Variable name</label><input class="variable" placeholder="eg. @new-cars" type="text"></input><label for="images">Extract Listing Images from current page</label><input class="checkbox" type="checkbox" name="images"><div class="button"><a href="" class="btn confirm">Confirm</a></div><div class="button"><a href="" class="btn cancel">Cancel</a></div></div>'),
 		overlay = $('<div class="gforces-assistant--overlay"></div>');
-		overlayConfirm = $('<div class="gforces-assistant--overlay--confirm"><div class="box"></div></div>');
 
+	$('.gforces-assistant--overlay--confirm').remove();
 	overlay.appendTo('body');
 	overlayConfirm.appendTo('body');
-	modal.appendTo('body');
 	$.each(options, function(index, value){
 		var select = $('.gforces-assistant--modal select'),
 			option = $('<option>' + value.title + '</option>');
@@ -48,7 +47,9 @@ dropdown.confirm = function(options, downloadImages, dropdownValue, varName) {
 	});
 
 	dropdown.generateSprite(dropdownEl, varName).then(function(data){
+		var overlayConfirm = $('<div class="gforces-assistant--overlay--confirm"><div class="box"></div></div>');
 		dropdown.copyVariable(data);
+		modal.appendTo('body');
 		$('.gforces-assistant--overlay--confirm').fadeIn(250).delay(550).fadeOut();
 	});
 }

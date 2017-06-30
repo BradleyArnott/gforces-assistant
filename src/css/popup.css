@@ -128,15 +128,23 @@
 .gforces-assistant--slashes.double-width a:nth-child(odd) {
   margin-left: 2px;
 }
+.gforces-assistant--slashes .close {
+  position: absolute;
+  right: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0 6px;
+  background: #fff;
+}
 .gforces-assistant--slashes .title {
   display: block;
-  padding: 5px;
+  padding: 0 5px 5px;
   color: #000;
   margin-bottom: 5px;
   font-weight: bold;
   font-size: 16px;
 }
-.gforces-assistant--slashes a {
+.gforces-assistant--slashes .link {
   display: block;
   position: relative;
   box-sizing: border-box;
@@ -152,12 +160,13 @@
   font-family: Arial;
   font-size: 13px;
 }
-.gforces-assistant--slashes a .value {
+.gforces-assistant--slashes .link .value {
+  padding: 0 7px;
   font-weight: bold;
   position: absolute;
   top: 0;
-  right: 5px;
+  right: 0;
 }
-.gforces-assistant--slashes a:hover {
+.gforces-assistant--slashes .link:hover {
   color: #000;
 }
