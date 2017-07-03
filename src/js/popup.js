@@ -37,7 +37,7 @@ frontendActions.clickSwitches = function() {
 }
 
 frontendActions.checkPage = function() {
-	var isOnND = '<link href="//images.netdirector.co.uk" rel="preconnect">';
+	var isOnND = '<link href="https://images.netdirector.co.uk" rel="preconnect">';
 	return new Promise(function(resolve) {
 		chrome.runtime.sendMessage({action: 'getPageData'}, function(data) {
 			var DOMHead = data[0].head;
@@ -64,6 +64,7 @@ frontendActions.checkLogIn = function(hostname) {
 			resolve();
 
 		}).fail(function(jqXHR, textStatus) {
+			console.log("login failed")
 			resolve();
 		});
 	});

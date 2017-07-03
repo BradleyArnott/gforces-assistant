@@ -35,7 +35,7 @@ auth.checkExpiry = function() {
 }
 
 auth.init = function() {
-	var isOnND = $('link[href="//images.netdirector.co.uk"]');
+	var isOnND = $('link[href="https://images.netdirector.co.uk"]');
 	if (!isOnND.length) return;
 	Settings.get('autoLogin').then(function(autoLogin) {
 		if (!autoLogin) return;
