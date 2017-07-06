@@ -21,7 +21,7 @@ table td {
 .issue-table td {
   font-size: 11px !important;
   padding: 2px 5px !important;
-  border: 1px dotted #efefef !important;
+  border: 1px solid #efefef !important;
   border-bottom: 1px solid #ccc !important;
 }
 .issue-table .aui-button.aui-button-compact {
@@ -98,7 +98,8 @@ table td {
 #gadget-72009-chrome .dashboard-item-title,
 #gadget-72010-chrome .dashboard-item-title,
 #gadget-72011-chrome .dashboard-item-title,
-#gadget-73000-chrome .dashboard-item-title {
+#gadget-73000-chrome .dashboard-item-title,
+#gadget-77814-chrome .dashboard-item-title {
   font-size: 0;
 }
 #gadget-11706-chrome .dashboard-item-title:before,
@@ -145,7 +146,8 @@ table td {
 #gadget-72009-chrome .dashboard-item-title:before,
 #gadget-72010-chrome .dashboard-item-title:before,
 #gadget-72011-chrome .dashboard-item-title:before,
-#gadget-73000-chrome .dashboard-item-title:before {
+#gadget-73000-chrome .dashboard-item-title:before,
+#gadget-77814-chrome .dashboard-item-title:before {
   font-size: 12px;
 }
 #gadget-71902-chrome .dashboard-item-title:before,
@@ -163,7 +165,8 @@ table td {
   content: "CSS Work Queue";
 }
 #gadget-61800-chrome .dashboard-item-title:before,
-#gadget-69212-chrome .dashboard-item-title:before {
+#gadget-69212-chrome .dashboard-item-title:before,
+#gadget-77814-chrome .dashboard-item-title:before {
   content: "CSS Large Tickets";
 }
 #gadget-54825-chrome .dashboard-item-title:before,
