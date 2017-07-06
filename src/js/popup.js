@@ -85,6 +85,15 @@ frontendActions.trailingSlashes = function() {
 	});
 }
 
+frontendActions.checkOverflow = function() {
+	$('.overflow-elements').click(function(e) {
+		e.preventDefault();
+		chrome.runtime.sendMessage({
+			action: 'checkOverflow'
+		});
+	});
+}
+
 frontendActions.getDeploy = function(hostname) {
 
 	$.ajax({
@@ -237,6 +246,7 @@ frontendActions.init = function() {
 			frontendActions.buttons(data.url);
 			frontendActions.dropdownButton();
 			frontendActions.trailingSlashes();
+			frontendActions.checkOverflow();
 			frontendActions.speedTest(data.url);
 		});
 	});

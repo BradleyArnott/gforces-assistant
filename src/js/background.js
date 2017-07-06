@@ -40,6 +40,9 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
 		case 'checkSlashes':
 			chrome.tabs.executeScript({file:"js/v10/frontend/checkSlashes.js"})
 			break;
+		case 'checkOverflow':
+			chrome.tabs.executeScript({file:"js/v10/frontend/checkOverflow.js"})
+			break;		
 	}
 
 	return true;
