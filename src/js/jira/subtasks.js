@@ -35,9 +35,17 @@ subtasks.loopList = function() {
 			taskStatus = $this.find(".status span").html();
 
 		subtasks.identifyCSS($this, taskStatus);
-		subtasks.hidePM($this);
+		subtasks.hideTeam($this, 'PM');
+		subtasks.hideTeam($this, 'PS');
 		subtasks.checkComplete($this, taskStatus);
+		subtasks.checkCore($this, taskStatus);
 	});
+}
+
+subtasks.checkCore = function(el, value) {
+	var cssCore = el.find('.customfield_10201').is(':contains("CSS - Software")');
+	if (!cssCore) return;
+	el.css('background', '#ff9bbb');
 }
 
 subtasks.checkComplete = function(el, value) {
@@ -46,9 +54,9 @@ subtasks.checkComplete = function(el, value) {
 	el.hide().css('background', subtasksDoneColour);
 }
 
-subtasks.hidePM = function(el) {
-	var isPM = el.find(".stsummary a").is(':contains("PM ")');
-	if (!isPM) return;
+subtasks.hideTeam = function(el, team) {
+	var shouldHide = el.find(".stsummary a").is(':contains("' + team + ' ")');
+	if (!shouldHide) return;
 	el.hide();	
 }
 

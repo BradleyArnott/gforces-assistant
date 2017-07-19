@@ -6,7 +6,7 @@ auth = {};
 
 auth.login = function(data) {
 	$.ajax({
-		url: 'http://' + window.location.hostname + backendPath,
+		url: window.location.protocol + '//' + window.location.hostname + backendPath,
 		data: {
 			'Components_Auth_LoginForm[username]': data.username,
 			'Components_Auth_LoginForm[password]': data.password
@@ -27,6 +27,7 @@ auth.login = function(data) {
 auth.checkExpiry = function() {
 	var expiryTime = 24 * 3600;
 	var expiryDate = sessionStorage.getItem('NDAutoLog') ? parseInt(sessionStorage.getItem('NDAutoLog')) + expiryTime : 0;
+	if (currentDate < expiryDate) console.log("Not yet expired")
 
 	return new Promise(function(resolve, error) {
 		if (currentDate < expiryDate) return;

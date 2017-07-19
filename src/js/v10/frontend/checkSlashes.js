@@ -19,6 +19,7 @@ trailingSlashes.check = function() {
             if (theUrl === undefined) return;
             if (theUrl == 'null') return;
             if (theUrl.endsWith('/')) return;
+            if (theUrl.startsWith('tel:')) return;
             if (theUrl.startsWith('#')) return;
             if (theUrl.endsWith('#')) return;
             if (theUrl.startsWith('javascript:')) return;
