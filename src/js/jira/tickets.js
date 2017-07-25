@@ -139,7 +139,7 @@ tickets.today = function(timeData, el) {
 tickets.next = function(timeData, el) {
 	if (nextDate != timeData.ticketDate) return 0;
 	if (el.find('.status span').text() == 'In Progress') return 0;
-	var estimate = parseFloat(el.find('.timeoriginalestimate').text());
+	var estimate = tickets.timeSpent(el.find('.timeoriginalestimate').text());
 	el.css('background', '#e5e5e5');
 	if (isNaN(estimate)) return 0;
 	var worked = tickets.timeSpent(el.find('.timespent').text()),

@@ -27,7 +27,6 @@ auth.login = function(data) {
 auth.checkExpiry = function() {
 	var expiryTime = 24 * 3600;
 	var expiryDate = sessionStorage.getItem('NDAutoLog') ? parseInt(sessionStorage.getItem('NDAutoLog')) + expiryTime : 0;
-	if (currentDate < expiryDate) console.log("Not yet expired")
 
 	return new Promise(function(resolve, error) {
 		if (currentDate < expiryDate) return;

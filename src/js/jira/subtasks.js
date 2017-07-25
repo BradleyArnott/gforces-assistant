@@ -36,7 +36,6 @@ subtasks.loopList = function() {
 
 		subtasks.identifyCSS($this, taskStatus);
 		subtasks.hideTeam($this, 'PM');
-		subtasks.hideTeam($this, 'PS');
 		subtasks.checkComplete($this, taskStatus);
 		subtasks.checkCore($this, taskStatus);
 	});
@@ -58,6 +57,9 @@ subtasks.hideTeam = function(el, team) {
 	var shouldHide = el.find(".stsummary a").is(':contains("' + team + ' ")');
 	if (!shouldHide) return;
 	el.hide();	
+	console.log(shouldHide)
+	console.log(el.find(".stsummary a"))
+	console.log(team)
 }
 
 subtasks.identifyCSS = function(el, value) {
