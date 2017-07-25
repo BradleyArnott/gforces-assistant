@@ -131,7 +131,7 @@ tickets.today = function(timeData, el) {
 	if (isNaN(estimate)) return 0;
 	var worked = tickets.timeSpent(el.find('.timespent').text());
 		hours = estimate - worked;
-	if (hours < 0) return 0;
+	if (hours < 0) return 1;
 	hoursToday += hours;
 	return 1;
 }
