@@ -127,7 +127,7 @@ tickets.modified = function(timeData, el) {
 tickets.today = function(timeData, el) {
 	if (currentDate != timeData.ticketDate) return 0;
 	if (el.find('.status span').text() == 'In Progress') return 0;
-	var estimate = parseFloat(el.find('.timeoriginalestimate').text());
+	var estimate = tickets.timeSpent(el.find('.timeoriginalestimate').text());
 	if (isNaN(estimate)) return 0;
 	var worked = tickets.timeSpent(el.find('.timespent').text());
 		hours = estimate - worked;

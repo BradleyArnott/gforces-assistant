@@ -80,7 +80,6 @@
   box-shadow: none;
   border-radius: 3px;
   font-size: 12px;
-  -webkit-transition: all .3s;
   transition: all .3s;
 }
 .gforces-assistant--modal .btn:before,

@@ -1,8 +1,11 @@
 html {
   background: #f1f1f1;
-  width: 250px;
 }
 body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 10px;
+  width: 250px;
   line-height: 1.4;
   font-size: 14px;
 }
@@ -58,7 +61,6 @@ img {
   padding: 0 8px;
   width: 37px;
   opacity: .5;
-  -webkit-transition: all .3s;
   transition: all .3s;
 }
 .switchContainer .options:hover {
@@ -99,7 +101,6 @@ img {
   height: 28px;
   background-color: #D8334A;
   border-radius: 3px;
-  -webkit-transition: .25s ease;
   transition: .25s ease;
 }
 .switch .slider {
@@ -110,7 +111,6 @@ img {
   left: 3px;
   background-color: #F5F7FA;
   border-radius: 2px;
-  -webkit-transition: .25s ease;
   transition: .25s ease;
   cursor: pointer;
 }
@@ -140,7 +140,6 @@ img {
   -webkit-transform: translate(-50%, -50%);
       -ms-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
-  -webkit-transition: .25s ease;
   transition: .25s ease;
   background-color: #BF263C;
 }
@@ -225,7 +224,6 @@ img {
   background: #2585c7;
   border-radius: 3px;
   font-size: 12px;
-  -webkit-transition: all .3s;
   transition: all .3s;
 }
 .btn:hover {
