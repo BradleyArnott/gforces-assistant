@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Beau August",
-	"version": "0.12.0",
+	"version": "0.13.0",
 
 	"icons": { 
 		"210": "img/icon.png" 
@@ -48,6 +48,16 @@
 			],
 			"js": [
 				"js/jira/subtasks.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["*://*/backend/tag-management/index/"],
+			"css": [
+				"css/tag-manager.min.css"
+			],
+			"js": [
+				"js/v10/backend/tag-manager.js"
 			],
 			"run_at": "document_end"
 		}

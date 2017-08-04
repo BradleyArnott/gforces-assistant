@@ -1,8 +1,10 @@
-var tickets = {},
+var username = $('#header-details-user-fullname').attr("data-username"),
+	tickets = {},
 	ticketsColours = {
 		good: '#cfe9b6',
 		late: '#e9b6b6',
-		modified: '#f0b664'
+		modified: '#f0b664',
+		mine: '#b6e9db'
 	},
 	ticketsToday = 0,
 	hoursToday = 0,
@@ -31,6 +33,8 @@ tickets.init = function() {
 		setTimeout(function() {
 			tickets.loopTables();
 			tickets.Champions();
+			tickets.myIssues();
+			tickets.checkWorkQueue();
 		}, 1000);
 	});
 }
@@ -165,7 +169,6 @@ tickets.timeSpent = function(time) {
 }
 
 tickets.Champions = function() {
-	var username = $('#header-details-user-fullname').attr("data-username");
 	for (champion in champions) {
 		var user = champions[champion];
 		if (user.name != username) continue;
@@ -185,6 +188,100 @@ tickets.showData = function() {
     $(todayContent).appendTo(todayContentContainer);
     $(nextContent).appendTo(todayContentContainer);
     $('.page-type-dashboard #content').prepend(todayContentContainer);
+}
+
+
+tickets.myIssues = function() {
+	$('#gadget-54826-chrome .issuerow').each(function() {
+		var issueReporter = $(this).find('.reporter a').attr('rel');
+		if (issueReporter != username) return;
+		$(this).css('background', ticketsColours.mine);
+	});
+}
+
+tickets.checkWorkQueue = function() {
+	$.get('https://jira.netdirector.co.uk/rest/api/2/search?jql=status+in+(%22In+Progress%22,+Reopened,+Error,+Reported,+%22To+Do%22,+%22More+Information%22,+Queued)+AND+(labels+not+in+(CSSQueue,+ProjectCSS,+MobileFirstMigration,+css-core,+css-site-review,+css-code-review)+OR+labels+is+EMPTY)+AND+type+!%3D+%22Project+-+Design%22+AND+assignee+in+(EMPTY)+AND+NOT+reporter+in+(api.user)+AND+Department+%3D+CSS+AND+NOT+project+%3D+11300+AND+NOT+project+%3D+%22Third+Party+Code+Approval%22+AND+issuetype+!%3D+%22QA+Sub-Task%22+ORDER+BY+cf%5B11004%5D+ASC', function( data ) {
+		var issues = data.issues;
+		for (var i = 0; i < issues.length; i++) {
+			tickets.clearNotDue(issues[i]);
+		};
+	});
+}
+
+tickets.clearNotDue = function(issue) {
+	var due = issue.fields.customfield_11004;
+	if (due !== null) return;
+	tickets.getTransitions(issue.key).then(function(data) {
+		tickets.addLabel(issue.key, 'nodue');
+		tickets.moreInfo(issue.key, data);
+	});
+}
+
+tickets.getTransitions = function(key, status) {
+	return new Promise(function(resolve, reject) {
+		$.get('https://jira.netdirector.co.uk/rest/api/2/issue/' + key + '/transitions?expand=transitions.fields', function( data ) {
+			let transitions = data.transitions;
+			for (let i = 0; i < transitions.length; i++) {
+				let transitionName = transitions[i].name;
+				if ('More Info'.indexOf(transitionName) == -1) continue;
+				resolve(transitions[i].id);
+			}
+		});
+	});
+}
+
+tickets.moreInfo = function(key, transitionID) {
+	let transitionUrl = 'https://jira.netdirector.co.uk/rest/api/2/issue/' + key + '/transitions?expand=transitions.fields',
+		transitionData = {
+	    "update": {
+	        "comment": [
+	            {
+	                "add": {
+	                    "body": "*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. \nIf the time is now after 09:30 AM, please set the due date to no earlier than the next working day. \nIf this ticket is yet to be quoted on, please move it to the quote queue.\nIf this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'"
+	                }
+	            }
+	        ]
+	    },
+	    "transition": {
+	        "id": transitionID
+	    }
+	};
+	transitionData = JSON.stringify(transitionData);
+
+	console.log(transitionUrl);	
+	console.log('More Information ID: ' + transitionID);
+	console.log('Ticket ref: ' + key);
+
+	$.ajax({
+		type: 'POST',
+		url: transitionUrl, 
+		data: transitionData,
+		contentType: 'application/json',
+		dataType: 'json'
+	});
+}
+
+tickets.addLabel = function(key, label) {
+	let transitionUrl = 'https://jira.netdirector.co.uk/rest/api/2/issue/' + key,
+		transitionData = {
+		"update": {		
+			"labels": [
+				{
+					"add": "css-automated-" + label
+				}
+			]
+		}
+	};
+
+	transitionData = JSON.stringify(transitionData);
+
+	$.ajax({
+		type: 'PUT',
+		url: transitionUrl, 
+		data: transitionData,
+		contentType: 'application/json',
+		dataType: 'json'
+	});
 }
 
 tickets.init();

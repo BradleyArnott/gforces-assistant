@@ -1,0 +1,41 @@
+.css-assistant--button {
+  position: absolute;
+  top: 5px;
+  right: 12px;
+}
+.custom-css-js--container {
+  width: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+.custom-css-js--container .inner {
+  font-size: 0;
+}
+.custom-css-js--container .script {
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  width: 25%;
+  line-height: 55px;
+  transition: all .3s;
+  color: #555;
+}
+.custom-css-js--container .script:not(:nth-child(4n + 1)) {
+  border-right: 1px solid #f5f5f5;
+}
+.custom-css-js--container .script:hover {
+  background: #f5f5f5;
+}
+.custom-css-js--container .script .inner {
+  position: relative;
+  top: -2px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+  font-size: 13px;
+}

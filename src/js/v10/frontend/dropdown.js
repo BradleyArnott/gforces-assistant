@@ -3,7 +3,7 @@ var dropdown = {},
 	urlSuffix = 'auto-client/';
 
 dropdown.modal = function(options) {
-	var modal = $('<div class="gforces-assistant--modal"><label for="dropdown">Dropdown select</label><select class="dropdown-list"></select><label for="variable">Variable name</label><input class="variable" placeholder="eg. @new-cars" type="text"></input><label for="images">Extract Listing Images from current page</label><input class="checkbox" type="checkbox" name="images"><div class="button"><a href="" class="btn confirm">Confirm</a></div><div class="button"><a href="" class="btn cancel">Cancel</a></div></div>'),
+	var modal = $('<div class="gforces-assistant--modal"><label for="dropdown">Dropdown select</label><select class="dropdown-list"></select><label for="variable">Variable name</label><input class="variable" placeholder="eg. @new-cars" type="text"></input><label for="images">Extract Listing Images from current page</label><input class="checkbox-images" type="checkbox" name="images"><label for="title">Use title instead of href</label><input class="checkbox-title" type="checkbox" name="title"><div class="button"><a href="" class="btn confirm">Confirm</a></div><div class="button"><a href="" class="btn cancel">Cancel</a></div></div>'),
 		overlay = $('<div class="gforces-assistant--overlay"></div>'),
 		overlayConfirm = $('<div class="gforces-assistant--overlay--confirm"><div class="box"></div></div>');
 
@@ -38,7 +38,7 @@ dropdown.setOptions = function() {
 	})
 }
 
-dropdown.confirm = function(options, downloadImages, dropdownValue, varName) {
+dropdown.confirm = function(options, downloadImages, useTitle, dropdownValue, varName) {
 	var dropdownEl;
 
 	if (downloadImages) dropdown.grabImages();
@@ -48,7 +48,7 @@ dropdown.confirm = function(options, downloadImages, dropdownValue, varName) {
 		dropdownEl = value.el;
 	});
 
-	dropdown.generateSprite(dropdownEl, varName).then(function(data){
+	dropdown.generateSprite(dropdownEl, useTitle, varName).then(function(data){
 		dropdown.copyVariable(data);
 		$('.gforces-assistant--overlay--confirm').fadeIn(250).delay(550).fadeOut();
 	});
@@ -61,9 +61,10 @@ dropdown.buttons = function(options) {
 
 		if ($(this).hasClass('confirm')) {
 			var dropdownValue = $('.gforces-assistant--modal option:selected').val(),
-				downloadImages = $('.gforces-assistant--modal .checkbox').is(':checked'),
+				downloadImages = $('.gforces-assistant--modal .checkbox-images').is(':checked'),
+				useTitle = $('.gforces-assistant--modal .checkbox-title').is(':checked'),
 				varName = $('.gforces-assistant--modal .variable').val() ? $('.gforces-assistant--modal .variable').val() : '@dropdown-items';
-			dropdown.confirm(options, downloadImages, dropdownValue, varName);
+			dropdown.confirm(options, downloadImages, useTitle, dropdownValue, varName);
 		}
 
 		$('.gforces-assistant--modal').remove();
@@ -99,7 +100,7 @@ dropdown.copyVariable = function(string) {
 	textArea.remove();
 }
 
-dropdown.generateSprite = function(el, varName) {
+dropdown.generateSprite = function(el, useTitle, varName) {
 
 	return new Promise(function(resolve, error) {
 		var menuItems = $(el).find('.dropdown-menu a'),
@@ -107,7 +108,8 @@ dropdown.generateSprite = function(el, varName) {
 			menuLength = menuItems.length;
 
 		menuItems.each(function(index) {
-			variableString += '\n\t"' + $(this).attr('href').match("[^/]*(?=\/$)") + '"';
+			var attribute = useTitle ? $(this).attr('title') : $(this).attr('href').match("[^/]*(?=\/$)");
+			variableString += '\n\t"' + attribute + '"';
 
 			if (index != menuLength - 1) {
 				variableString += ','
