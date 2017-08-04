@@ -20,10 +20,12 @@
   display: inline-block;
   vertical-align: top;
   text-align: center;
+  padding: 0 5px;
   width: 25%;
   line-height: 55px;
   transition: all .3s;
   color: #555;
+  border-bottom: 1px solid #f5f5f5;
 }
 .custom-css-js--container .script:not(:nth-child(4n + 1)) {
   border-right: 1px solid #f5f5f5;
