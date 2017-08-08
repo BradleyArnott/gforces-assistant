@@ -6,6 +6,21 @@ var username = $('#header-details-user-fullname').attr("data-username"),
 		modified: '#f0b664',
 		mine: '#b6e9db'
 	},
+	ticketsOEM = [
+		{
+			label: 'css-im-group',
+			refs: [
+				'IMGROUP'
+			]
+		},
+		{
+			label: 'css-vauxhall',
+			refs: [
+				'VVB',
+				'BEVB'
+			]
+		}
+	],
 	ticketsToday = 0,
 	hoursToday = 0,
 	ticketsNext = 0,
@@ -201,20 +216,28 @@ tickets.myIssues = function() {
 
 tickets.checkWorkQueue = function() {
 	$.get('https://jira.netdirector.co.uk/rest/api/2/search?jql=status+in+(%22In+Progress%22,+Reopened,+Error,+Reported,+%22To+Do%22,+%22More+Information%22,+Queued)+AND+(labels+not+in+(CSSQueue,+ProjectCSS,+MobileFirstMigration,+css-core,+css-site-review,+css-code-review)+OR+labels+is+EMPTY)+AND+type+!%3D+%22Project+-+Design%22+AND+assignee+in+(EMPTY)+AND+NOT+reporter+in+(api.user)+AND+Department+%3D+CSS+AND+NOT+project+%3D+11300+AND+NOT+project+%3D+%22Third+Party+Code+Approval%22+AND+issuetype+!%3D+%22QA+Sub-Task%22+ORDER+BY+cf%5B11004%5D+ASC', function( data ) {
-		var issues = data.issues;
-		for (var i = 0; i < issues.length; i++) {
-			tickets.clearNotDue(issues[i]);
+		let issues = data.issues;
+		for (let i = 0; i < issues.length; i++) {
+			tickets.checkDue(issues[i]);
+			tickets.labelOEM(issues[i]);
 		};
 	});
 }
 
 tickets.clearNotDue = function(issue) {
-	var due = issue.fields.customfield_11004;
-	if (due !== null) return;
 	tickets.getTransitions(issue.key).then(function(data) {
-		tickets.addLabel(issue.key, 'nodue');
+		console.log(issue.key + ' has no due date')
+		tickets.addLabel(issue.key, 'css-automated-nodue');
 		tickets.moreInfo(issue.key, data);
 	});
+}
+
+tickets.checkDue = function(issue) {
+	let due = issue.fields.customfield_11004,
+		sameDate = moment(currentDate).isSame(moment(due).format('MM DD YYYY'));
+
+	if (due === null) tickets.clearNotDue(issue);
+	else if (!sameDate) return;
 }
 
 tickets.getTransitions = function(key, status) {
@@ -237,7 +260,10 @@ tickets.moreInfo = function(key, transitionID) {
 	        "comment": [
 	            {
 	                "add": {
-	                    "body": "*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. \nIf the time is now after 09:30 AM, please set the due date to no earlier than the next working day. \nIf this ticket is yet to be quoted on, please move it to the quote queue.\nIf this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'"
+	                    "body": `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. 
+						If the time is now after 09:30 AM, please set the due date to no earlier than the next working day. 
+						If this ticket is yet to be quoted on, please move it to the quote queue.
+						If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`
 	                }
 	            }
 	        ]
@@ -267,7 +293,7 @@ tickets.addLabel = function(key, label) {
 		"update": {		
 			"labels": [
 				{
-					"add": "css-automated-" + label
+					"add": label
 				}
 			]
 		}
@@ -282,6 +308,20 @@ tickets.addLabel = function(key, label) {
 		contentType: 'application/json',
 		dataType: 'json'
 	});
+}
+
+tickets.labelOEM = function(issue) {
+	let key = issue.key;
+
+	for (let t = 0; t < ticketsOEM.length; t++) {
+		let ticketsRef = ticketsOEM[t].refs;
+
+		for (let r = 0; r < ticketsRef.length; r++) {
+			if (!key.startsWith(ticketsRef[r])) continue;
+			console.log(key + ' matched with ' + ticketsOEM[t].label)
+			tickets.addLabel(key, ticketsOEM[t].label);
+		}
+	}
 }
 
 tickets.init();
