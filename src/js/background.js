@@ -42,7 +42,10 @@ chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
 			break;
 		case 'checkOverflow':
 			chrome.tabs.executeScript({file:"js/v10/frontend/checkOverflow.js"})
-			break;		
+			break;
+		case 'inTemplateEditor':
+			chrome.tabs.executeScript({file:"js/v10/backend/site-editor.js"})
+			break;
 	}
 
 	return true;

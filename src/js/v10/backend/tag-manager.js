@@ -4,52 +4,52 @@ var tagManager = {},
 	{
 		id: 0,
 		name: 'JS Absolute',
-		ref: '00.%20Misc/js/js-absolute.js'
+		ref: 'js-absolute.js'
 	},	
 	{
 		id: 1,
 		name: 'JS Absolute (Advanced)',
-		ref: '00.%20Misc/js/js-absolute-advanced.js'
+		ref: 'js-absolute-advanced.js'
 	},
 	{
 		id: 2,
 		name: 'Judge Service',
-		ref: '00.%20Misc/js/judge-service-superwidget.js'
+		ref: 'judge-service-superwidget.js'
 	},
 	{
 		id: 3,
 		name: 'Miappi',
-		ref: '00.%20Misc/js/miappi.js'
+		ref: 'miappi.js'
 	},
 	{
 		id: 4,
 		name: 'HR Spacing',
-		ref: '00.%20Misc/js/hr-spacing.js'
+		ref: 'hr-spacing.js'
 	},	
 	{
 		id: 5,
 		name: 'New Car Detail (Desktop-first)',
-		ref: '00.%20Misc/js/new-car-detail.js'
+		ref: 'new-car-detail.js'
 	},	
 	{
 		id: 6,
 		name: 'New Car Detail (User-first)',
-		ref: '00.%20Misc/js/new-car-detail-MF.js'
+		ref: 'new-car-detail-MF.js'
 	},	
 	{
 		id: 7,
 		name: 'New Car Dropdown',
-		ref: '00.%20Misc/js/_ND/menuImages.js'
+		ref: 'menuImages.js'
 	},
 	{
 		id: 8,
 		name: 'Current Year',
-		ref: '00.%20Misc/js/footer-year.js',
+		ref: 'footer-year.js',
 	},
 	{
 		id: 9,
 		name: 'Open in new tab',
-		ref: '00.%20Misc/js/open-in-new-tab-button.js'
+		ref: 'open-in-new-tab-button.js'
 	}
 ];
 
@@ -166,7 +166,7 @@ tagManager.checkSnippet = function() {
 }
 
 tagManager.get = function(ID) {
-	let scriptPath = 'https://gforcesdevtest.slsapp.com/source/netdirector-auto-resources/trunk/',
+	let scriptPath = 'https://gforcesdevtest.slsapp.com/source/netdirector-auto-resources/trunk/00.%20Misc/js/',
 		file = cssTagsJS[ID].ref,
 		fullURL = scriptPath + file,
 		scriptTitle = 'CSS - ' + cssTagsJS[ID].name;

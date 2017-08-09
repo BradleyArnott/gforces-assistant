@@ -1,6 +1,8 @@
-var frontendActions = {};
+var popup = {},
+	devMode = false,
+	templateEditor = false;
 
-frontendActions.setSwitches = function() {
+popup.setSwitches = function() {
 
 	$('.switch').each(function() {
 		var option = $(this).attr('data-option'),
@@ -16,7 +18,7 @@ frontendActions.setSwitches = function() {
 	});
 }
 
-frontendActions.clickSwitches = function() {
+popup.clickSwitches = function() {
 
 	$('.switch').click(function() {
 		$(this).toggleClass('checked');
@@ -36,7 +38,7 @@ frontendActions.clickSwitches = function() {
 	});
 }
 
-frontendActions.checkPage = function() {
+popup.checkPage = function() {
 	var isOnND = '<link href="https://images.netdirector.co.uk" rel="preconnect">';
 	return new Promise(function(resolve) {
 		chrome.runtime.sendMessage({action: 'getPageData'}, function(data) {
@@ -47,7 +49,7 @@ frontendActions.checkPage = function() {
 	});
 }
 
-frontendActions.checkLogIn = function(hostname) {
+popup.checkLogIn = function(hostname) {
 
 	return new Promise(function(resolve) {
 		$.ajax({
@@ -70,13 +72,13 @@ frontendActions.checkLogIn = function(hostname) {
 	});
 }
 
-frontendActions.checkSplit = function(data) {
+popup.checkSplit = function(data) {
 	var isSplitTest = (data.body).includes('vwo_loaded');
 	if (!isSplitTest) return;
 	$('.backend .splitTests').addClass('active');
 }
 
-frontendActions.trailingSlashes = function() {
+popup.trailingSlashes = function() {
 	$('.trailing-slashes').click(function(e) {
 		e.preventDefault();
 		chrome.runtime.sendMessage({
@@ -85,7 +87,7 @@ frontendActions.trailingSlashes = function() {
 	});
 }
 
-frontendActions.checkOverflow = function() {
+popup.checkOverflow = function() {
 	$('.overflow-elements').click(function(e) {
 		e.preventDefault();
 		chrome.runtime.sendMessage({
@@ -94,7 +96,7 @@ frontendActions.checkOverflow = function() {
 	});
 }
 
-frontendActions.getDeploy = function(hostname) {
+popup.getDeploy = function(hostname) {
 
 	$.ajax({
 		url: 'http://' + hostname + '/backend/assets/',
@@ -122,7 +124,7 @@ frontendActions.getDeploy = function(hostname) {
 	});
 }
 
-frontendActions.modal = function() {
+popup.modal = function() {
 
 	$('.options').click(function(e) {
 		e.preventDefault();
@@ -132,7 +134,7 @@ frontendActions.modal = function() {
 	$('.modal input').keydown(function (event) {
 		var keypress = event.keyCode || event.which;
 		if (keypress != 13) return;
-		frontendActions.sendAuth();
+		popup.sendAuth();
 	});
 
 	$('.modal .btn').click(function(e) {
@@ -144,11 +146,11 @@ frontendActions.modal = function() {
 			modal.hide();
 			return;
 		}
-		frontendActions.sendAuth();
+		popup.sendAuth();
 	});	
 }
 
-frontendActions.sendAuth = function() {
+popup.sendAuth = function() {
 	var modal = $('.modal'),
 		username = modal.find('input.username').val(),
 		password = modal.find('input.password').val();
@@ -161,7 +163,7 @@ frontendActions.sendAuth = function() {
 	modal.hide();
 }
 
-frontendActions.buttons = function(hostname) {
+popup.buttons = function(hostname) {
 
 	$('.button').each(function() {
 		var btn = $(this).find('.btn'),
@@ -171,7 +173,7 @@ frontendActions.buttons = function(hostname) {
 	});
 }
 
-frontendActions.dropdownButton = function() {
+popup.dropdownButton = function() {
 	$('.sprite .btn').click(function() {
 		chrome.runtime.sendMessage({
 			action: 'generateDropdown'
@@ -179,9 +181,8 @@ frontendActions.dropdownButton = function() {
 	});
 }
 
-
-frontendActions.checkDevMode = function(data) {
-	var links = $(data.head).filter('link');
+popup.checkDevMode = function(data) {
+	let links = $(data.head).filter('link');
 
 	links.each(function(index) {
 		if ($(links[index]).attr('href').indexOf('temp-') == -1) return;
@@ -190,7 +191,7 @@ frontendActions.checkDevMode = function(data) {
 	});
 }
 
-frontendActions.setDevMode = function(hostname) {
+popup.setDevMode = function(hostname) {
 
 	$('.devmode.switch').click(function() {
 		var devMode = $(this).attr('enabled') == 'true'; // Convert string to boolean
@@ -209,7 +210,7 @@ frontendActions.setDevMode = function(hostname) {
 	});
 }
 
-frontendActions.speedTest = function(hostname) {
+popup.speedTest = function(hostname) {
 
 	return new Promise(function(resolve) {
 
@@ -233,23 +234,23 @@ frontendActions.speedTest = function(hostname) {
 	});
 }
 
-frontendActions.init = function() {
-	frontendActions.setSwitches();
-	frontendActions.modal();
-	frontendActions.clickSwitches();
-	frontendActions.checkPage().then(function(data) {
-		frontendActions.checkLogIn(data.url).then(function() {
-			frontendActions.checkSplit(data);
-			frontendActions.getDeploy(data.url);
-			frontendActions.setDevMode(data.url);
-			frontendActions.checkDevMode(data);
-			frontendActions.buttons(data.url);
-			frontendActions.dropdownButton();
-			frontendActions.trailingSlashes();
-			frontendActions.checkOverflow();
-			frontendActions.speedTest(data.url);
+popup.init = function() {
+	popup.setSwitches();
+	popup.modal();
+	popup.clickSwitches();
+	popup.checkPage().then(function(data) {
+		popup.checkLogIn(data.url).then(function() {
+			popup.checkSplit(data);
+			popup.getDeploy(data.url);
+			popup.setDevMode(data.url);
+			popup.checkDevMode(data);
+			popup.buttons(data.url);
+			popup.dropdownButton();
+			popup.trailingSlashes();
+			popup.checkOverflow();
+			popup.speedTest(data.url);
 		});
 	});
 }
 
-frontendActions.init();
+popup.init();

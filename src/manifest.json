@@ -19,14 +19,15 @@
 			"js": [
 				"js/lib/jquery.min.js",
 				"js/settings.js",
-				"js/v10/frontend/auth.js"
+				"js/v10/frontend/auth.js",
+				"js/v10/backend/tools.js"
 			],
 			"run_at": "document_end"
 		},
 		{
 			"matches": ["https://jira.netdirector.co.uk/secure/Dashboard.jspa*"],
 			"css": [
-				"css/jira-tickets.min.css"
+				"css/jira/tickets.min.css"
 			],
 			"js": [
 				"js/lib/moment.min.js",
@@ -37,14 +38,14 @@
 		{
 			"matches": ["https://jira.netdirector.co.uk/secure/RapidBoard.jspa*"],
 			"css": [
-				"css/jira-subtasks-board.min.css"
+				"css/jira/subtasks-board.min.css"
 			],
 			"run_at": "document_end"
 		},
 		{
 			"matches": ["https://jira.netdirector.co.uk/browse/*"],
 			"css": [
-				"css/jira-subtasks.min.css"
+				"css/jira/subtasks.min.css"
 			],
 			"js": [
 				"js/jira/subtasks.js"
@@ -58,7 +59,7 @@
 				"css/codemirror/monokai.css",
 				"css/codemirror/show-hint.css",
 				"css/codemirror/lint.css",
-				"css/tag-manager.css"
+				"css/v10/tag-manager.css"
 
 			],
 			"js": [
@@ -77,6 +78,10 @@
 			"run_at": "document_end"
 		}
 	],
+	"web_accessible_resources": [
+		"js/v10/backend/order-modules.js",
+		"css/v10/modal-styles.css"
+	],
 	"background": {
 		"scripts": [
 			"js/lib/jquery.min.js",
@@ -86,12 +91,10 @@
 		],
 		"persistent": true
 	},
-
 	"browser_action": {
 		"default_icon": "img/icon.png",
 		"default_popup": "popup.html"
 	},
-
 	"permissions": [
 		"tabs",
 		"activeTab",
