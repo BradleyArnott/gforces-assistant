@@ -28,6 +28,7 @@
 
 .custom-css-js--container {
 	position: fixed;
+	z-index: 10;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
@@ -65,5 +66,27 @@
 			line-height: normal;
 			font-size: 13px;
 		}
+	}
+}
+
+/*  ==========================================================================
+	Code Mirror 
+	========================================================================== */
+
+.CodeMirror {
+	height: 600px;
+}
+
+.cm-tab {
+	position: relative;
+
+	&:before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		right: 2px;	
+		left: 2px;
+		height: 1px;
+		background: #696969;
 	}
 }

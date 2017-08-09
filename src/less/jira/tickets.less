@@ -460,13 +460,13 @@ table td {
 
 .ticket-count-container {
 	padding: 20px;
+	display: flex;
+	justify-content: space-between;
 }
 
 .ticket-count {
-	box-sizing: border-box;
-	display: inline-block;
+	flex: 1;
 	text-align: center;
-	width: 33.33%;
 	font-size: 12px;
 	padding: 0 20px;
 
@@ -487,5 +487,9 @@ table td {
 
 	&.champion .inner {
 		background: #ffc672;
+	}
+
+	&.approval .inner {
+		background: #a2e1ff;
 	}
 }

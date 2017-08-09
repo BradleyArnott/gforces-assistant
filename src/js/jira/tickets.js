@@ -10,14 +10,23 @@ var username = $('#header-details-user-fullname').attr("data-username"),
 		{
 			label: 'css-im-group',
 			refs: [
-				'IMGROUP'
+				'IMGROUP' // Master
 			]
 		},
 		{
 			label: 'css-vauxhall',
 			refs: [
-				'VVB',
-				'BEVB'
+				'VVB', // Master
+				'BEVB', // Bellingers
+				'BVB', // Beadles
+				'GVB', // Go Vauxhall,
+				'BURNHAM' // Advance Vauxhall
+			]
+		},
+		{
+			label: 'css-mazda',
+			refs: [
+				'MAZDAB' // Master
 			]
 		}
 	],
@@ -33,12 +42,17 @@ var champions = [
 	{
 		name: 'matt.mumford',
 		type: 'Mazda',
-		table: '#gadget-72006-renderbox'
+		table: '#gadget-71902-renderbox'
 	},
 	{
 		name: 'beau.august',
 		type: 'Vauxhall',
 		table: '#gadget-72006-renderbox'
+	},
+	{
+		name: 'chris.kent',
+		type: 'IM Group',
+		table: '#gadget-71901-renderbox'
 	}
 ]
 
@@ -48,6 +62,7 @@ tickets.init = function() {
 		setTimeout(function() {
 			tickets.loopTables();
 			tickets.Champions();
+			tickets.Approval();
 			tickets.myIssues();
 			tickets.checkWorkQueue();
 		}, 1000);
@@ -185,15 +200,26 @@ tickets.timeSpent = function(time) {
 
 tickets.Champions = function() {
 	for (champion in champions) {
-		var user = champions[champion];
+		let user = champions[champion];
 		if (user.name != username) continue;
-		var champTickets = $(user.table).find('.issuerow').length,
+		let champTickets = $(user.table).find('.issuerow').length,
 			plural = champTickets == 1 ? 'is' : 'are',
 			pluralTickets = champTickets == 1 ? 'ticket' : 'tickets',
 			text = 'There ' + plural + ' <strong>' + champTickets + '</strong> ' + user.type + '-related ' + pluralTickets,
 			el = $('<div class="ticket-count champion"><div class="inner">' + text + '</div></div>');
 		el.appendTo('.ticket-count-container');
 	}
+}
+
+tickets.Approval = function() {
+	let table = $('#gadget-79400-renderbox');
+
+	let approvalTickets = table.find('.issuerow').length,
+		plural = approvalTickets == 1 ? 'is' : 'are',
+		pluralTickets = approvalTickets == 1 ? 'ticket' : 'tickets',
+		text = 'There ' + plural + ' <strong>' + approvalTickets + '</strong> third-party approval ' + pluralTickets,
+		el = $('<div class="ticket-count approval"><div class="inner">' + text + '</div></div>');
+	el.appendTo('.ticket-count-container');
 }
 
 tickets.showData = function() {
@@ -308,17 +334,23 @@ tickets.addLabel = function(key, label) {
 		contentType: 'application/json',
 		dataType: 'json'
 	});
+
+	console.log('label ' + label + ' added to ' + key);
 }
 
 tickets.labelOEM = function(issue) {
-	let key = issue.key;
+	let key = issue.key,
+		labels = issue.fields.labels;
 
 	for (let t = 0; t < ticketsOEM.length; t++) {
 		let ticketsRef = ticketsOEM[t].refs;
 
 		for (let r = 0; r < ticketsRef.length; r++) {
 			if (!key.startsWith(ticketsRef[r])) continue;
-			console.log(key + ' matched with ' + ticketsOEM[t].label)
+			let OEMLabel = ticketsOEM[t].label,
+				hasLabel = labels.indexOf(OEMLabel);
+
+			if (hasLabel !== -1) return;
 			tickets.addLabel(key, ticketsOEM[t].label);
 		}
 	}

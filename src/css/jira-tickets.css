@@ -339,12 +339,18 @@ table td {
 }
 .ticket-count-container {
   padding: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 .ticket-count {
-  box-sizing: border-box;
-  display: inline-block;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
   text-align: center;
-  width: 33.33%;
   font-size: 12px;
   padding: 0 20px;
 }
@@ -362,4 +368,7 @@ table td {
 }
 .ticket-count.champion .inner {
   background: #ffc672;
+}
+.ticket-count.approval .inner {
+  background: #a2e1ff;
 }

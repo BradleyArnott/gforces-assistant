@@ -1,4 +1,5 @@
 var tagManager = {},
+	CMeditor,
 	cssTagsJS = [
 	{
 		id: 0,
@@ -53,21 +54,14 @@ var tagManager = {},
 ];
 
 tagManager.init = function() {
-	$('<a title="Add" id="add-css-tag" href="#" class="btn btn-success css-assistant--button">Use predefined code</a>').appendTo('body');
-	$('#add-css-tag').click(function(e) {
-		e.preventDefault();
-		$('.custom-css-js--container').remove();
-		if ($('.nd-form-standard').length == 0) return;
-		tagManager.populate().then(function() {
-			tagManager.scriptClick();
-			tagManager.scriptClose();
-		});
-	})
+	tagManager.check();
+	tagManager.removeButton();
 }  
 
 function isEmpty( el ){
 	return !$.trim(el.html())
 }
+
 
 tagManager.populate = function() {
 	return new Promise(function(resolve, reject){
@@ -82,6 +76,60 @@ tagManager.populate = function() {
 		resolve();		
 	})
 }
+
+tagManager.addButton = function() {
+	$('<a title="Add" id="add-css-tag" href="#" class="btn btn-success css-assistant--button">Use predefined code</a>').appendTo('body');
+	$('#add-css-tag').click(function(e) {
+		e.preventDefault();
+		$('.custom-css-js--container').remove();
+		tagManager.populate().then(function() {
+			tagManager.scriptClick();
+			tagManager.scriptClose();
+		});
+	})
+}
+
+tagManager.removeButton = function() {
+	$(document).on('click', '#cancel-tag-edit', function() {
+		$('#add-css-tag').remove();
+	})
+}
+
+tagManager.addEditor = function() {
+	CMeditor = CodeMirror.fromTextArea(document.getElementById('Snippet_content'), {
+		mode: 'javascript',
+		lineNumbers: true,
+		tabSize: 4,
+		indentUnit: 4,
+		indentWithTabs: true,
+		theme: 'monokai',
+		keyMap: 'sublime',
+		lineWrapping: true,
+		gutters: ["CodeMirror-lint-markers"],
+		lint: true,
+		lintOnChange: true
+	});
+	CMeditor.on('change', checkTextArea);
+
+	function checkTextArea() {
+	    CMeditor.save();
+	}
+
+	$('.nd-form-standard > .row-fluid > .span8').removeClass('span8');
+}
+
+tagManager.check = function() {
+	$(document).on('click', '.edit-tag, #add-tag', function() {
+		tagManager.checkSnippet().then(function() {
+			tagManager.addEditor();
+			tagManager.addButton();
+		})
+	});
+	$(document).on('click', '#save-tag', function() {
+		$('#add-css-tag').remove();
+	});
+}
+
 
 tagManager.scriptClick = function() {
 	$('.custom-css-js--container .script').click(function(e) {
@@ -99,6 +147,23 @@ tagManager.scriptClose = function() {
 	})
 }
 
+tagManager.checkSnippet = function() {
+
+	return new Promise(function(resolve, reject) {
+
+		let checkTextArea = setInterval(function() {
+			let isText = $('#Snippet_content').length;
+
+			if (isText) {
+				clearInterval(checkTextArea);
+				resolve();
+			}
+
+			$('#add-css-tag').remove();
+
+		}, 100);
+	});
+}
 
 tagManager.get = function(ID) {
 	let scriptPath = 'https://gforcesdevtest.slsapp.com/source/netdirector-auto-resources/trunk/',
@@ -106,9 +171,15 @@ tagManager.get = function(ID) {
 		fullURL = scriptPath + file,
 		scriptTitle = 'CSS - ' + cssTagsJS[ID].name;
 
-	$.get(fullURL).then(function(data) {
-		$('.nd-form-standard input').val(scriptTitle);
-		$('.nd-form-standard textarea').val(data);
+	$.ajax({
+		url: fullURL,
+		type: "GET",
+	}).then(function(data) {
+		$('#Snippet_title').val(scriptTitle);
+		$('#Snippet_content').val(data);
+		if ($('.CodeMirror').length) {
+			CMeditor.setValue($('#Snippet_content').val());
+		}
 	});
 }
 
