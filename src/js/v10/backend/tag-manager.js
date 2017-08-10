@@ -77,6 +77,37 @@ tagManager.populate = function() {
 	})
 }
 
+tagManager.searchFunction = function() {
+	$('#template-search').keyup(function() {
+
+		let input = $(this),
+			parent = $(this).parents('.table-menu');
+			filter = input[0].value.toUpperCase(),
+			ul = parent.find('ul'),
+			li = ul.find('li');
+
+		// Loop through all list items, and hide those who don't match the search query
+		for (i = 0; i < li.length; i++) {
+			let el = $(li[i]);
+
+			let label = el.find('label');
+			if (label[0].innerHTML.toUpperCase().indexOf(filter) > -1) {
+				el.show();
+			} else {
+				el.hide();
+			}
+		}
+	});
+}
+
+tagManager.addSearch = function() {
+	return new Promise(function(resolve, reject) {
+		let input = '<div class="padding-bottom padding-left"><input type="text" id="template-search" placeholder="Search for templates"></div>';
+		$(input).insertAfter('.nd-table-checkbox-dropdown .table-menu > div:first-child');
+		resolve();
+	});
+}
+
 tagManager.addButton = function() {
 	$('<a title="Add" id="add-css-tag" href="#" class="btn btn-success css-assistant--button">Use predefined code</a>').appendTo('body');
 	$('#add-css-tag').click(function(e) {
@@ -92,6 +123,7 @@ tagManager.addButton = function() {
 tagManager.removeButton = function() {
 	$(document).on('click', '#cancel-tag-edit', function() {
 		$('#add-css-tag').remove();
+		$('#template-search').remove();
 	})
 }
 
@@ -112,7 +144,7 @@ tagManager.addEditor = function() {
 	CMeditor.on('change', checkTextArea);
 
 	function checkTextArea() {
-	    CMeditor.save();
+		CMeditor.save();
 	}
 
 	$('.nd-form-standard > .row-fluid > .span8').removeClass('span8');
@@ -122,6 +154,8 @@ tagManager.check = function() {
 	$(document).on('click', '.edit-tag, #add-tag', function() {
 		tagManager.checkSnippet().then(function() {
 			tagManager.addEditor();
+			tagManager.addSearch();
+			tagManager.searchFunction();
 			tagManager.addButton();
 		})
 	});

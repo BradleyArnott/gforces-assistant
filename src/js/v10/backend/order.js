@@ -25,17 +25,61 @@ orderModules.init = function() {
 		orderModules.set();
 		orderModules.clickEvents();
 		orderModules.closeEvents();
+		orderModules.saveEvents();
 	});
 }
 
 orderModules.addButtons = function() {
 
 	return new Promise(function(resolve, reject) {
+		$('<div class="order-modal-overlay"></div><div class="order-modal"><a href="#" class="save">Save</a><a href="#" class="cancel">Cancel</a></div>').appendTo('body');
 		$('.container-wrap > .nd-module-btns').append("<a class='nd-module-remove custom-order-settings' style='background: #673ab7 !important; margin-right: 3px !important; border-radius: 0 0 3px 3px;' href='#'><i class='nd-icon-resize-vertical nd-icon-invert'></i></a>");
 		$('.container-wrap .row-fluid > .nd-module-btns').append("<a class='nd-module-remove custom-order-settings' style='background: #673ab7 !important; margin-right: 3px !important; border-radius: 0 0 3px 3px;' href='#'><i class='nd-icon-resize-vertical nd-icon-invert'></i></a>");
 		$('[class^="layout"] > [class^="span"]').append("<div class='nd-module-btns'><a class='nd-module-remove custom-order-settings' style='background: #673ab7 !important; margin-right: 3px !important; border-radius: 0 0 3px 3px;' href='#'><i class='nd-icon-resize-vertical nd-icon-invert'></i></a></div>");
+		
+		$(".order-modal").sortable({
+			cancel: ".order-modal a",
+			scroll: false,
+			zIndex: 10000
+		});	
+		$(".order-modal").disableSelection();
 		resolve();
 	});
+}
+orderModules.saveEvents = function() {
+
+	$('body').on("click", '.order-modal .save', function(e) {
+		e.preventDefault();
+
+		orderModules.getList().then(function(data) {
+			orderModules.changeOrder(data);
+			orderModules.clear();
+		});
+
+	});
+}
+
+orderModules.getList = function() {
+	let itemList = [];
+
+	return new Promise(function(resolve, reject) {
+
+		$('.order-modal span').each(function() {
+			itemList.push($(this).attr('data-index'));
+		});
+		resolve(itemList);
+	})
+}
+
+orderModules.changeOrder = function(items) {
+	items.forEach(function(item, i) {
+		if (isModule === false) {
+			$(itemContainer).find('.container').append(selectorArray[item]);
+		} else {
+			$(itemContainer).append(selectorArray[item]);
+		}
+	});
+	isModule = true;
 }
 
 orderModules.closeEvents = function() {
@@ -46,11 +90,39 @@ orderModules.closeEvents = function() {
 }
 
 orderModules.clickEvents = function() {
+	$('.custom-order-settings').click(function(e) {
+		e.preventDefault();
+		$('.order-modal').find('span').remove();
 
+		let itemType = "> [data-module]",
+			slicePosition = 0,
+			itemNames = [];
+
+		itemContainer = $(this).closest('.row-fluid, [class^="span"], .container-wrap');
+
+		if (itemContainer.hasClass('container-wrap')) {
+			isModule = false;
+			itemType = ".row-fluid";
+			slicePosition = 1;
+		}
+
+		$(itemContainer).find(itemType).each(function(i) {
+			$(this).attr('style','border: 5px solid ' + colorArray[i] +' !important;');
+			let itemClass = $(this).attr('class'),
+				splitClass = itemClass.split(/\s+/).join(' ');
+			selectorArray[i] = $(this)[0];
+			itemNames.push(splitClass);
+		});
+		if(itemNames.length === 0) return;
+		orderModules.addList(itemNames);
+
+		$('.order-modal').show();
+		$('.order-modal-overlay').show();
+	});
 }
 
-orderModules.addlist = function() {
-	var markup = '';
+orderModules.addList = function(itemNames) {
+	let markup = '';
 	itemNames.forEach(function(item, i) {
 		markup += '<span data-index="' + i + '" style="border-left: 5px solid ' + colorArray[i] + ';">' + item + '</span>';
 	});
@@ -58,15 +130,15 @@ orderModules.addlist = function() {
 }
 
 orderModules.set = function() {
-    $('body').on("click", '.order-modal .save', function(e) {
-	    e.preventDefault();
-	    var contentOrder = [];
-	    $('.order-modal span').each(function() {
-	        contentOrder.push($(this).attr('data-index'));
-	    });
-	    orderModules.clear();
-	    orderModules.arrange(contentOrder);
-    });
+	$('body').on("click", '.order-modal .save', function(e) {
+		e.preventDefault();
+		let contentOrder = [];
+		$('.order-modal span').each(function() {
+			contentOrder.push($(this).attr('data-index'));
+		});
+		orderModules.clear();
+		orderModules.arrange(contentOrder);
+	});
 }
 
 orderModules.arrange = function(items) {

@@ -6,9 +6,10 @@ editorTools.init = function() {
 	Settings.get('editorTools').then(function(isOn) {
 		if (!isOn) return;
 		setTimeout(function() {
-			editorTools.injectContent('js', 'js/v10/backend/order-modules.js');
-			editorTools.injectContent('css', 'css/v10/modal-styles.css');
-		}, 700);
+			editorTools.injectContent('js', 'js/v10/backend/order.js');
+			editorTools.injectContent('js', 'js/v10/backend/clone.js');
+			editorTools.injectContent('css', 'css/v10/editor.css');
+		}, 2000);
 	});
 };
 

@@ -90,3 +90,71 @@
 		background: #696969;
 	}
 }
+
+/*  ==========================================================================
+	Template Selector 
+	========================================================================== */
+
+.nd-form-standard {
+
+	> .row-fluid > div {
+
+		> .control-group {
+
+			&:first-child {
+				margin-right: 600px;
+			}
+
+			&:last-child {
+				position: absolute;
+				top: 129px;
+				z-index: 1000;
+				right: 43px;
+				width: 500px;
+			}
+		}
+	}
+
+	.control-group .table-menu {
+		position: absolute;
+		top: 100%;
+		width: 1000px;
+		max-height: 500px;
+
+		ul {
+			font-size: 0;
+		}
+
+		li {
+			position: relative;
+			cursor: pointer;
+			box-sizing: border-box;
+			display: inline-block;
+			vertical-align: top;
+			width: 25%;
+			line-height: 36px;
+			border: none;
+			border-bottom: 1px solid #ddd;
+			border-right: 1px solid #ddd;
+
+			input {
+				margin: 0;
+				position: absolute;
+				top: 50%;
+				right: 6px;
+				transform: translateY(-50%);
+			}
+
+			span {
+				padding-right: 15px;
+				display: inline-block;
+				vertical-align: middle;
+			}
+
+			label {
+				cursor: pointer;
+				margin: 0;
+			}
+		}
+	}
+}

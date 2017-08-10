@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Beau August",
-	"version": "0.20.0",
+	"version": "0.20.1",
 
 	"icons": { 
 		"210": "img/icon.png" 
@@ -79,8 +79,9 @@
 		}
 	],
 	"web_accessible_resources": [
-		"js/v10/backend/order-modules.js",
-		"css/v10/modal-styles.css"
+		"js/v10/backend/order.js",
+		"js/v10/backend/clone.js",
+		"css/v10/editor.css"
 	],
 	"background": {
 		"scripts": [

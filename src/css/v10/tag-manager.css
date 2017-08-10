@@ -87,3 +87,55 @@
   height: 1px;
   background: #696969;
 }
+/*  ==========================================================================
+	Template Selector 
+	========================================================================== */
+.nd-form-standard > .row-fluid > div > .control-group:first-child {
+  margin-right: 600px;
+}
+.nd-form-standard > .row-fluid > div > .control-group:last-child {
+  position: absolute;
+  top: 129px;
+  z-index: 1000;
+  right: 43px;
+  width: 500px;
+}
+.nd-form-standard .control-group .table-menu {
+  position: absolute;
+  top: 100%;
+  width: 1000px;
+  max-height: 500px;
+}
+.nd-form-standard .control-group .table-menu ul {
+  font-size: 0;
+}
+.nd-form-standard .control-group .table-menu li {
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align: top;
+  width: 25%;
+  line-height: 36px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+.nd-form-standard .control-group .table-menu li input {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+.nd-form-standard .control-group .table-menu li span {
+  padding-right: 15px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.nd-form-standard .control-group .table-menu li label {
+  cursor: pointer;
+  margin: 0;
+}
