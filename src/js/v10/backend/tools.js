@@ -8,6 +8,7 @@ editorTools.init = function() {
 		setTimeout(function() {
 			editorTools.injectContent('js', 'js/v10/backend/order.js');
 			editorTools.injectContent('js', 'js/v10/backend/clone.js');
+			editorTools.injectContent('js', 'js/v10/backend/templates.js');
 			editorTools.injectContent('css', 'css/v10/editor.css');
 		}, 2000);
 	});

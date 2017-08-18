@@ -10,7 +10,8 @@ var username = $('#header-details-user-fullname').attr("data-username"),
 		{
 			label: 'css-im-group',
 			refs: [
-				'IMGROUP' // Master
+				'IMGROUP', // Master
+				'SMLA' // Subaru Master
 			]
 		},
 		{
@@ -19,14 +20,25 @@ var username = $('#header-details-user-fullname').attr("data-username"),
 				'VVB', // Master
 				'BEVB', // Bellingers
 				'BVB', // Beadles
-				'GVB', // Go Vauxhall,
-				'BURNHAM' // Advance Vauxhall
+				'GVB', // Go Vauxhall
+				'BURNHAM', // Advance Vauxhall
+				'THURLOW', // Thurlow Nunn
+				'VAUXUFM' // Vauxhall Migrations
 			]
 		},
 		{
 			label: 'css-mazda',
 			refs: [
-				'MAZDAB' // Master
+				'MAZDAB', // Master
+				'MUVLB' // UVL
+			]
+		},
+		{
+			label: 'css-gmme',
+			refs: [
+				'GMME', // Master
+				'GCREB', // Chevrolet
+				'GCNCC' // Cadillac
 			]
 		}
 	],
@@ -53,6 +65,11 @@ var champions = [
 		name: 'chris.kent',
 		type: 'IM Group',
 		table: '#gadget-71901-renderbox'
+	},
+	{
+		name: 'nuno.barros',
+		type: 'GMME',
+		table: '#gadget-72007-renderbox'
 	}
 ]
 
@@ -64,9 +81,25 @@ tickets.init = function() {
 			tickets.Champions();
 			tickets.Approval();
 			tickets.myIssues();
+			tickets.LabelsButton();
 			tickets.checkWorkQueue();
 		}, 1000);
 	});
+}
+
+tickets.LabelsButton = function() {
+	let newItem = `	<li>
+						<a class="aui-nav-link aui-dropdown2-trigger " id="ts-custom-labels-link" href="" aria-haspopup="true" aria-owns="ts-custom-labels-link-content" aria-controls="ts-custom-labels-link-content">Automated Labels</a>
+						<div id="ts-custom-labels-link-content" class="aui-dropdown2 aui-style-default aui-dropdown2-in-header" data-dropdown2-alignment="left" aria-hidden="true">
+							<div class="aui-dropdown2-section">
+								<ul id="report" class="aui-list-truncate">
+									<li><a href="/issues/?jql=labels%20%3D%20css-automated-nodue">No Due Date</a></li>
+									<li><a href="/issues/?jql=labels%20%3D%20css-automated-noquote">No Quote</a></li>
+								</ul>
+							</div>
+						</div>
+					</li>`;
+	$(newItem).insertBefore('.aui-header-primary .aui-nav > li:last-child');
 }
 
 tickets.loopTables = function() {
@@ -244,6 +277,7 @@ tickets.checkWorkQueue = function() {
 	$.get('https://jira.netdirector.co.uk/rest/api/2/search?jql=status+in+(%22In+Progress%22,+Reopened,+Error,+Reported,+%22To+Do%22,+%22More+Information%22,+Queued)+AND+(labels+not+in+(CSSQueue,+ProjectCSS,+MobileFirstMigration,+css-core,+css-site-review,+css-code-review)+OR+labels+is+EMPTY)+AND+type+!%3D+%22Project+-+Design%22+AND+assignee+in+(EMPTY)+AND+NOT+reporter+in+(api.user)+AND+Department+%3D+CSS+AND+NOT+project+%3D+11300+AND+NOT+project+%3D+%22Third+Party+Code+Approval%22+AND+issuetype+!%3D+%22QA+Sub-Task%22+ORDER+BY+cf%5B11004%5D+ASC', function( data ) {
 		let issues = data.issues;
 		for (let i = 0; i < issues.length; i++) {
+			tickets.checkQuote(issues[i]);
 			tickets.checkDue(issues[i]);
 			tickets.labelOEM(issues[i]);
 		};
@@ -252,9 +286,24 @@ tickets.checkWorkQueue = function() {
 
 tickets.clearNotDue = function(issue) {
 	tickets.getTransitions(issue.key).then(function(data) {
-		console.log(issue.key + ' has no due date')
+		let message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. 
+						If the time is now after 09:30 AM, please set the due date to no earlier than the next working day. 
+						If this ticket is yet to be quoted on, please move it to the quote queue.
+						If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`;
 		tickets.addLabel(issue.key, 'css-automated-nodue');
-		tickets.moreInfo(issue.key, data);
+		tickets.moreInfo(issue.key, message, data);
+	});
+}
+
+tickets.checkQuote = function(issue) {
+	let quote = issue.fields.timeoriginalestimate,
+		message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a quote.
+					If this is an MS ticket, please move it to the quote queue.
+					If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`;		
+	if (quote !== null) return;
+	tickets.getTransitions(issue.key).then(function(data) {
+		tickets.addLabel(issue.key, 'css-automated-noquote');
+		tickets.moreInfo(issue.key, message, data);
 	});
 }
 
@@ -279,17 +328,14 @@ tickets.getTransitions = function(key, status) {
 	});
 }
 
-tickets.moreInfo = function(key, transitionID) {
+tickets.moreInfo = function(key, message, transitionID) {
 	let transitionUrl = 'https://jira.netdirector.co.uk/rest/api/2/issue/' + key + '/transitions?expand=transitions.fields',
 		transitionData = {
 	    "update": {
 	        "comment": [
 	            {
 	                "add": {
-	                    "body": `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. 
-						If the time is now after 09:30 AM, please set the due date to no earlier than the next working day. 
-						If this ticket is yet to be quoted on, please move it to the quote queue.
-						If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`
+	                    "body": message
 	                }
 	            }
 	        ]
@@ -300,9 +346,7 @@ tickets.moreInfo = function(key, transitionID) {
 	};
 	transitionData = JSON.stringify(transitionData);
 
-	console.log(transitionUrl);	
-	console.log('More Information ID: ' + transitionID);
-	console.log('Ticket ref: ' + key);
+	console.log(key + ' set to "More Info"');
 
 	$.ajax({
 		type: 'POST',
@@ -335,7 +379,7 @@ tickets.addLabel = function(key, label) {
 		dataType: 'json'
 	});
 
-	console.log('label ' + label + ' added to ' + key);
+	console.log('label "' + label + '" added to ' + key);
 }
 
 tickets.labelOEM = function(issue) {

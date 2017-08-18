@@ -50,6 +50,11 @@ var tagManager = {},
 		id: 9,
 		name: 'Open in new tab',
 		ref: 'open-in-new-tab-button.js'
+	},
+	{
+		id: 10,
+		name: 'Scrolling footer toggle',
+		ref: 'footer-toggle-scroll.js'
 	}
 ];
 

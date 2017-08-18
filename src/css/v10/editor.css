@@ -53,3 +53,16 @@
 .order-modal a:hover {
   background: #ccc;
 }
+/*  ==========================================================================
+	Template Editor 
+	========================================================================== */
+.module {
+  width: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  -webkit-transform: none !important;
+      -ms-transform: none !important;
+          transform: none !important;
+}
