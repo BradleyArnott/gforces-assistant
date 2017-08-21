@@ -25,6 +25,13 @@
 			"run_at": "document_end"
 		},
 		{
+			"matches": ["https://jira.netdirector.co.uk/*"],
+			"js": [
+				"js/jira/global.js"
+			],
+			"run_at": "document_end"
+		},
+		{
 			"matches": ["https://jira.netdirector.co.uk/secure/Dashboard.jspa*"],
 			"css": [
 				"css/jira/tickets.min.css"

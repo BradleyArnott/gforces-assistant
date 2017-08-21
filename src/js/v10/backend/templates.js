@@ -1862,4 +1862,4 @@ var addTemplate = function(data) {
 
 };
 
-codeBlocks.init();
+// codeBlocks.init();
