@@ -56,13 +56,7 @@
 /*  ==========================================================================
 	Template Editor 
 	========================================================================== */
-.module {
-  width: auto !important;
-  top: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  left: auto !important;
-  -webkit-transform: none !important;
-      -ms-transform: none !important;
-          transform: none !important;
+.setting_markup textarea {
+  min-width: 100%;
+  min-height: 140px;
 }

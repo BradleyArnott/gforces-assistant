@@ -38,7 +38,8 @@ var username = $('#header-details-user-fullname').attr("data-username"),
 			refs: [
 				'GMME', // Master
 				'GCREB', // Chevrolet
-				'GCNCC' // Cadillac
+				'GCNCC', // Cadillac
+				'UB-' // UMA
 			]
 		}
 	],
