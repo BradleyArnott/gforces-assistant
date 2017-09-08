@@ -43,6 +43,7 @@ popup.checkPage = function() {
 	return new Promise(function(resolve) {
 		chrome.runtime.sendMessage({action: 'getPageData'}, function(data) {
 			var DOMHead = data[0].head;
+			console.log(data[0])
 			if (DOMHead.indexOf(isOnND) == -1) return;
 			resolve(data[0]);
 		});

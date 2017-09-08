@@ -38,8 +38,8 @@ var tagManager = {},
 	},	
 	{
 		id: 7,
-		name: 'New Car Dropdown',
-		ref: '_ND/menuImages.js'
+		name: 'Import Multi-scripts',
+		ref: '_ND/getMultiScripts.js'
 	},
 	{
 		id: 8,
