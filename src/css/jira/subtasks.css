@@ -13,3 +13,6 @@
 #issuetable .aui-button.aui-button-compact .aui-icon-small:before {
   margin-top: -11px !important;
 }
+#issuetable td.labels {
+  display: none;
+}

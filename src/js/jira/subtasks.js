@@ -12,6 +12,15 @@ var subtasks = {},
 		'Resolved',
 		'Rejected'
 	],
+	CSSLabels = {
+		'repeatissue': '#ffb355',
+		'css-qa-config': '#fd97ff',
+		'css-qa-content': '#fd97ff',
+		'css-qa-setup': '#fd97ff',
+		'css-qa-dev': '#ffa4a4',
+		'css-core': '#ff9bbb',
+		'css-scope-change': '#ff6c6c'
+	},
 	subtasksDoneColour = '#b2d8b9';
 
 $.extend($.expr[':'], {
@@ -37,14 +46,19 @@ subtasks.loopList = function() {
 		subtasks.identifyCSS($this, taskStatus);
 		subtasks.hideTeam($this, 'PM');
 		subtasks.checkComplete($this, taskStatus);
-		subtasks.checkCore($this, taskStatus);
+		subtasks.checkLabels($this);
 	});
 }
 
-subtasks.checkCore = function(el, value) {
-	var cssCore = el.find('.customfield_10201').is(':contains("CSS - Software")');
-	if (!cssCore) return;
-	el.css('background', '#ff9bbb');
+subtasks.checkLabels = function(el) {
+	var labelEl = el.find('.labels-wrap > .labels');
+	if (labelEl.is('span')) return;
+	labelEl.find('a').each(function() {
+		var label = $(this).attr('title');
+		for (lbl in CSSLabels) {
+			if (label.indexOf(lbl) !== -1) el.css('background', CSSLabels[lbl]);
+		}
+	});
 }
 
 subtasks.checkComplete = function(el, value) {
@@ -57,9 +71,6 @@ subtasks.hideTeam = function(el, team) {
 	var shouldHide = el.find(".stsummary a").is(':contains("' + team + ' ")');
 	if (!shouldHide) return;
 	el.hide();	
-	console.log(shouldHide)
-	console.log(el.find(".stsummary a"))
-	console.log(team)
 }
 
 subtasks.identifyCSS = function(el, value) {
