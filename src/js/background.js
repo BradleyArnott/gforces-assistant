@@ -1,193 +1,187 @@
-var background = {},
-	keySize = 256,
-	ivSize = 128,
-	iterations = 100;
+const keySize = 256;
+const iterations = 100;
 
-chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
+const background = {
 
-	switch(data.action) {
+    init() {
+        chrome.runtime.onInstalled.addListener((details) => {
+            if (details.reason === 'install') {
+                const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let passphrase = '';
 
-		case 'saveSetting':
-			background.save(data);
-			break;
-		case 'getSetting':
-			background.get(data).then(function(option){
-				sendResponse(option);
-			});
-			break;
-		case 'getPageData':
-			background.scrape().then(function(data){
-				sendResponse(data);
-			});
-			break;
-		case 'openPage':
-			background.openTab(data);
-			break;
-		case 'reloadPage':
-			chrome.tabs.reload();
-			break;
-		case 'sendAuthData':
-			background.setAuth(data);
-			break;
-		case 'getAuthData':
-			background.getAuth().then(function(data){
-				sendResponse(data);
-			});
-			break;
-		case 'generateDropdown':
-			chrome.tabs.executeScript({file:"js/v10/frontend/dropdown.js"})
-			break;
-		case 'checkSlashes':
-			chrome.tabs.executeScript({file:"js/v10/frontend/checkSlashes.js"})
-			break;
-		case 'checkOverflow':
-			chrome.tabs.executeScript({file:"js/v10/frontend/checkOverflow.js"})
-			break;
-		case 'inTemplateEditor':
-			chrome.tabs.executeScript({file:"js/v10/backend/site-editor.js"})
-			break;
-	}
+                for (let i = 0; i < 32; i++) {
+                    passphrase += possible.charAt(Math.floor(Math.random() * possible.length));
+                }
 
-	return true;
-});
+                chrome.storage.local.set({
+                    label: 'passphrase',
+                    value: passphrase,
+                });
+            }
+        });
+    },
 
-background.save = function(data) {
-	dataOptions = {};
-	dataOptions[data.label] = data.value;
-	chrome.storage.local.set(dataOptions);
-}
+    save(data) {
+        const dataOptions = {};
+        dataOptions[data.label] = data.value;
+        chrome.storage.local.set(dataOptions);
+    },
 
-background.get = function(data) {
-	var setting = data.label;
-	return new Promise(function (resolve, reject) {
-		chrome.storage.local.get(setting, function(result) {
-			resolve(result);
-		});	
-	});
-}
+    get(data) {
+        const setting = data.label;
+        return new Promise(((resolve) => {
+            chrome.storage.local.get(setting, (result) => {
+                resolve(result);
+            });
+        }));
+    },
 
-background.openTab = function(data) {
-	pageUrl = data.url;
-	chrome.tabs.create({ url: pageUrl });
-}
+    openTab(data) {
+        chrome.tabs.create({ url: data.url });
+    },
 
-background.scrape = function() {
+    scrape() {
+        const getDOM = () => {
+            const pageUrl = window.location.hostname;
+            const pageHead = document.head.innerHTML;
+            const pageDOM = document.body.innerHTML;
+            const data = {
+                url: pageUrl,
+                head: pageHead,
+                body: pageDOM,
+            };
 
-	function getDOM() {
-		var pageUrl = window.location.hostname,
-			pageHead =  document.head.innerHTML,
-			pageDOM =  document.body.innerHTML,
-			data = {};
+            return data;
+        };
 
-		data.url = pageUrl;
-		data.head = pageHead;
-		data.body = pageDOM;
+        return new Promise((resolve) => {
+            chrome.tabs.executeScript({
+                code: `(${getDOM})();`,
+            }, (data) => {
+                console.log(data);
+                resolve(data);
+            });
+        });
+    },
 
-		return data;
-	}
+    encrypt(msg, pass) {
+        const salt = CryptoJS.lib.WordArray.random(128 / 8);
+        const key = CryptoJS.PBKDF2(pass, salt, {
+            keySize: keySize / 32,
+            iterations,
+        });
+        const iv = CryptoJS.lib.WordArray.random(128 / 8);
+        const encrypted = CryptoJS.AES.encrypt(msg, key, {
+            iv,
+            padding: CryptoJS.pad.Pkcs7,
+            mode: CryptoJS.mode.CBC,
+        });
+        const transitmessage = salt.toString() + iv.toString() + encrypted.toString();
 
-	return new Promise(function(resolve) {
-		chrome.tabs.executeScript({
-			code: '(' + getDOM + ')();'
-		}, function(data) {
-			resolve(data);
-		});
-	});
-}
+        return transitmessage;
+    },
 
-background.encrypt = function(msg, pass) {
+    decrypt(transitmessage, pass) {
+        const salt = CryptoJS.enc.Hex.parse(transitmessage.substr(0, 32));
+        const iv = CryptoJS.enc.Hex.parse(transitmessage.substr(32, 32));
+        const encrypted = transitmessage.substring(64);
+        const key = CryptoJS.PBKDF2(pass, salt, {
+            keySize: keySize / 32,
+            iterations,
+        });
+        const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+            iv,
+            padding: CryptoJS.pad.Pkcs7,
+            mode: CryptoJS.mode.CBC,
+        });
 
-	var salt = CryptoJS.lib.WordArray.random(128/8);
-	var key = CryptoJS.PBKDF2(pass, salt, {
-		keySize: keySize/32,
-		iterations: iterations
-	});
-	var iv = CryptoJS.lib.WordArray.random(128/8);
-	var encrypted = CryptoJS.AES.encrypt(msg, key, { 
-		iv: iv, 
-		padding: CryptoJS.pad.Pkcs7,
-		mode: CryptoJS.mode.CBC
-	});
+        return decrypted;
+    },
 
-	var transitmessage = salt.toString()+ iv.toString() + encrypted.toString();
+    setAuth(data) {
+        this.get('passphrase')
+            .then((result) => {
+                const passphrase = result.value;
+                const { username, password } = data;
+                const encrypted = this.encrypt(password, passphrase);
+                const userData = {
+                    label: 'userData',
+                    value: {
+                        username,
+                        password: encrypted,
+                    },
+                };
+                this.save(userData);
+            });
+    },
 
-	return transitmessage;
-}
+    getAuth() {
+        return new Promise(((resolve) => {
+            this.get('passphrase')
+                .then((passphrase) => {
+                    const { value } = passphrase;
+                    this.get('userData')
+                        .then((data) => {
+                            if (data.userData.username === undefined) return;
+                            const { username, passord: encrypted } = data.userData;
+                            const decrypted = this.decrypt(encrypted, value);
+                            const authData = {};
 
-background.decrypt = function(transitmessage, pass) {
-	var salt = CryptoJS.enc.Hex.parse(transitmessage.substr(0, 32)),
-		iv = CryptoJS.enc.Hex.parse(transitmessage.substr(32, 32)),
-		encrypted = transitmessage.substring(64),
-		key = CryptoJS.PBKDF2(pass, salt, {
-			keySize: keySize/32,
-			iterations: iterations
-		}),
-		decrypted = CryptoJS.AES.decrypt(encrypted, key, { 
-			iv: iv, 
-			padding: CryptoJS.pad.Pkcs7,
-			mode: CryptoJS.mode.CBC
-		});
-
-	return decrypted;
-}
-
-background.setAuth = function(data) {
-	background.get('passphrase').then(function(result) {
-		var passphrase = result.value,
-			username = data.username,
-			password = data.password;
-
-		var encrypted = background.encrypt(password, passphrase);
-
-		var userData = {
-			label: 'userData',
-			value: {
-				username: username,
-				password: encrypted
-			}
-		}
-		background.save(userData);
-	});
-}
-
-background.getAuth = function() {
-
-	return new Promise(function(resolve) {
-
-		background.get('passphrase').then(function(passphrase) {
-			var passphrase = passphrase.value;
-			background.get('userData').then(function(data) {
-				if(data.userData.username == undefined) return;
-				var username = data.userData.username,
-					encrypted = data.userData.password,
-					decrypted = background.decrypt(encrypted, passphrase),
-					authData = {};
-
-				authData.username = username;
-				authData.password = decrypted.toString(CryptoJS.enc.Utf8);
-				resolve(authData);
-			});
-		});
-	});
-}
-
-background.init = function() {
-
-	chrome.runtime.onInstalled.addListener(function(details){
-
-	    if(details.reason == "install"){
-			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-				passphrase = "";
-
-			for(var i = 0; i < 32; i++) {
-				passphrase += possible.charAt(Math.floor(Math.random() * possible.length));
-			}
-			chrome.storage.local.set({
-				label: 'passphrase',
-				value: passphrase
-			});
-		}
-	});
-}
+                            authData.username = username;
+                            authData.password = decrypted.toString(CryptoJS.enc.Utf8);
+                            resolve(authData);
+                        });
+                });
+        }));
+    },
+};
 
 background.init();
+
+chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
+    switch (data.action) {
+    case 'saveSetting':
+        background.save(data);
+        break;
+    case 'getSetting':
+        background.get(data).then((option) => {
+            sendResponse(option);
+        });
+        break;
+    case 'getPageData':
+        background.scrape().then((DOM) => {
+            sendResponse(DOM);
+        });
+        break;
+    case 'openPage':
+        background.openTab(data);
+        break;
+    case 'reloadPage':
+        chrome.tabs.reload();
+        break;
+    case 'sendAuthData':
+        background.setAuth(data);
+        break;
+    case 'getAuthData':
+        background.getAuth().then((authData) => {
+            sendResponse(authData);
+        });
+        break;
+    case 'generateDropdown':
+        chrome.tabs.executeScript({ file: 'js/v10/frontend/dropdown.js' });
+        break;
+    case 'checkSlashes':
+        chrome.tabs.executeScript({ file: 'js/v10/frontend/checkSlashes.js' });
+        break;
+    case 'checkOverflow':
+        chrome.tabs.executeScript({ file: 'js/v10/frontend/checkOverflow.js' });
+        break;
+    case 'inTemplateEditor':
+        chrome.tabs.executeScript({ file: 'js/v10/backend/site-editor.js' });
+        break;
+    default:
+        console.log('Error, no case found');
+    }
+
+    return true;
+});

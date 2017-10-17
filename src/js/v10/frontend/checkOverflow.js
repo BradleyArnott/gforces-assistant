@@ -1,76 +1,96 @@
-var overflow = {};
+const overflow = {
 
-overflow.get = function() {
-	$('.gforces-assistant--overlay--confirm').remove();
+    init() {
+        this.get()
+            .then((elements) => {
+                this.present(elements);
+                this.clickAlert(elements);
+                this.modalClose(elements);
+            });
+    },
 
-	return new Promise(function(resolve, reject) {
-		var docWidth = document.documentElement.offsetWidth,
-			naughtyList = {},
-            id = 0;
+    get() {
+        const overlay = document.querySelector('.gforces-assistant--overlay--confirm');
 
-		$('*').each(function() {
-			if ($(this)[0].offsetWidth > docWidth) {
-				naughtyList[$(this)[0].classList.value] = {
-	                id: id,
-	                el: $(this),
-	                value: $(this)[0].classList.value,
-	            };
-	            id++;
-			}
-		});
-		resolve(naughtyList);
-	});
-}
+        if (overlay) overlay.remove();
 
-overflow.present = function(modules) {
-    var modal = $('<div class="gforces-assistant--slashes"><a href="#" class="close">X</a><div class="title">Overflowing Content:</div></div>');
+        return new Promise(((resolve) => {
+            const docWidth = document.documentElement.offsetWidth;
+            const naughtyList = {};
+            const els = document.querySelectorAll('*');
+            let id = 0;
 
-    if ($.isEmptyObject(modules)) {
-        var overlayConfirm = $('<div class="gforces-assistant--overlay--confirm"><div class="box"></div></div>');
-        overlayConfirm.appendTo('body');
-        $('.gforces-assistant--overlay--confirm').fadeIn(250).delay(550).fadeOut();
-        return;
-    }
+            els.forEach((el) => {
+                if (el.offsetWidth > docWidth) {
+                    naughtyList[el.classList.value] = {
+                        id,
+                        el,
+                        value: el.classList.value,
+                    };
+                    id += 1;
+                }
+            });
+            resolve(naughtyList);
+        }));
+    },
 
-    for (module in modules) {
-        $(modules[module].el).attr('id', 'overflow-scrollto-' + modules[module].id);
-        $(modules[module].el).css('background', 'red');
-        var link = $('<a class="link" data-id="' + modules[module].value + '" href="#overflow-scrollto-' + modules[module].id + '">' + modules[module].value + '</a>');
-        link.appendTo(modal);
-    }
-    if (modules.length > 10) modal.addClass('double-width');
-    modal.appendTo('body');
-}
+    loopModules(modules) {
+        let modal = '<div class="gforces-assistant--slashes"><a href="#" class="close">X</a><div class="title">Overflowing Content:</div></div>';
 
-overflow.modalClose = function(modules) {
-    $('.gforces-assistant--slashes .close').click(function(e) {
-        e.preventDefault();
-        $(this).parent().remove();
+        Object.keys(modules).forEach((module) => {
+            console.log(modules[module].el);
+            modules[module].el.setAttribute('id', `overflow-scrollto-${modules[module].id}`);
+            modules[module].el.style.backgroundColor = 'red';
+            const link = `<a class="link" data-id="${modules[module].value}" href="#overflow-scrollto-${modules[module].id}">${modules[module].value}</a>`;
+            modal += link;
+        });
+        return modal;
+    },
 
-        for (module in modules) {
-            modules[module].el.css('background', 'inherit');
+    present(modules) {
+        if (Object.keys(modules).length === 0) {
+            const overlayConfirm = '<div class="gforces-assistant--overlay--confirm"><div class="box"></div></div>';
+            document.body.appendChild(overlayConfirm);
+            document.querySelector('.gforces-assistant--overlay--confirm').fadeIn(250).delay(550).fadeOut();
+            return;
         }
-    })
-}
 
-overflow.clickAlert = function(modules) {
+        let data = this.loopModules(modules);
+        data += '</div>';
+        const modal = document.createElement('div');
+        modal.innerHTML = data;
+        if (modules.length > 10) modal.classList.add('double-width');
+        document.body.appendChild(modal);
+    },
 
-    $('.gforces-assistant--slashes .link').click(function() {
-        var id = $(this).attr('data-id');
+    modalClose(modules) {
+        const parent = document.querySelector('.gforces-assistant--slashes');
+        const close = document.querySelector('.gforces-assistant--slashes .close');
+        close.addEventListener('click', (e) => {
+            e.preventDefault();
+            parent.remove();
+            Object.keys(modules).forEach((module) => {
+                modules[module].el.style = '';
+            });
+        });
+    },
 
-        $(modules[id].el).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-    });
-}
+    clickAlert(modules) {
+        const links = document.querySelectorAll('.gforces-assistant--slashes .link');
 
-overflow.init = function() {
+        for (const link in links) {
+            link.addEventListener('click', () => {
+                const { id } = link.dataset;
 
-	overflow.get().then(function(elements) {
-        overflow.present(elements);
-        overflow.clickAlert(elements);
-        overflow.modalClose(elements);
-	});
-}
-
-
+                $(modules[id].el)
+                    .fadeIn(100)
+                    .fadeOut(100)
+                    .fadeIn(100)
+                    .fadeOut(100)
+                    .fadeIn(100);
+            });
+        }
+    },
+};
 
 overflow.init();

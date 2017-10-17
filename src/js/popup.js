@@ -20,7 +20,13 @@ const popup = {
         }
     },
 
-    async checkPage() {
+    parseHTML(str) {
+        const tmp = document.implementation.createHTMLDocument();
+        tmp.body.innerHTML = str;
+        return tmp.body;
+    },
+
+    checkPage() {
         const isOnND = '<link href="https://images.netdirector.co.uk" rel="preconnect">';
         return new Promise(((resolve) => {
             chrome.runtime.sendMessage({ action: 'getPageData' }, (data) => {
@@ -31,24 +37,24 @@ const popup = {
         }));
     },
 
-    async checkLogIn(hostname) {
-        return new Promise(((resolve) => {
-            $.ajax({
-                url: `http://${hostname}/backend/`,
-                type: 'GET',
-            }).done((response) => {
-                if (response) {
-                    const error = $($.parseHTML(response)).find('#login-form');
-                    if (error.length) return;
-                    $('.backend').slideDown();
-                    $('.backendTitle').text(hostname);
+    checkLogIn(hostname) {
+        return new Promise((resolve) => {
+            const request = new XMLHttpRequest();
+            request.open('GET', `http://${hostname}/backend/`, true);
+            request.onload = () => {
+                if (request.status >= 200 && request.status < 400) {
+                    const html = this.parseHTML(request.responseText);
+                    const error = html.querySelector('#login-form');
+                    if (error) return;
+                    document.querySelector('.backend').style.display = 'block';
+                    document.querySelector('.backendTitle').innerHTML = hostname;
+                    resolve(true);
+                } else {
+                    resolve(false);
                 }
-                resolve(true);
-            }).fail(() => {
-                console.log('login failed');
-                resolve(false);
-            });
-        }));
+            };
+            request.send();
+        });
     },
 
     getToggles() {
@@ -120,18 +126,12 @@ const popup = {
         request.onload = () => {
             if (request.status >= 200 && request.status < 400) {
                 const response = request.responseText;
-                const html = $($.parseHTML(response));
-                const options = html.find('#Site_assets_path option');
-                const hash = html.find('.nd-widget-box .alert-info').text().split('/').slice(-1)[0];
+                const html = this.parseHTML(response);
+                const date = html.querySelector('#Site_assets_path option[selected=selected]').innerHTML;
+                const hash = html.querySelector('.nd-widget-box .alert-info').innerHTML.split('/').slice(-1)[0];
 
-                $('.backendHash').text(hash);
-
-                $(options).each((i) => {
-                    const option = $(options[i]);
-                    if (!$(option).attr('selected')) return;
-                    const timestamp = option.text();
-                    $('.timestamp').text(timestamp);
-                });
+                document.querySelector('.backendHash').innerHTML = hash;
+                document.querySelector('.timestamp').innerHTML = date;
             }
         };
 
@@ -141,7 +141,8 @@ const popup = {
     modal() {
         const options = document.querySelector('.options');
         const modal = document.querySelector('.modal');
-        const button = document.querySelector('.modal .btn');
+        const confirm = document.querySelector('.modal .btn.confirm');
+        const cancel = document.querySelector('.modal .btn.cancel');
         const input = document.querySelector('.modal input.password');
 
         options.addEventListener('click', (e) => {
@@ -152,16 +153,21 @@ const popup = {
         input.addEventListener('keypress', (event) => {
             const keypress = event.keyCode || event.which;
             if (keypress !== 13) return;
+            modal.style.display = '';
             this.sendAuth();
         });
 
-        button.addEventListener('click', (e) => {
+        confirm.addEventListener('click', (e) => {
             e.preventDefault();
-
-            if (!modal.classList.contains('cancel')) return;
 
             modal.style.display = '';
             this.sendAuth();
+        });
+
+        cancel.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = '';
+            input.value = '';
         });
     },
 
@@ -211,46 +217,45 @@ const popup = {
 
         toggle.addEventListener('click', () => {
             this.devMode = toggle.getAttribute('enabled') === 'true'; // Convert string to boolean
-
-            $.ajax({
-                url: `http://${hostname}/backend/assets/set-development-mode?mode=${!this.devMode}`,
-                type: 'GET',
-            }).done(() => {
-                $(this).attr('enabled', !this.devMode);
-                chrome.runtime.sendMessage({
-                    action: 'reloadPage',
-                });
-            }).fail((jqXHR) => {
-                console.log(jqXHR);
-                return false;
-            });
+            const request = new XMLHttpRequest();
+            request.open('GET', `http://${hostname}/backend/assets/set-development-mode?mode=${!this.devMode}`, true);
+            request.onload = () => {
+                if (request.status >= 200 && request.status < 400) {
+                    toggle.setAttribute('enabled', !this.devMode);
+                    toggle.classList.toggle('checked');
+                    chrome.runtime.sendMessage({
+                        action: 'reloadPage',
+                    });
+                }
+            };
+            request.send();
         });
     },
 
     speedTest(hostname) {
         const button = document.querySelector('.speed-test');
 
-        return new Promise(((resolve) => {
+        return new Promise((resolve) => {
             button.addEventListener('click', () => {
-                $.ajax({
-                    url: 'http://www.webpagetest.org/runtest.php',
-                    data: {
-                        url: hostname,
-                        k: 'A.f860abf3c5a1c9c511a1e0b39f7302b5',
-                        f: 'json',
-                        location: 'London_EC2:Chrome',
-                    },
-                    type: 'POST',
-                }).done((data) => {
-                    chrome.runtime.sendMessage({
-                        action: 'openPage',
-                        url: data.data.userUrl,
-                    }, () => {
+                const request = new XMLHttpRequest();
+                const params = {
+                    crossDomain: true,
+                    dataType: 'jsonp',
+                    url: hostname,
+                    k: 'A.f860abf3c5a1c9c511a1e0b39f7302b5',
+                    f: 'json',
+                    location: 'London_EC2:Chrome',
+                };
+                request.open('POST', 'http://www.webpagetest.org/runtest.php', true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                request.send(params);
+                request.onload = () => {
+                    if (request.status >= 200 && request.status < 400) {
                         resolve();
-                    });
-                });
+                    }
+                };
             });
-        }));
+        });
     },
 };
 
