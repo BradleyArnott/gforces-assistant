@@ -1,12 +1,13 @@
-var Settings = {};
+const settings = {
 
-Settings.get = function(option) {
-	return new Promise(function (resolve, reject) {
-		chrome.runtime.sendMessage({
-			action: 'getSetting', 
-			label: option
-			}, function(result) {
-				resolve(result[option]);
-		});
-	});
-}
+    get(option) {
+        return new Promise(((resolve) => {
+            chrome.runtime.sendMessage({
+                action: 'getSetting',
+                label: option,
+            }, (result) => {
+                resolve(result[option]);
+            });
+        }));
+    },
+};

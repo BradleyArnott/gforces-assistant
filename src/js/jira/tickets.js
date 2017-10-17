@@ -75,7 +75,7 @@ var champions = [
 ]
 
 tickets.init = function() {
-	Settings.get('checkTickets').then(function(checkTickets) {
+	settings.get('checkTickets').then(function(checkTickets) {
 		if (!checkTickets) return;
 		setTimeout(function() {
 			tickets.loopTables();
@@ -89,17 +89,13 @@ tickets.init = function() {
 
 tickets.loopTables = function() {
 	tickets.checkNext();
-	$('.page-type-dashboard .issue-table').each(function() {
-		var $this = $(this),
-			ticketsArr = {};
-		tickets.loopTickets($this);
-	});
+	tickets.loopTickets();
 	tickets.showData();
 }
 
-tickets.loopTickets = function(table) {
+tickets.loopTickets = function() {
 	var ticketsObj = {};
-	table.find(".issuerow").each(function() {
+	$('#gadget-11706-renderbox').find(".issuerow").each(function() {
 		var $this = $(this),
 			ticketTimestamp = $this.find('.livestamp'),
 			ticketUpdatedDateTime = $(this).find(".updated time").attr("datetime"),

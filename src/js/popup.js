@@ -1,257 +1,256 @@
-var popup = {},
-	devMode = false,
-	templateEditor = false;
+const popup = {
+    devMode: false,
 
-popup.setSwitches = function() {
+    async init() {
+        this.modal();
+        this.getToggles();
 
-	$('.switch').each(function() {
-		var option = $(this).attr('data-option'),
-			$this = $(this);
+        const data = await this.checkPage();
+        const loginData = await this.checkLogIn(data.url);
+        if (loginData) {
+            this.checkSplit(data);
+            this.getDeploy(data.url);
+            this.setDevMode(data.url);
+            this.checkDevMode(data);
+            this.buttons(data.url);
+            this.dropdownButton();
+            this.trailingSlashes();
+            this.checkOverflow();
+            this.speedTest(data.url);
+        }
+    },
 
-		if (option == undefined) return;
+    async checkPage() {
+        const isOnND = '<link href="https://images.netdirector.co.uk" rel="preconnect">';
+        return new Promise(((resolve) => {
+            chrome.runtime.sendMessage({ action: 'getPageData' }, (data) => {
+                const DOMHead = data[0].head;
+                if (DOMHead.indexOf(isOnND) === -1) return;
+                resolve(data[0]);
+            });
+        }));
+    },
 
-		Settings.get(option).then(function(result) {
-			if (!result) return;
-			$this.attr('enabled', result);
-			$this.addClass('checked');
-		});
-	});
-}
+    async checkLogIn(hostname) {
+        return new Promise(((resolve) => {
+            $.ajax({
+                url: `http://${hostname}/backend/`,
+                type: 'GET',
+            }).done((response) => {
+                if (response) {
+                    const error = $($.parseHTML(response)).find('#login-form');
+                    if (error.length) return;
+                    $('.backend').slideDown();
+                    $('.backendTitle').text(hostname);
+                }
+                resolve(true);
+            }).fail(() => {
+                console.log('login failed');
+                resolve(false);
+            });
+        }));
+    },
 
-popup.clickSwitches = function() {
+    getToggles() {
+        const toggles = document.querySelectorAll('.switch');
 
-	$('.switch').click(function() {
-		$(this).toggleClass('checked');
+        toggles.forEach((toggle) => {
+            const { option } = toggle.dataset;
+            if (!option) return;
+            this.setToggle(toggle);
+            this.clickToggle(toggle);
+        });
+    },
 
-		if ($(this).attr('data-option') == undefined) return;
+    setToggle(el) {
+        const setting = el.dataset.option;
+        settings.get(setting).then((result) => {
+            if (!result) return;
+            el.setAttribute('enabled', result);
+            el.classList.add('checked');
+        });
+    },
 
-		$(this).attr('enabled', isActive);
+    clickToggle(el) {
+        el.addEventListener('click', () => {
+            el.classList.toggle('checked');
+            const isActive = el.classList.contains('checked');
+            const { option } = el.dataset;
+            if (!option) return;
 
-		var isActive = $(this).hasClass('checked'),
-			option = $(this).attr('data-option');
+            el.setAttribute('enabled', isActive);
 
-		chrome.runtime.sendMessage({
-			action: 'saveSetting',
-			label: option,
-			value: isActive
-		});
-	});
-}
+            chrome.runtime.sendMessage({
+                action: 'saveSetting',
+                label: option,
+                value: isActive,
+            });
+        });
+    },
 
-popup.checkPage = function() {
-	var isOnND = '<link href="https://images.netdirector.co.uk" rel="preconnect">';
-	return new Promise(function(resolve) {
-		chrome.runtime.sendMessage({action: 'getPageData'}, function(data) {
-			var DOMHead = data[0].head;
-			console.log(data[0])
-			if (DOMHead.indexOf(isOnND) == -1) return;
-			resolve(data[0]);
-		});
-	});
-}
+    checkSplit(data) {
+        if (!data.body.includes('vwo_loaded')) return;
+        const splitAlert = document.querySelector('.backend .splitTests');
+        splitAlert.classList.add('active');
+    },
 
-popup.checkLogIn = function(hostname) {
+    trailingSlashes() {
+        const button = document.querySelector('.trailing-slashes .btn');
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            chrome.runtime.sendMessage({
+                action: 'checkSlashes',
+            });
+        });
+    },
 
-	return new Promise(function(resolve) {
-		$.ajax({
-			url: 'http://' + hostname + '/backend/',
-			type: 'GET'
-		}).done(function(response) {
+    checkOverflow() {
+        const button = document.querySelector('.overflow-elements .btn');
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            chrome.runtime.sendMessage({
+                action: 'checkOverflow',
+            });
+        });
+    },
 
-			if(response) {
-				var error =  $($.parseHTML(response)).find("#login-form");
-				if(error.length) return;
-				$('.backend').slideDown();
-				$('.backendTitle').text(hostname);
-			}
-			resolve();
+    getDeploy(hostname) {
+        $.ajax({
+            url: `http://${hostname}/backend/assets/`,
+            type: 'GET',
+        }).done((response) => {
+            if (response) {
+                const html = $($.parseHTML(response));
+                const options = html.find('#Site_assets_path option');
+                const hash = html.find('.nd-widget-box .alert-info').text().split('/').slice(-1)[0];
 
-		}).fail(function(jqXHR, textStatus) {
-			console.log("login failed")
-			resolve();
-		});
-	});
-}
+                $('.backendHash').text(hash);
 
-popup.checkSplit = function(data) {
-	var isSplitTest = (data.body).includes('vwo_loaded');
-	if (!isSplitTest) return;
-	$('.backend .splitTests').addClass('active');
-}
+                $(options).each((i) => {
+                    const option = $(options[i]);
+                    if (!$(option).attr('selected')) return;
+                    const timestamp = option.text();
+                    $('.timestamp').text(timestamp);
+                });
+            }
+        }).fail((jqXHR) => {
+            console.log(jqXHR);
+            return false;
+        });
+    },
 
-popup.trailingSlashes = function() {
-	$('.trailing-slashes').click(function(e) {
-		e.preventDefault();
-		chrome.runtime.sendMessage({
-			action: 'checkSlashes'
-		});
-	});
-}
+    modal() {
+        const options = document.querySelector('.options');
+        const modal = document.querySelector('.modal');
+        const button = document.querySelector('.modal .btn');
+        const input = document.querySelector('.modal input.password');
 
-popup.checkOverflow = function() {
-	$('.overflow-elements').click(function(e) {
-		e.preventDefault();
-		chrome.runtime.sendMessage({
-			action: 'checkOverflow'
-		});
-	});
-}
+        options.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'block';
+        });
 
-popup.getDeploy = function(hostname) {
+        input.addEventListener('keypress', (event) => {
+            const keypress = event.keyCode || event.which;
+            if (keypress !== 13) return;
+            this.sendAuth();
+        });
 
-	$.ajax({
-		url: 'http://' + hostname + '/backend/assets/',
-		type: 'GET'
-	}).done(function(response) {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
 
-		if(response) {
-			var html = $($.parseHTML(response)),
-				options = html.find('#Site_assets_path option');
-				hash = html.find('.nd-widget-box .alert-info').text().split('/').slice(-1)[0];
+            if (!modal.classList.contains('cancel')) return;
 
-			$('.backendHash').text(hash);
+            modal.style.display = '';
+            this.sendAuth();
+        });
+    },
 
-			$(options).each(function() {
-				if (!$(this).attr('selected')) return;
-				var timestamp = $(this).text();
-				$('.timestamp').text(timestamp);
-			});
+    sendAuth() {
+        const username = document.querySelector('.modal input.username').value;
+        const password = document.querySelector('.modal input.password').value;
 
-		}
+        chrome.runtime.sendMessage({
+            action: 'sendAuthData',
+            username,
+            password,
+        });
+    },
 
-	}).fail(function(jqXHR, textStatus) {
-		console.log(jqXHR)
-		return false;
-	});
-}
+    buttons(hostname) {
+        const buttons = document.querySelectorAll('.btn');
 
-popup.modal = function() {
+        buttons.forEach((button) => {
+            const dataPath = button.dataset.path;
+            if (!dataPath) return;
+            button.href = `http://${hostname}${dataPath}`;
+        });
+    },
 
-	$('.options').click(function(e) {
-		e.preventDefault();
-		$('.modal').show();
-	});
+    dropdownButton() {
+        const button = document.querySelector('.sprite .btn');
 
-	$('.modal input').keydown(function (event) {
-		var keypress = event.keyCode || event.which;
-		if (keypress != 13) return;
-		popup.sendAuth();
-	});
+        button.addEventListener('click', () => {
+            chrome.runtime.sendMessage({
+                action: 'generateDropdown',
+            });
+        });
+    },
 
-	$('.modal .btn').click(function(e) {
-		e.preventDefault();
-		var modal = $('.modal');
+    checkDevMode(data) {
+        const tempBucket = data.head.match(/<link.+temp-[^"]+/g);
+        if (!tempBucket) return;
+        const toggle = document.querySelector('.devmode.switch');
 
-		if ($(this).hasClass('cancel')) {
-			modal.find('input').val('');
-			modal.hide();
-			return;
-		}
-		popup.sendAuth();
-	});	
-}
+        toggle.classList.add('checked');
+        toggle.setAttribute('enabled', true);
+        this.devMode = true;
+    },
 
-popup.sendAuth = function() {
-	var modal = $('.modal'),
-		username = modal.find('input.username').val(),
-		password = modal.find('input.password').val();
+    setDevMode(hostname) {
+        const toggle = document.querySelector('.devmode.switch');
 
-	chrome.runtime.sendMessage({
-		action: 'sendAuthData',
-		username: username,
-		password: password
-	});	
-	modal.hide();
-}
+        toggle.addEventListener('click', () => {
+            this.devMode = toggle.getAttribute('enabled') === 'true'; // Convert string to boolean
 
-popup.buttons = function(hostname) {
+            $.ajax({
+                url: `http://${hostname}/backend/assets/set-development-mode?mode=${!this.devMode}`,
+                type: 'GET',
+            }).done(() => {
+                $(this).attr('enabled', !this.devMode);
+                chrome.runtime.sendMessage({
+                    action: 'reloadPage',
+                });
+            }).fail((jqXHR) => {
+                console.log(jqXHR);
+                return false;
+            });
+        });
+    },
 
-	$('.button').each(function() {
-		var btn = $(this).find('.btn'),
-			dataPath = btn.attr('data-path');
-		if (!dataPath) return;
-		btn.attr('href', 'http://' + hostname + dataPath);
-	});
-}
-
-popup.dropdownButton = function() {
-	$('.sprite .btn').click(function() {
-		chrome.runtime.sendMessage({
-			action: 'generateDropdown'
-		});	
-	});
-}
-
-popup.checkDevMode = function(data) {
-	let links = $(data.head).filter('link');
-
-	links.each(function(index) {
-		if ($(links[index]).attr('href').indexOf('temp-') == -1) return;
-		$('.devmode.switch').addClass('checked').attr('enabled', 'true');
-		devModeOn = true;
-	});
-}
-
-popup.setDevMode = function(hostname) {
-
-	$('.devmode.switch').click(function() {
-		var devMode = $(this).attr('enabled') == 'true'; // Convert string to boolean
-		$.ajax({
-			url: 'http://' + hostname + '/backend/assets/set-development-mode?mode=' + !devMode,
-			type: 'GET'
-		}).done(function(response) {
-			$(this).attr('enabled', !devMode);
-			chrome.runtime.sendMessage({
-				action: 'reloadPage'
-			});
-		}).fail(function(jqXHR, textStatus) {
-			console.log(jqXHR)
-			return false;
-		});
-	});
-}
-
-popup.speedTest = function(hostname) {
-
-	return new Promise(function(resolve) {
-
-		$('.speed-test').click(function() {
-			$.ajax({
-				url: 'http://www.webpagetest.org/runtest.php',
-				data: {
-					url: hostname,
-					k: 'A.f860abf3c5a1c9c511a1e0b39f7302b5',
-					f: 'json',
-					location: 'London_EC2:Chrome'
-				},
-				type: 'POST'
-			}).done (function(data){
-				chrome.runtime.sendMessage({
-					action: 'openPage',
-					url: data.data.userUrl
-				});
-			})
-		});
-	});
-}
-
-popup.init = function() {
-	popup.setSwitches();
-	popup.modal();
-	popup.clickSwitches();
-	popup.checkPage().then(function(data) {
-		popup.checkLogIn(data.url).then(function() {
-			popup.checkSplit(data);
-			popup.getDeploy(data.url);
-			popup.setDevMode(data.url);
-			popup.checkDevMode(data);
-			popup.buttons(data.url);
-			popup.dropdownButton();
-			popup.trailingSlashes();
-			popup.checkOverflow();
-			popup.speedTest(data.url);
-		});
-	});
-}
+    speedTest(hostname) {
+        return new Promise(((resolve) => {
+            $('.speed-test').click(() => {
+                $.ajax({
+                    url: 'http://www.webpagetest.org/runtest.php',
+                    data: {
+                        url: hostname,
+                        k: 'A.f860abf3c5a1c9c511a1e0b39f7302b5',
+                        f: 'json',
+                        location: 'London_EC2:Chrome',
+                    },
+                    type: 'POST',
+                }).done((data) => {
+                    chrome.runtime.sendMessage({
+                        action: 'openPage',
+                        url: data.data.userUrl,
+                    }, () => {
+                        resolve();
+                    });
+                });
+            });
+        }));
+    },
+};
 
 popup.init();

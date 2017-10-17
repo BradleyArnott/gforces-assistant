@@ -14,11 +14,11 @@ var subtasks = {},
 	],
 	CSSLabels = {
 		'repeatissue': '#ffb355',
-		'css-qa-config': '#fd97ff',
-		'css-qa-content': '#fd97ff',
-		'css-qa-setup': '#fd97ff',
+		'css-qa-config': '#7e82ff',
+		'css-qa-content': '#7e82ff',
+		'css-qa-setup': '#7e82ff',
 		'css-qa-dev': '#ffa4a4',
-		'css-core': '#ff9bbb',
+		'css-core': '#d5d832',
 		'css-scope-change': '#ff6c6c'
 	},
 	subtasksDoneColour = '#b2d8b9';
@@ -35,6 +35,7 @@ subtasks.init = function() {
 		if (!checkSubTasks) return;
 		subtasks.loopList();
 		subtasks.addButton();
+		subtasks.createKey();
 	});
 }
 
@@ -96,6 +97,16 @@ subtasks.addButton = function() {
 		$(this).attr('enabled', 'true');
 		$(this).find("span").text("Show all sub-tasks");
 	});
+}
+
+subtasks.createKey = function() {
+	let list = '<div class="custom-css-key"><div class="key-title"> Label colour key:</div><ul>';
+
+	for (const [key, value] of Object.entries(CSSLabels)) {
+		list += `<li><div style="background:${value};"></div><span>${key}</span></li>`;
+	};
+	list += '</div>'
+	$(list).appendTo('.issue-main-column #details-module_heading');
 }
 
 subtasks.init();
