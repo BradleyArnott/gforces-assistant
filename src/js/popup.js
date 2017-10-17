@@ -115,11 +115,11 @@ const popup = {
     },
 
     getDeploy(hostname) {
-        $.ajax({
-            url: `http://${hostname}/backend/assets/`,
-            type: 'GET',
-        }).done((response) => {
-            if (response) {
+        const request = new XMLHttpRequest();
+        request.open('GET', `http://${hostname}/backend/assets/`, true);
+        request.onload = () => {
+            if (request.status >= 200 && request.status < 400) {
+                const response = request.responseText;
                 const html = $($.parseHTML(response));
                 const options = html.find('#Site_assets_path option');
                 const hash = html.find('.nd-widget-box .alert-info').text().split('/').slice(-1)[0];
@@ -133,10 +133,9 @@ const popup = {
                     $('.timestamp').text(timestamp);
                 });
             }
-        }).fail((jqXHR) => {
-            console.log(jqXHR);
-            return false;
-        });
+        };
+
+        request.send();
     },
 
     modal() {
@@ -229,8 +228,10 @@ const popup = {
     },
 
     speedTest(hostname) {
+        const button = document.querySelector('.speed-test');
+
         return new Promise(((resolve) => {
-            $('.speed-test').click(() => {
+            button.addEventListener('click', () => {
                 $.ajax({
                     url: 'http://www.webpagetest.org/runtest.php',
                     data: {
