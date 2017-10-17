@@ -4,7 +4,7 @@ const auth = {
     attempts: 0,
 
     init() {
-        const isOnND = $('link[href="https://images.netdirector.co.uk"]');
+        const isOnND = document.querySelector('link[href="https://images.netdirector.co.uk"]');
         if (!isOnND.length) return;
         settings.get('autoLogin').then((autoLogin) => {
             if (!autoLogin) return;

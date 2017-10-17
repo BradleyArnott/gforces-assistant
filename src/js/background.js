@@ -58,7 +58,6 @@ const background = {
             chrome.tabs.executeScript({
                 code: `(${getDOM})();`,
             }, (data) => {
-                console.log(data);
                 resolve(data);
             });
         });
@@ -123,7 +122,7 @@ const background = {
                     this.get('userData')
                         .then((data) => {
                             if (data.userData.username === undefined) return;
-                            const { username, passord: encrypted } = data.userData;
+                            const { username, password: encrypted } = data.userData;
                             const decrypted = this.decrypt(encrypted, value);
                             const authData = {};
 
