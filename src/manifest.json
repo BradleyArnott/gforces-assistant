@@ -52,17 +52,17 @@
 				"css/jira/subtasks-board.min.css"
 			],
 			"run_at": "document_end"
+		},
+		{
+			"matches": ["https://jira.netdirector.co.uk/browse/*"],
+			"css": [
+				"css/jira/subtasks.min.css"
+			],
+			"js": [
+				"js/jira/subtasks.js"
+			],
+			"run_at": "document_end"
 		}
-		// {
-		// 	"matches": ["https://jira.netdirector.co.uk/browse/*"],
-		// 	"css": [
-		// 		"css/jira/subtasks.min.css"
-		// 	],
-		// 	"js": [
-		// 		"js/jira/subtasks.js"
-		// 	],
-		// 	"run_at": "document_end"
-		// },
 		// {
 		// 	"matches": ["*://*/backend/tag-management/index/"],
 		// 	"css": [
