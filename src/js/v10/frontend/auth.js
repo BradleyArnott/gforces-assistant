@@ -5,7 +5,7 @@ const auth = {
 
     init() {
         const isOnND = document.querySelector('link[href="https://images.netdirector.co.uk"]');
-        if (!isOnND.length) return;
+        if (!isOnND) return;
         settings.get('autoLogin').then((autoLogin) => {
             if (!autoLogin) return;
             chrome.runtime.sendMessage({
