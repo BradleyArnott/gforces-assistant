@@ -1,29 +1,40 @@
-cloneButton = {};
+const cloneButton = {
 
-cloneButton.init = function() {
-	cloneButton.insert().then(function(){
-		cloneButton.clickEvents();
-	});
-}
+    init() {
+        this.insert().then(() => {
+            this.clickEvents();
+        });
+    },
 
-cloneButton.insert = function() {
-	
-	return new Promise(function(resolve, reject) {
-		$('.module .nd-module-btns').each(function(){
-			if(!$(this).find('.js-module-clone').length) $(this).append('<a class="js-module-clone nd-clone nd-module-remove" style="border-radius: 0 0 3px 3px; background: #49ddaa !important; margin-right: 3px !important;" href="#"><i class="nd-icon-plus nd-icon-invert"></i></a>');
-		});
-		resolve();
-	});
-}
+    insert() {
+        return new Promise(((resolve) => {
+            const buttons = document.querySelectorAll('.module .nd-module-btns');
 
-cloneButton.clickEvents = function() {
+            buttons.forEach((button) => {
+                const clone = button.querySelector('.js-module-clone');
+                if (!clone) {
+                    const newButton = document.createElement('a');
+                    newButton.className = 'js-module-clone nd-clone nd-module-remove';
+                    newButton.style.cssText = 'border-radius: 0 0 3px 3px; background: #49ddaa !important; margin-right: 3px !important;';
+                    newButton.innerHTML = '<i class="nd-icon-plus nd-icon-invert"></i>';
+                    button.appendChild(newButton);
+                }
+            });
+            resolve();
+        }));
+    },
 
-	$('body').on('click', '.js-module-clone', function(e) {
-		e.preventDefault();
+    clickEvents() {
+        const cloneButtons = document.querySelectorAll('.js-module-clone');
 
-		let $clone = $(this).parent().parent().clone(),
-			$item = $clone.insertAfter($(this).parent().parent());
-	});
-}
+        cloneButtons.forEach((moduleButton) => {
+            moduleButton.addEventListener('click', () => {
+                const module = moduleButton.parentNode.parentNode;
+                const clone = module.cloneNode(true);
+                module.parentNode.insertBefore(clone, module.nextSibling);
+            });
+        });
+    },
+};
 
 cloneButton.init();
