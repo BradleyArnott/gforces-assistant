@@ -41,18 +41,18 @@
 				"js/jira/tickets.js"
 			],
 			"run_at": "document_end"
-		}		
-		// {
-		// 	"matches": ["https://jira.netdirector.co.uk/secure/RapidBoard.jspa*"],
-		// 	"js": [
-		// 		"js/lib/moment.min.js",
-		// 		"js/jira/projects.js"
-		// 	],
-		// 	"css": [
-		// 		"css/jira/subtasks-board.min.css"
-		// 	],
-		// 	"run_at": "document_end"
-		// },
+		},	
+		{
+			"matches": ["https://jira.netdirector.co.uk/secure/RapidBoard.jspa*"],
+			"js": [
+				"js/lib/moment.min.js",
+				"js/jira/projects.js"
+			],
+			"css": [
+				"css/jira/subtasks-board.min.css"
+			],
+			"run_at": "document_end"
+		}
 		// {
 		// 	"matches": ["https://jira.netdirector.co.uk/browse/*"],
 		// 	"css": [
