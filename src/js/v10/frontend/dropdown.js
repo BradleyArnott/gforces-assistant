@@ -1,134 +1,146 @@
-var dropdown = {},
-	urlPrefix = 'image/upload/',
-	urlSuffix = 'auto-client/';
 
-dropdown.modal = function(options) {
-	var modal = $('<div class="gforces-assistant--modal"><label for="dropdown">Dropdown select</label><select class="dropdown-list"></select><label for="variable">Variable name</label><input class="variable" placeholder="eg. @new-cars" type="text"></input><label for="images">Extract Listing Images from current page</label><input class="checkbox-images" type="checkbox" name="images"><label for="title">Use title instead of href</label><input class="checkbox-title" type="checkbox" name="title"><div class="button"><a href="" class="btn confirm">Confirm</a></div><div class="button"><a href="" class="btn cancel">Cancel</a></div></div>'),
-		overlay = $('<div class="gforces-assistant--overlay"></div>'),
-		overlayConfirm = $('<div class="gforces-assistant--overlay--confirm"><div class="box"></div></div>');
+const dropdown = {
+    urlPrefix: 'image/upload/',
+    urlSuffix: 'auto-client/',
 
-	$('.gforces-assistant--overlay--confirm').remove();
-	modal.appendTo('body');
-	overlay.appendTo('body');
-	overlayConfirm.appendTo('body');
-	$.each(options, function(index, value){
-		var select = $('.gforces-assistant--modal select'),
-			option = $('<option>' + value.title + '</option>');
-		option.appendTo('.gforces-assistant--modal select');
-	});
-	overlay.fadeIn();
-	modal.fadeIn();
-}
+    init() {
+        dropdown.setOptions().then((data) => {
+            dropdown.modal(data);
+            dropdown.buttons(data);
+        });
+    },
 
-dropdown.setOptions = function() {
+    modal(options) {
+        const overlay = document.createElement('div');
+        overlay.innerHTML = '<div class="gforces-assistant--overlay"></div>';
+        document.body.appendChild(overlay);
 
-	return new Promise(function(resolve, error) {
-		var options = [];
+        const modal = document.createElement('div');
+        modal.className = 'gforces-assistant--modal';
+        modal.innerHTML = '<label for="dropdown">Dropdown select</label><select class="dropdown-list"></select><label for="variable">Variable name</label><input class="variable" placeholder="eg. @new-cars" type="text"></input><label for="images">Extract Listing Images from current page</label><input class="checkbox-images" type="checkbox" name="images"><label for="title">Use title instead of href</label><input class="checkbox-title" type="checkbox" name="title"><div class="button"><a href="" class="btn confirm">Confirm</a></div><div class="button"><a href="" class="btn cancel">Cancel</a></div>';
+        document.body.appendChild(modal);
 
-		$('.header-container .nav li.dropdown').each(function(){
-			var title = $(this).find('> a > span').text();
-			var data = {
-				el: $(this),
-				title: title
-			};
+        const confirm = document.createElement('div');
+        confirm.className = 'gforces-assistant--overlay--confirm';
+        confirm.innerHTML = '<div class="box"></div>';
+        document.body.appendChild(confirm);
 
-			options.push(data);
-		});
-		resolve(options);
-	})
-}
+        options.forEach((option) => {
+            const container = document.querySelector('.gforces-assistant--modal select');
+            const el = document.createElement('option');
+            el.innerHTML = option.title;
+            container.appendChild(el);
+        });
 
-dropdown.confirm = function(options, downloadImages, useTitle, dropdownValue, varName) {
-	var dropdownEl;
+        overlay.style.display = 'block';
+        modal.style.display = 'block';
+    },
 
-	if (downloadImages) dropdown.grabImages();
+    setOptions() {
+        return new Promise(((resolve) => {
+            const options = [];
+            const dropdowns = document.querySelectorAll('.header-container .nav li.dropdown');
 
-	$.each(options, function(index, value){
-		if (dropdownValue != value.title) return;
-		dropdownEl = value.el;
-	});
+            dropdowns.forEach((el) => {
+                const title = el.querySelector('a > span').innerHTML;
+                const data = { el, title };
+                options.push(data);
+            });
+            resolve(options);
+        }));
+    },
 
-	dropdown.generateSprite(dropdownEl, useTitle, varName).then(function(data){
-		dropdown.copyVariable(data);
-		$('.gforces-assistant--overlay--confirm').fadeIn(250).delay(550).fadeOut();
-	});
-}
+    confirm(options, downloadImages, useTitle, dropdownValue, varName) {
+        let dropdownEl;
 
-dropdown.buttons = function(options) {
+        if (downloadImages) dropdown.grabImages();
 
-	$('.gforces-assistant--modal .btn').click(function(e){
-		e.preventDefault();
+        options.forEach((option) => {
+            if (dropdownValue !== option.title) return;
+            dropdownEl = option.el;
+        });
 
-		if ($(this).hasClass('confirm')) {
-			var dropdownValue = $('.gforces-assistant--modal option:selected').val(),
-				downloadImages = $('.gforces-assistant--modal .checkbox-images').is(':checked'),
-				useTitle = $('.gforces-assistant--modal .checkbox-title').is(':checked'),
-				varName = $('.gforces-assistant--modal .variable').val() ? $('.gforces-assistant--modal .variable').val() : '@dropdown-items';
-			dropdown.confirm(options, downloadImages, useTitle, dropdownValue, varName);
-		}
+        this.generateSprite(dropdownEl, useTitle, varName).then((data) => {
+            dropdown.copyVariable(data);
+            const confirm = document.querySelector('.gforces-assistant--overlay--confirm');
+            confirm.style.display = 'block';
 
-		$('.gforces-assistant--modal').remove();
-		$('.gforces-assistant--overlay').remove();
-	});
-}
+            setTimeout(() => {
+                confirm.style.display = 'none';
+            }, 800);
+        });
+    },
 
-dropdown.grabImages = function() {
-	var images = $('.list-item img');
+    buttons(options) {
+        const button = document.querySelector('.gforces-assistant--modal .btn');
 
-	images.each(function() {
-		var src = $(this).attr('src');
-		if (src.search(urlPrefix) == -1) return; 
-		if (src.search(urlSuffix) == -1) return;
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
 
-		var urlPrefixSplit = src.split(urlPrefix)[0],
-			urlSuffixSplit = src.split(urlSuffix)[1],
-			src = urlPrefixSplit + urlSuffix + urlSuffixSplit,
-			fileType = src.substr(src.length - 4);
-			alt = $(this).attr('alt').replace(' ', ''),
-			download_link = $('<a></a>').attr('href', src).attr('download', alt + fileType).appendTo('body');
+            if (button.classList.contains('confirm')) {
+                const dropdownValue = document.querySelector('.gforces-assistant--modal option:checked').innerHTML;
+                const downloadImages = document.querySelector('.gforces-assistant--modal .checkbox-images').checked;
+                const useTitle = document.querySelector('.gforces-assistant--modal .checkbox-title').checked;
+                const varName = document.querySelector('.gforces-assistant--modal .variable').innerHTML ? document.querySelector('.gforces-assistant--modal .variable').innerHTML : '@dropdown-items';
+                this.confirm(options, downloadImages, useTitle, dropdownValue, varName);
+            }
 
-		download_link[0].click();
-		download_link[0].remove();
-	});
-}
+            document.querySelector('.gforces-assistant--modal').remove();
+            document.querySelector('.gforces-assistant--overlay').remove();
+        });
+    },
 
-dropdown.copyVariable = function(string) {
-	var textArea = $("<textarea>" + string + "</textarea>");
-	$("body").append(textArea);
-	textArea.select();
-	document.execCommand("copy");
-	textArea.remove();
-}
+    grabImages() {
+        const images = document.querySelectorAll('.list-item img');
 
-dropdown.generateSprite = function(el, useTitle, varName) {
+        images.each((image) => {
+            const src = image.getAttribute('src');
+            if (src.search(this.urlPrefix) === -1) return;
+            if (src.search(this.urlSuffix) === -1) return;
 
-	return new Promise(function(resolve, error) {
-		var menuItems = $(el).find('.dropdown-menu a'),
-			variableString = varName + ': \n\t"",',
-			menuLength = menuItems.length;
+            const urlPrefixSplit = src.split(this.urlPrefix)[0];
+            const urlSuffixSplit = src.split(this.urlSuffix)[1];
+            const newSrc = urlPrefixSplit + this.urlSuffix + urlSuffixSplit;
+            const fileType = src.substr(src.length - 4);
+            const alt = image.getAttribute('alt').replace(' ', '');
+            const downloadLink = document.createElement('a');
+            downloadLink.href = newSrc;
+            downloadLink.setAttribute('download', alt + fileType);
+            document.body.appendChild(downloadLink);
 
-		menuItems.each(function(index) {
-			var attribute = useTitle ? $(this).attr('title') : $(this).attr('href').match("[^/]*(?=\/$)");
-			variableString += '\n\t"' + attribute + '"';
+            downloadLink.click();
+            downloadLink.remove();
+        });
+    },
 
-			if (index != menuLength - 1) {
-				variableString += ','
-			}
-		});
+    copyVariable(string) {
+        const textArea = document.createElement('textarea');
+        textArea.innerHTML = string;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+    },
 
-		variableString += '\n;';
-		resolve(variableString);
-	});
-}
+    generateSprite(el, useTitle, varName) {
+        return new Promise(((resolve) => {
+            const menuItems = el.querySelectorAll('.dropdown-menu a');
+            let variableString = `${varName}: \n\t"",`;
+            const menuLength = menuItems.length;
 
-dropdown.init = function() {
-	$('.gforces-assistant--modal').remove();
-	$('.gforces-assistant--overlay').remove();
-	$('.gforces-assistant--overlay--confirm').remove();
-	dropdown.setOptions().then(function(data){
-		dropdown.modal(data);
-		dropdown.buttons(data);
-	});
-}
+            menuItems.forEach((item, index) => {
+                const attribute = useTitle ? item.getAttribute('title') : item.href.match('[^/]*(?=/$)');
+                variableString += `\n\t"${attribute}"`;
+
+                if (index !== menuLength - 1) {
+                    variableString += ',';
+                }
+            });
+
+            variableString += '\n;';
+            resolve(variableString);
+        }));
+    },
+};
 
 dropdown.init();
