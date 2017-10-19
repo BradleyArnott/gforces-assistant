@@ -17,7 +17,6 @@
 				"css/popup.css"
 			],
 			"js": [
-				"js/lib/jquery.min.js",
 				"js/settings.js",
 				"js/v10/frontend/auth.js",
 				"js/v10/backend/tools.js"
@@ -62,32 +61,32 @@
 				"js/jira/subtasks.js"
 			],
 			"run_at": "document_end"
-		}
-		// {
-		// 	"matches": ["*://*/backend/tag-management/index/"],
-		// 	"css": [
-		// 		"css/codemirror/codemirror.css",
-		// 		"css/codemirror/monokai.css",
-		// 		"css/codemirror/show-hint.css",
-		// 		"css/codemirror/lint.css",
-		// 		"css/v10/tag-manager.css"
+		},
+		{
+			"matches": ["*://*/backend/tag-management/index/"],
+			"css": [
+				"css/codemirror/codemirror.css",
+				"css/codemirror/monokai.css",
+				"css/codemirror/show-hint.css",
+				"css/codemirror/lint.css",
+				"css/v10/tag-manager.css"
 
-		// 	],
-		// 	"js": [
-		// 		"js/lib/codemirror/codemirror.js",
-		// 		"js/lib/codemirror/sublime.js",
-		// 		"js/lib/codemirror/javascript.js",
-		// 		"js/lib/codemirror/htmlmixed.js",
-		// 		"js/lib/codemirror/comment.js",
-		// 		"js/lib/jshint.js",
-		// 		"js/lib/codemirror/javascript-hint.js",
-		// 		"js/lib/codemirror/show-hint.js",
-		// 		"js/lib/codemirror/lint.js",
-		// 		"js/lib/codemirror/javascript-lint.js",
-		// 		"js/v10/backend/tag-manager.js"
-		// 	],
-		// 	"run_at": "document_end"
-		// }
+			],
+			"js": [
+				"js/lib/codemirror/codemirror.js",
+				"js/lib/codemirror/sublime.js",
+				"js/lib/codemirror/javascript.js",
+				"js/lib/codemirror/htmlmixed.js",
+				"js/lib/codemirror/comment.js",
+				"js/lib/jshint.js",
+				"js/lib/codemirror/javascript-hint.js",
+				"js/lib/codemirror/show-hint.js",
+				"js/lib/codemirror/lint.js",
+				"js/lib/codemirror/javascript-lint.js",
+				"js/v10/backend/tag-manager.js"
+			],
+			"run_at": "document_end"
+		}
 	],
 	"web_accessible_resources": [
 		"js/v10/backend/templates.js",

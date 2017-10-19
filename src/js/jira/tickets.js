@@ -74,7 +74,7 @@ const tickets = {
     ],
 
     init() {
-        settings.get('checkTickets').then((checkTickets) => {
+        V10settings.get('checkTickets').then((checkTickets) => {
             if (!checkTickets) return;
             setTimeout(() => {
                 this.loopTables();

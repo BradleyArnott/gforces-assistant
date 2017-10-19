@@ -70,7 +70,7 @@ const popup = {
 
     setToggle(el) {
         const setting = el.dataset.option;
-        settings.get(setting).then((result) => {
+        V10settings.get(setting).then((result) => {
             if (!result) return;
             el.setAttribute('enabled', result);
             el.classList.add('checked');

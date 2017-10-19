@@ -1,24 +1,37 @@
 const editorTools = {
 
     init() {
-        const isInEditor = $('[href*="/templateEditor.css"]');
-        if (!isInEditor.length) return;
-        settings.get('editorTools').then((isOn) => {
+        const inEditor = document.querySelector('link[href*="/templateEditor.css"]');
+        if (!inEditor) return;
+        V10settings.get('editorTools').then((isOn) => {
             if (!isOn) return;
             setTimeout(() => {
-                this.injectContent('js', 'js/v10/backend/order.js');
-                this.injectContent('js', 'js/v10/backend/clone.js');
-                this.injectContent('js', 'js/v10/backend/templates.js');
-                this.injectContent('css', 'css/v10/editor.css');
+                this.inject('js', 'js/v10/backend/order.js');
+                this.inject('js', 'js/v10/backend/clone.js');
+                this.inject('css', 'css/v10/editor.css');
             }, 2000);
         });
     },
 
-    injectContent(type, filePath) {
-        const codePath = chrome.extension.getURL(filePath);
-        const codeLink = type === 'css' ? $('<link>').attr('href', codePath).attr('rel', 'stylesheet').attr('type', 'text/css') : $('<script>').attr('src', codePath);
+    createCSS(path) {
+        const el = document.createElement('link');
+        el.href = path;
+        el.setAttribute('rel', 'stylesheet');
+        el.setAttribute('type', 'text/css');
+        return el;
+    },
 
-        $('head').append(codeLink);
+    createScript(path) {
+        const el = document.createElement('script');
+        el.setAttribute('src', path);
+        return el;
+    },
+
+    inject(type, file) {
+        const path = chrome.extension.getURL(file);
+        const code = type === 'css' ? this.createCSS(path) : this.createScript(path);
+
+        document.head.appendChild(code);
     },
 };
 

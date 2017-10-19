@@ -25,7 +25,7 @@ const subtasks = {
     },
 
     init() {
-        settings.get('checkSubTasks').then((checkSubTasks) => {
+        V10settings.get('checkSubTasks').then((checkSubTasks) => {
             if (!checkSubTasks) return;
             this.loopList();
             this.addButton();

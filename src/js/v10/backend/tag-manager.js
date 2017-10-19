@@ -1,225 +1,227 @@
-var tagManager = {},
-	CMeditor,
-	cssTagsJS = [
-	{
-		id: 0,
-		name: 'JS Absolute',
-		ref: 'js-absolute.js'
-	},	
-	{
-		id: 1,
-		name: 'JS Absolute (Advanced)',
-		ref: 'js-absolute-advanced.js'
-	},
-	{
-		id: 2,
-		name: 'Judge Service',
-		ref: 'judge-service-superwidget.js'
-	},
-	{
-		id: 3,
-		name: 'Miappi',
-		ref: 'miappi.js'
-	},
-	{
-		id: 4,
-		name: 'HR Spacing',
-		ref: 'hr-spacing.js'
-	},	
-	{
-		id: 5,
-		name: 'New Car Detail (Desktop-first)',
-		ref: 'new-car-detail.js'
-	},	
-	{
-		id: 6,
-		name: 'New Car Detail (User-first)',
-		ref: 'new-car-detail-MF.js'
-	},	
-	{
-		id: 7,
-		name: 'Import Multi-scripts',
-		ref: '_ND/getMultiScripts.js'
-	},
-	{
-		id: 8,
-		name: 'Current Year',
-		ref: 'footer-year.js',
-	},
-	{
-		id: 9,
-		name: 'Open in new tab',
-		ref: 'open-in-new-tab-button.js'
-	},
-	{
-		id: 10,
-		name: 'Scrolling footer toggle',
-		ref: 'footer-toggle-scroll.js'
-	}
-];
+const tagManager = {
+    CMeditor: '',
+    tags: [
+        {
+            id: 0,
+            name: 'JS Absolute',
+            ref: 'js-absolute.js',
+        },
+        {
+            id: 1,
+            name: 'JS Absolute (Advanced)',
+            ref: 'js-absolute-advanced.js',
+        },
+        {
+            id: 2,
+            name: 'Judge Service',
+            ref: 'judge-service-superwidget.js',
+        },
+        {
+            id: 3,
+            name: 'Miappi',
+            ref: 'miappi.js',
+        },
+        {
+            id: 4,
+            name: 'HR Spacing',
+            ref: 'hr-spacing.js',
+        },
+        {
+            id: 5,
+            name: 'New Car Detail (Desktop-first)',
+            ref: 'new-car-detail.js',
+        },
+        {
+            id: 6,
+            name: 'New Car Detail (User-first)',
+            ref: 'new-car-detail-MF.js',
+        },
+        {
+            id: 7,
+            name: 'Import Multi-scripts',
+            ref: '_ND/getMultiScripts.js',
+        },
+        {
+            id: 8,
+            name: 'Current Year',
+            ref: 'footer-year.js',
+        },
+        {
+            id: 9,
+            name: 'Open in new tab',
+            ref: 'open-in-new-tab-button.js',
+        },
+        {
+            id: 10,
+            name: 'Scrolling footer toggle',
+            ref: 'footer-toggle-scroll.js',
+        },
+    ],
 
-tagManager.init = function() {
-	tagManager.check();
-	tagManager.removeButton();
-}  
+    init() {
+        const adds = document.querySelectorAll('.edit-tag, #add-tag');
 
-function isEmpty( el ){
-	return !$.trim(el.html())
-}
+        adds.forEach((add) => {
+            add.addEventListener('click', () => {
+                tagManager.checkSnippet().then(() => {
+                    tagManager.addEditor();
+                    tagManager.addSearch();
+                    tagManager.searchFunction();
+                    tagManager.addButton();
+                    tagManager.removeButton();
+                });
+            });
+        });
+    },
 
+    populate() {
+        return new Promise((resolve) => {
+            const container = document.createElement('div');
+            let content = '<a href="#" class="custom-css-js--close"></a><div class="nd-widget-title"><h2>Predefined CSS Scripts</h2></div>';
 
-tagManager.populate = function() {
-	return new Promise(function(resolve, reject){
-		let scriptContainer = $('<div class="nd-widget-box custom-css-js--container"><a href="#" class="custom-css-js--close"></a><div class="nd-widget-title"><h2>Predefined CSS Scripts</h2></div></div>');
-		
-		for (let t = 0; t < cssTagsJS.length; t++) {
-			let scriptName = cssTagsJS[t].name,
-				scriptID = cssTagsJS[t].id;
-			$('<a href="#"" class="script" data-id="' + scriptID + '"><div class="inner">' + scriptName + '</div></a>').appendTo(scriptContainer);
-		}
-		$(scriptContainer).appendTo('body');
-		resolve();		
-	})
-}
+            this.tags.forEach((tag) => {
+                const { name, id } = tag;
+                content += `<a href="#"" class="script" data-id="${id}"><div class="inner">${name}</div></a>`;
+            });
 
-tagManager.searchFunction = function() {
-	$('#template-search').keyup(function() {
+            container.className = 'nd-widget-box custom-css-js--container';
+            container.innerHTML = content;
+            document.body.appendChild(container);
+            resolve();
+        });
+    },
 
-		let input = $(this),
-			parent = $(this).parents('.table-menu');
-			filter = input[0].value.toUpperCase(),
-			ul = parent.find('ul'),
-			li = ul.find('li');
+    searchFunction() {
+        const input = document.querySelector('#template-search');
+        const parent = document.querySelector('.table-menu');
 
-		// Loop through all list items, and hide those who don't match the search query
-		for (i = 0; i < li.length; i++) {
-			let el = $(li[i]);
+        input.onkeyup = () => {
+            const filter = input.value.toUpperCase();
+            const list = parent.querySelectorAll('li');
 
-			let label = el.find('label');
-			if (label[0].innerHTML.toUpperCase().indexOf(filter) > -1) {
-				el.show();
-			} else {
-				el.hide();
-			}
-		}
-	});
-}
+            list.forEach((li) => {
+                const label = li.querySelector('label').innerHTML.toUpperCase();
+                if (label.includes(filter)) li.style.display = '';
+                else li.style.display = 'none';
+            });
+        };
+    },
 
-tagManager.addSearch = function() {
-	return new Promise(function(resolve, reject) {
-		let input = '<div class="padding-bottom padding-left"><input type="text" id="template-search" placeholder="Search for templates"></div>';
-		$(input).insertAfter('.nd-table-checkbox-dropdown .table-menu > div:first-child');
-		resolve();
-	});
-}
+    addSearch() {
+        return new Promise(((resolve) => {
+            const reference = document.querySelector('.nd-table-checkbox-dropdown .table-menu > div:first-child');
+            const input = document.createElement('div');
+            input.className = 'padding-bottom padding-left';
+            input.innerHTML = '<input type="text" id="template-search" placeholder="Search for templates">';
+            reference.parentNode.insertBefore(input, reference.nextSibling);
+            resolve();
+        }));
+    },
 
-tagManager.addButton = function() {
-	$('<a title="Add" id="add-css-tag" href="#" class="btn btn-success css-assistant--button">Use predefined code</a>').appendTo('body');
-	$('#add-css-tag').click(function(e) {
-		e.preventDefault();
-		$('.custom-css-js--container').remove();
-		tagManager.populate().then(function() {
-			tagManager.scriptClick();
-			tagManager.scriptClose();
-		});
-	})
-}
+    addButton() {
+        const button = document.createElement('a');
+        button.id = 'add-css-tag';
+        button.className = 'btn btn-success css-assistant--button';
+        button.href = '#';
+        button.setAttribute('title', 'Add');
+        button.innerHTML = 'Use predefined code';
+        document.body.appendChild(button);
 
-tagManager.removeButton = function() {
-	$(document).on('click', '#cancel-tag-edit', function() {
-		$('#add-css-tag').remove();
-		$('#template-search').remove();
-	})
-}
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const container = document.querySelector('.custom-css-js--container');
+            if (container) container.remove();
+            tagManager.populate().then(() => {
+                tagManager.scriptClick();
+                tagManager.scriptClose();
+            });
+        });
 
-tagManager.addEditor = function() {
-	CMeditor = CodeMirror.fromTextArea(document.getElementById('Snippet_content'), {
-		mode: 'javascript',
-		lineNumbers: true,
-		tabSize: 4,
-		indentUnit: 4,
-		indentWithTabs: true,
-		theme: 'monokai',
-		keyMap: 'sublime',
-		lineWrapping: true,
-		gutters: ["CodeMirror-lint-markers"],
-		lint: true,
-		lintOnChange: true
-	});
-	CMeditor.on('change', checkTextArea);
+        const save = document.querySelector('#save-tag');
+        save.addEventListener('click', () => {
+            document.querySelector('#add-css-tag').remove();
+        });
+    },
 
-	function checkTextArea() {
-		CMeditor.save();
-	}
+    removeButton() {
+        const button = document.querySelector('#cancel-tag-edit');
 
-	$('.nd-form-standard > .row-fluid > .span8').removeClass('span8');
-}
+        button.addEventListener('click', () => {
+            document.querySelector('#add-css-tag').remove();
+            document.querySelector('#template-search').remove();
+        });
+    },
 
-tagManager.check = function() {
-	$(document).on('click', '.edit-tag, #add-tag', function() {
-		tagManager.checkSnippet().then(function() {
-			tagManager.addEditor();
-			tagManager.addSearch();
-			tagManager.searchFunction();
-			tagManager.addButton();
-		})
-	});
-	$(document).on('click', '#save-tag', function() {
-		$('#add-css-tag').remove();
-	});
-}
+    addEditor() {
+        this.CMeditor = CodeMirror.fromTextArea(document.getElementById('Snippet_content'), {
+            mode: 'javascript',
+            lineNumbers: true,
+            tabSize: 4,
+            indentUnit: 4,
+            indentWithTabs: true,
+            theme: 'monokai',
+            keyMap: 'sublime',
+            lineWrapping: true,
+            gutters: ['CodeMirror-lint-markers'],
+            lint: true,
+            lintOnChange: true,
+        });
 
+        const save = () => this.CMeditor.save();
+        this.CMeditor.on('change', save);
+        document.querySelector('.nd-form-standard > .row-fluid > .span8').classList.remove('span8');
+    },
 
-tagManager.scriptClick = function() {
-	$('.custom-css-js--container .script').click(function(e) {
-		e.preventDefault();
-		let dataID = $(this).attr('data-id');
-		tagManager.get(dataID);
-		$('.custom-css-js--container').remove();
-	})
-}
+    scriptClick() {
+        const scripts = document.querySelectorAll('.custom-css-js--container .script');
 
-tagManager.scriptClose = function() {
-	$('.custom-css-js--close').click(function(e) {
-		e.preventDefault();
-		$('.custom-css-js--container').remove();
-	})
-}
+        scripts.forEach((script) => {
+            script.addEventListener('click', (e) => {
+                e.preventDefault();
+                const { id } = script.dataset;
+                tagManager.get(id);
+                script.parentNode.remove();
+            });
+        });
+    },
 
-tagManager.checkSnippet = function() {
+    scriptClose() {
+        const close = document.querySelector('.custom-css-js--close');
+        close.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelector('.custom-css-js--container').remove();
+        });
+    },
 
-	return new Promise(function(resolve, reject) {
+    checkSnippet() {
+        return new Promise((resolve) => {
+            const checkTextArea = setInterval(() => {
+                const textArea = document.querySelector('#Snippet_content');
 
-		let checkTextArea = setInterval(function() {
-			let isText = $('#Snippet_content').length;
+                if (textArea) {
+                    clearInterval(checkTextArea);
+                    resolve();
+                }
+            }, 100);
+        });
+    },
 
-			if (isText) {
-				clearInterval(checkTextArea);
-				resolve();
-			}
+    get(ID) {
+        const { ref, name } = this.tags[ID];
+        const fullURL = `https://gforcesdevtest.slsapp.com/source/netdirector-auto-resources/trunk/00.%20Misc/js/${ref}`;
+        const scriptTitle = `CSS - ${name}`;
 
-			$('#add-css-tag').remove();
-
-		}, 100);
-	});
-}
-
-tagManager.get = function(ID) {
-	let scriptPath = 'https://gforcesdevtest.slsapp.com/source/netdirector-auto-resources/trunk/00.%20Misc/js/',
-		file = cssTagsJS[ID].ref,
-		fullURL = scriptPath + file,
-		scriptTitle = 'CSS - ' + cssTagsJS[ID].name;
-
-	$.ajax({
-		url: fullURL,
-		type: "GET",
-	}).then(function(data) {
-		$('#Snippet_title').val(scriptTitle);
-		$('#Snippet_content').val(data);
-		if ($('.CodeMirror').length) {
-			CMeditor.setValue($('#Snippet_content').val());
-		}
-	});
-}
+        $.ajax({
+            url: fullURL,
+            type: 'GET',
+        }).then((data) => {
+            $('#Snippet_title').val(scriptTitle);
+            $('#Snippet_content').val(data);
+            if ($('.CodeMirror').length) {
+                this.CMeditor.setValue($('#Snippet_content').val());
+            }
+        });
+    },
+};
 
 tagManager.init();

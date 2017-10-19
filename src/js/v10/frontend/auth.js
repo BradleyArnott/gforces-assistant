@@ -6,7 +6,7 @@ const auth = {
     init() {
         const isOnND = document.querySelector('link[href="https://images.netdirector.co.uk"]');
         if (!isOnND) return;
-        settings.get('autoLogin').then((autoLogin) => {
+        V10settings.get('autoLogin').then((autoLogin) => {
             if (!autoLogin) return;
             chrome.runtime.sendMessage({
                 action: 'getAuthData',

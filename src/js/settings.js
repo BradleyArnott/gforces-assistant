@@ -1,4 +1,4 @@
-const settings = {
+const V10settings = {
 
     get(option) {
         return new Promise(((resolve) => {
