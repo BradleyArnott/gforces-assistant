@@ -111,7 +111,7 @@ const projects = {
 
             request.onload = () => {
                 if (request.status >= 200 && request.status < 400) {
-                    let resp = JSON.parse(request.response);
+                    const resp = JSON.parse(request.response);
                     const { labels } = resp.fields;
                     const phaseOne = labels.includes('CSS-QA-Phase1');
                     this.data.push({ issue: key, phaseOne });

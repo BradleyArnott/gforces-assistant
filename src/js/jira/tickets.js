@@ -1,384 +1,390 @@
-var username = $('#header-details-user-fullname').attr("data-username"),
-	tickets = {},
-	ticketsColours = {
-		good: '#cfe9b6',
-		late: '#e9b6b6',
-		modified: '#f0b664',
-		mine: '#b6e9db'
-	},
-	ticketsOEM = [
-		{
-			label: 'css-im-group',
-			refs: [
-				'IMGROUP', // Master
-				'SMLA' // Subaru Master
-			]
-		},
-		{
-			label: 'css-vauxhall',
-			refs: [
-				'VVB', // Master
-				'BEVB', // Bellingers
-				'BVB', // Beadles
-				'GVB', // Go Vauxhall
-				'BURNHAM', // Advance Vauxhall
-				'THURLOW', // Thurlow Nunn
-				'VAUXUFM' // Vauxhall Migrations
-			]
-		},
-		{
-			label: 'css-mazda',
-			refs: [
-				'MAZDAB', // Master
-				'MUVLB' // UVL
-			]
-		},
-		{
-			label: 'css-gmme',
-			refs: [
-				'GMME', // Master
-				'GCREB', // Chevrolet
-				'GCNCC', // Cadillac
-				'UB-' // UMA
-			]
-		}
-	],
-	ticketsToday = 0,
-	hoursToday = 0,
-	ticketsNext = 0,
-	hoursNext = 0,
-	currentDate = moment().format('MM DD YYYY'),
-	nextWord,
-	nextDate;
+const tickets = {
+    date: moment().format('MM DD YYYY'),
+    username: document.querySelector('#header-details-user-fullname').dataset.username,
+    tToday: 0,
+    hToday: 0,
+    tNext: 0,
+    hNext: 0,
+    nextWord: '',
+    nextDate: '',
+    colours: {
+        good: '#cfe9b6',
+        late: '#e9b6b6',
+        modified: '#f0b664',
+        mine: '#b6e9db',
+    },
+    champions: [
+        {
+            name: 'matt.mumford',
+            type: 'Mazda',
+            table: '#gadget-71902-renderbox',
+        },
+        {
+            name: 'beau.august',
+            type: 'Vauxhall',
+            table: '#gadget-72006-renderbox',
+        },
+        {
+            name: 'chris.kent',
+            type: 'IM Group',
+            table: '#gadget-71901-renderbox',
+        },
+        {
+            name: 'nuno.barros',
+            type: 'GMME',
+            table: '#gadget-72007-renderbox',
+        },
+    ],
+    OEM: [
+        {
+            label: 'css-im-group',
+            refs: [
+                'IMGROUP', // Master
+                'SMLA', // Subaru Master
+            ],
+        },
+        {
+            label: 'css-vauxhall',
+            refs: [
+                'VVB', // Master
+                'BEVB', // Bellingers
+                'BVB', // Beadles
+                'GVB', // Go Vauxhall
+                'BURNHAM', // Advance Vauxhall
+                'THURLOW', // Thurlow Nunn
+                'VAUXUFM', // Vauxhall Migrations
+            ],
+        },
+        {
+            label: 'css-mazda',
+            refs: [
+                'MAZDAB', // Master
+                'MUVLB', // UVL
+            ],
+        },
+        {
+            label: 'css-gmme',
+            refs: [
+                'GMME', // Master
+                'GCREB', // Chevrolet
+                'GCNCC', // Cadillac
+                'UB-', // UMA
+            ],
+        },
+    ],
 
-var champions = [
-	{
-		name: 'matt.mumford',
-		type: 'Mazda',
-		table: '#gadget-71902-renderbox'
-	},
-	{
-		name: 'beau.august',
-		type: 'Vauxhall',
-		table: '#gadget-72006-renderbox'
-	},
-	{
-		name: 'chris.kent',
-		type: 'IM Group',
-		table: '#gadget-71901-renderbox'
-	},
-	{
-		name: 'nuno.barros',
-		type: 'GMME',
-		table: '#gadget-72007-renderbox'
-	}
-]
+    init() {
+        settings.get('checkTickets').then((checkTickets) => {
+            if (!checkTickets) return;
+            setTimeout(() => {
+                this.loopTables();
+                this.championTickets();
+                this.approval();
+                this.myIssues();
+                this.checkWorkQueue();
+            }, 1000);
+        });
+    },
 
-tickets.init = function() {
-	settings.get('checkTickets').then(function(checkTickets) {
-		if (!checkTickets) return;
-		setTimeout(function() {
-			tickets.loopTables();
-			tickets.Champions();
-			tickets.Approval();
-			tickets.myIssues();
-			tickets.checkWorkQueue();
-		}, 1000);
-	});
-}
+    loopTables() {
+        this.checkNext();
+        this.loopTickets();
+        this.showData();
+    },
 
-tickets.loopTables = function() {
-	tickets.checkNext();
-	tickets.loopTickets();
-	tickets.showData();
-}
+    loopTickets() {
+        const rows = document.querySelectorAll('#gadget-11706-renderbox .issuerow');
+        const ticketsObj = {};
 
-tickets.loopTickets = function() {
-	var ticketsObj = {};
-	$('#gadget-11706-renderbox').find(".issuerow").each(function() {
-		var $this = $(this),
-			ticketTimestamp = $this.find('.livestamp'),
-			ticketUpdatedDateTime = $(this).find(".updated time").attr("datetime"),
-			ticketDateTime = ticketTimestamp.attr('datetime'),
-			timeData = {};
+        rows.forEach((row) => {
+            const due = row.querySelector('.customfield_11004 time').getAttribute('datetime');
+            const updated = row.querySelector('.updated time').getAttribute('datetime');
+            const timeData = {
+                timeUnix: moment().unix(),
+                date: moment(due).format('MM DD YYYY'),
+                dateUnix: moment(due).unix(),
+                updatedDate: moment(updated).format('MM DD YYYY'),
+                updatedTime: moment(updated).format('HH:mm'),
+            };
 
-			timeData.timeUnix = moment().unix();
-			timeData.ticketDate = moment(ticketDateTime).format('MM DD YYYY');
-			timeData.ticketUnix = moment(ticketDateTime).unix();
-			timeData.ticketUpdatedDate = moment(ticketUpdatedDateTime).format('MM DD YYYY');
-			timeData.ticketUpdatedTime = moment(ticketUpdatedDateTime).format('HH:mm');
+            this.group(timeData, row, ticketsObj);
+            this.good(timeData, row);
+            this.late(timeData, row);
+            this.modified(timeData, row);
+            this.tToday += this.today(timeData, row);
+            this.tNext += this.next(timeData, row);
+        });
+        this.colorGroups(ticketsObj);
+    },
 
-		if (!ticketTimestamp.length) return;
-		tickets.group(timeData, $this, ticketsObj);
-		tickets.good(timeData, $this);
-		tickets.late(timeData, $this);
-		tickets.modified(timeData, $this);
-		ticketsToday += tickets.today(timeData, $this);
-		ticketsNext += tickets.next(timeData, $this);
-	});
-	tickets.colorGroups(ticketsObj);
-}
+    checkNext() {
+        const nextDay = moment().add(1, 'days').weekday();
+        let numDays = 1;
+        if (nextDay === 6) numDays += 2;
+        if (nextDay === 0) numDays += 1;
+        this.nextDate = moment().add(numDays, 'days').format('MM DD YYYY');
+        this.nextWord = numDays === 1 ? 'Tomorrow' : moment(this.nextDate).format('dddd');
+    },
 
-tickets.checkNext = function() {
-	var nextDay = moment().add(1, 'days').weekday();
-	var numDays = 1;
-	if (nextDay == 6) numDays += 2;
-	if (nextDay == 0) numDays += 1;
-	nextDate = moment().add(numDays, 'days').format('MM DD YYYY');
-	nextWord = numDays == 1 ? 'Tomorrow' : moment(nextDate).format('dddd');
-}
+    group(timeData, el, obj) {
+        if (this.date !== timeData.date) return;
+        const issueKey = el.dataset.issuekey;
+        const keyString = issueKey.split('-')[0];
+        const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
-tickets.group = function(timeData, el, obj) {
-	var issueKey = el.attr('data-issuekey'),
-		keyString = issueKey.split('-')[0];
-		color = '#'+Math.floor(Math.random()*16777215).toString(16);
+        if (obj[keyString]) obj[keyString].items.push(el);
+        else obj[keyString] = { color, items: [el] };
+    },
 
-	if(obj[keyString]) obj[keyString].items.push(el);
-	else obj[keyString] = { 'color': color, 'items': [el]}
-}
+    colorGroups(obj) {
+        Object.keys(obj).forEach((key) => {
+            const { items, color } = obj[key];
 
-tickets.colorGroups = function(obj) {
+            if (items.length <= 1) return;
 
-	Object.keys(obj).forEach(function(key) {
+            items.forEach((el) => {
+                el.querySelector('.issuetype').style.backgroundColor = color;
+            });
+        });
+    },
 
-		var items = obj[key].items,
-			color = obj[key].color;
+    good(timeData, el) {
+        if (timeData.dateUnix < timeData.timeUnix) return;
+        if (this.date !== timeData.date) return;
+        el.style.backgroundColor = this.colours.good;
+    },
 
-		if(items.length > 1) {
+    late(timeData, el) {
+        if (timeData.dateUnix > timeData.timeUnix) return;
+        el.style.backgroundColor = this.colours.late;
+    },
 
-			for (var n = 0; n < items.length; n++) {
-				var el = items[n];
-				el.find('.issuetype').css('background-color', color);
-			}
-		}
-	});
-}
+    modified(timeData, el) {
+        if (this.date !== timeData.date) return;
+        if (timeData.updatedDate !== this.date) return;
+        if (timeData.updatedTime < '09:30') return;
+        el.style.backgroundColor = this.colours.modified;
+    },
 
-tickets.late = function(timeData, el) {
-	if (timeData.ticketUnix > timeData.timeUnix) return;
-	el.css('background', ticketsColours.late);
-}
+    today(timeData, el) {
+        if (this.date !== timeData.date) return 0;
+        const status = el.querySelector('.status span').innerHTML;
+        if (status === 'In Progress') return 0;
+        const estimate = this.timeSpent(el.querySelector('.timeoriginalestimate').innerHTML);
+        if (Number.isNaN(estimate)) return 0;
+        const worked = this.timeSpent(el.querySelector('.timespent').innerHTML);
+        const hours = estimate - worked;
+        if (hours < 0) return 1;
+        this.hToday += hours;
+        return 1;
+    },
 
-tickets.good = function(timeData, el) {
-	if (timeData.ticketUnix < timeData.timeUnix) return;
-	if (currentDate != timeData.ticketDate) return;
-	el.css('background', ticketsColours.good);
-}
+    next(timeData, el) {
+        if (this.nextDate !== timeData.date) return 0;
+        const status = el.querySelector('.status span').innerHTML;
+        if (status === 'In Progress') return 0;
+        const estimate = this.timeSpent(el.querySelector('.timeoriginalestimate').innerHTML);
+        el.style.backgroundColor = '#e5e5e5';
+        if (Number.isNaN(estimate)) return 0;
+        const worked = this.timeSpent(el.querySelector('.timespent').innerHTML);
+        const hours = estimate - worked;
+        if (hours < 0) return 1;
+        this.hNext += hours;
+        return 1;
+    },
 
-tickets.modified = function(timeData, el) {
-	if (currentDate != timeData.ticketDate) return;
-	if (timeData.ticketUpdatedDate != currentDate) return;
-	if (timeData.ticketUpdatedTime < '09:30') return;
-	el.css('background', ticketsColours.modified);
-}
+    timeSpent(time) {
+        const timeSpentArr = time.split(' ');
+        let newTimeSpent = 0;
 
-tickets.today = function(timeData, el) {
-	if (currentDate != timeData.ticketDate) return 0;
-	if (el.find('.status span').text() == 'In Progress') return 0;
-	var estimate = tickets.timeSpent(el.find('.timeoriginalestimate').text());
-	if (isNaN(estimate)) return 0;
-	var worked = tickets.timeSpent(el.find('.timespent').text());
-		hours = estimate - worked;
-	if (hours < 0) return 1;
-	hoursToday += hours;
-	return 1;
-}
+        timeSpentArr.forEach((unit) => {
+            if (unit) {
+                let newTime = unit;
+                if (unit.indexOf('m') >= 0) newTime = parseFloat(newTime) / 60;
+                newTimeSpent = parseFloat(newTime) + parseFloat(newTimeSpent);
+            }
+        });
+        if (newTimeSpent < 0) newTimeSpent = 0;
+        return newTimeSpent;
+    },
 
-tickets.next = function(timeData, el) {
-	if (nextDate != timeData.ticketDate) return 0;
-	if (el.find('.status span').text() == 'In Progress') return 0;
-	var estimate = tickets.timeSpent(el.find('.timeoriginalestimate').text());
-	el.css('background', '#e5e5e5');
-	if (isNaN(estimate)) return 0;
-	var worked = tickets.timeSpent(el.find('.timespent').text()),
-		hours = estimate - worked;
-	if (hours < 0) return 0;
-	hoursNext += hours;
-	return 1;
-}
+    championTickets() {
+        this.champions.forEach((champion, index) => {
+            const user = this.champions[index];
+            if (user.name !== this.username) return;
+            const table = document.querySelector(user.table);
+            const issues = table.querySelectorAll('.issuerow').length;
+            const plural = issues === 1 ? 'is' : 'are';
+            const pluralTickets = issues === 1 ? 'ticket' : 'tickets';
+            const text = `There ${plural} <strong>${issues}</strong> ${user.type}-related ${pluralTickets}`;
+            const el = document.createElement('div');
+            el.className = 'ticket-count champion';
+            el.innerHTML = `<div class="inner">${text}</div>`;
+            document.querySelector('.ticket-count-container').appendChild(el);
+        });
+    },
 
-tickets.timeSpent = function(time) {
-	var timeSpentArr = time.split(' '),
-	newTimeSpent = 0;
+    approval() {
+        const table = document.querySelector('#gadget-79400-renderbox');
+        const approvals = table.querySelectorAll('.issuerow').length;
+        const plural = approvals === 1 ? 'is' : 'are';
+        const pluralTickets = approvals === 1 ? 'ticket' : 'tickets';
+        const text = `There ${plural} <strong>${approvals}</strong> third-party approval ${pluralTickets}`;
+        const el = document.createElement('div');
+        el.className = 'ticket-count approval';
+        el.innerHTML = `<div class="inner">${text}</div>`;
+        document.querySelector('.ticket-count-container').appendChild(el);
+    },
 
-	for ( var i = 0, l = timeSpentArr.length; i < l; i++ ) {
-		var newTime = timeSpentArr[i];
-		if(newTime) {
-			if (newTime.indexOf('m') >= 0) newTime = parseFloat(newTime) / 60;
-			newTimeSpent = parseFloat(newTime) + parseFloat(newTimeSpent);
-		}
-	}
-	if (newTimeSpent < 0) newTimeSpent = 0;
-	return newTimeSpent;
-}
+    showData() {
+        const dashboard = document.querySelector('.page-type-dashboard #content');
+        const container = document.createElement('div');
+        container.className = 'ticket-count-container';
+        const today = (this.tToday === 0) ? '<div class="ticket-count today completed"><div class="inner">All tickets done for today</div></div>' : `<div class="ticket-count today"><div class="inner">Total Hours Today <strong>${this.hToday.toFixed(1)}</strong> Total Tickets Today <strong>${this.tToday}</strong></div></div>`;
+        const next = `<div class="ticket-count tomorrow"><div class="inner">Total hours ${this.nextWord} <strong>${this.hNext.toFixed(1)}</strong> Total tickets ${this.nextWord} <strong>${this.tNext}</strong></div></div>`;
 
-tickets.Champions = function() {
-	for (champion in champions) {
-		let user = champions[champion];
-		if (user.name != username) continue;
-		let champTickets = $(user.table).find('.issuerow').length,
-			plural = champTickets == 1 ? 'is' : 'are',
-			pluralTickets = champTickets == 1 ? 'ticket' : 'tickets',
-			text = 'There ' + plural + ' <strong>' + champTickets + '</strong> ' + user.type + '-related ' + pluralTickets,
-			el = $('<div class="ticket-count champion"><div class="inner">' + text + '</div></div>');
-		el.appendTo('.ticket-count-container');
-	}
-}
+        container.innerHTML = today + next;
+        dashboard.insertBefore(container, dashboard.firstChild);
+    },
 
-tickets.Approval = function() {
-	let table = $('#gadget-79400-renderbox');
+    myIssues() {
+        const rows = document.querySelectorAll('#gadget-54826-chrome .issuerow');
+        rows.forEach((row) => {
+            const reporter = row.querySelector('.reporter a').getAttribute('rel');
+            if (reporter !== this.username) return;
+            row.style.backgroundColor = this.colours.mine;
+        });
+    },
 
-	let approvalTickets = table.find('.issuerow').length,
-		plural = approvalTickets == 1 ? 'is' : 'are',
-		pluralTickets = approvalTickets == 1 ? 'ticket' : 'tickets',
-		text = 'There ' + plural + ' <strong>' + approvalTickets + '</strong> third-party approval ' + pluralTickets,
-		el = $('<div class="ticket-count approval"><div class="inner">' + text + '</div></div>');
-	el.appendTo('.ticket-count-container');
-}
+    checkWorkQueue() {
+        const request = new XMLHttpRequest();
+        request.open('GET', 'https://jira.netdirector.co.uk/rest/api/2/search?jql=status+in+(%22In+Progress%22,+Reopened,+Error,+Reported,+%22To+Do%22,+%22More+Information%22,+Queued)+AND+(labels+not+in+(CSSQueue,+ProjectCSS,+MobileFirstMigration,+css-core,+css-site-review,+css-code-review)+OR+labels+is+EMPTY)+AND+type+!%3D+%22Project+-+Design%22+AND+assignee+in+(EMPTY)+AND+NOT+reporter+in+(api.user)+AND+Department+%3D+CSS+AND+NOT+project+%3D+11300+AND+NOT+project+%3D+%22Third+Party+Code+Approval%22+AND+issuetype+!%3D+%22QA+Sub-Task%22+ORDER+BY+cf%5B11004%5D+ASC', true);
+        request.onload = () => {
+            if (request.status >= 200 && request.status < 400) {
+                const data = JSON.parse(request.response);
+                const { issues } = data;
 
-tickets.showData = function() {
-	var todayContentContainer = $('<div class="ticket-count-container"></div>');
-	var todayContent = (ticketsToday == 0) ? '<div class="ticket-count today completed"><div class="inner">All tickets done for today</div></div>' : '<div class="ticket-count today"><div class="inner">Total Hours Today <strong>' + hoursToday.toFixed(1) + '</strong> Total Tickets Today <strong>' + ticketsToday + '</strong></div></div>';
-    var nextContent = '<div class="ticket-count tomorrow"><div class="inner">Total hours ' + nextWord + ' <strong>' + hoursNext.toFixed(1) + '</strong> Total tickets ' + nextWord + ' <strong>' + ticketsNext + '</strong></div></div>';
-    $(todayContent).appendTo(todayContentContainer);
-    $(nextContent).appendTo(todayContentContainer);
-    $('.page-type-dashboard #content').prepend(todayContentContainer);
-}
+                issues.forEach((issue) => {
+                    this.checkQuote(issue);
+                    this.checkDue(issue);
+                    this.labelOEM(issue);
+                });
+            }
+        };
+        request.send();
+    },
 
+    clearNotDue(issue) {
+        this.getTransitions(issue.key).then((data) => {
+            const message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. 
+                            If the time is now after 09:30 AM, please set the due date to no earlier than the next working day. 
+                            If this ticket is yet to be quoted on, please move it to the quote queue.
+                            If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`;
+            this.addLabel(issue.key, 'css-automated-nodue');
+            this.moreInfo(issue.key, message, data);
+        });
+    },
 
-tickets.myIssues = function() {
-	$('#gadget-54826-chrome .issuerow').each(function() {
-		var issueReporter = $(this).find('.reporter a').attr('rel');
-		if (issueReporter != username) return;
-		$(this).css('background', ticketsColours.mine);
-	});
-}
+    checkQuote(issue) {
+        const quote = issue.fields.timeoriginalestimate;
+        const message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a quote.
+                        If this is an MS ticket, please move it to the quote queue.
+                        If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`;
+        if (quote !== null) return;
+        this.getTransitions(issue.key).then((data) => {
+            this.addLabel(issue.key, 'css-automated-noquote');
+            this.moreInfo(issue.key, message, data);
+        });
+    },
 
-tickets.checkWorkQueue = function() {
-	$.get('https://jira.netdirector.co.uk/rest/api/2/search?jql=status+in+(%22In+Progress%22,+Reopened,+Error,+Reported,+%22To+Do%22,+%22More+Information%22,+Queued)+AND+(labels+not+in+(CSSQueue,+ProjectCSS,+MobileFirstMigration,+css-core,+css-site-review,+css-code-review)+OR+labels+is+EMPTY)+AND+type+!%3D+%22Project+-+Design%22+AND+assignee+in+(EMPTY)+AND+NOT+reporter+in+(api.user)+AND+Department+%3D+CSS+AND+NOT+project+%3D+11300+AND+NOT+project+%3D+%22Third+Party+Code+Approval%22+AND+issuetype+!%3D+%22QA+Sub-Task%22+ORDER+BY+cf%5B11004%5D+ASC', function( data ) {
-		let issues = data.issues;
-		for (let i = 0; i < issues.length; i++) {
-			tickets.checkQuote(issues[i]);
-			tickets.checkDue(issues[i]);
-			tickets.labelOEM(issues[i]);
-		};
-	});
-}
+    checkDue(issue) {
+        if (issue.fields.customfield_11004 === null) this.clearNotDue(issue);
+    },
 
-tickets.clearNotDue = function(issue) {
-	tickets.getTransitions(issue.key).then(function(data) {
-		let message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. 
-						If the time is now after 09:30 AM, please set the due date to no earlier than the next working day. 
-						If this ticket is yet to be quoted on, please move it to the quote queue.
-						If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`;
-		tickets.addLabel(issue.key, 'css-automated-nodue');
-		tickets.moreInfo(issue.key, message, data);
-	});
-}
+    getTransitions(key) {
+        return new Promise((resolve) => {
+            const request = new XMLHttpRequest();
+            request.open('GET', `https://jira.netdirector.co.uk/rest/api/2/issue/${key}/transitions?expand=transitions.fields`, true);
+            request.onload = () => {
+                if (request.status >= 200 && request.status < 400) {
+                    const data = JSON.parse(request.response);
+                    const { transitions } = data;
 
-tickets.checkQuote = function(issue) {
-	let quote = issue.fields.timeoriginalestimate,
-		message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a quote.
-					If this is an MS ticket, please move it to the quote queue.
-					If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`;		
-	if (quote !== null) return;
-	tickets.getTransitions(issue.key).then(function(data) {
-		tickets.addLabel(issue.key, 'css-automated-noquote');
-		tickets.moreInfo(issue.key, message, data);
-	});
-}
+                    transitions.forEach((transition) => {
+                        const { name, id } = transition;
+                        if ('More Info'.indexOf(name) === -1) return;
+                        resolve(id);
+                    });
+                }
+            };
+            request.send();
+        });
+    },
 
-tickets.checkDue = function(issue) {
-	let due = issue.fields.customfield_11004,
-		sameDate = moment(currentDate).isSame(moment(due).format('MM DD YYYY'));
+    moreInfo(key, message, transitionID) {
+        const request = new XMLHttpRequest();
+        let data = {
+            update: {
+                comment: [
+                    {
+                        add: {
+                            body: message,
+                        },
+                    },
+                ],
+            },
+            transition: {
+                id: transitionID,
+            },
+        };
 
-	if (due === null) tickets.clearNotDue(issue);
-	else if (!sameDate) return;
-}
+        request.open('POST', `https://jira.netdirector.co.uk/rest/api/2/issue/${key}/transitions?expand=transitions.fields`, true);
+        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        request.onload = () => {
+            if (request.status >= 200 && request.status < 400) {
+                console.log(`${key} set to "More Info"`);
+            }
+        };
+        data = JSON.stringify(data);
+        request.send(data);
+    },
 
-tickets.getTransitions = function(key, status) {
-	return new Promise(function(resolve, reject) {
-		$.get('https://jira.netdirector.co.uk/rest/api/2/issue/' + key + '/transitions?expand=transitions.fields', function( data ) {
-			let transitions = data.transitions;
-			for (let i = 0; i < transitions.length; i++) {
-				let transitionName = transitions[i].name;
-				if ('More Info'.indexOf(transitionName) == -1) continue;
-				resolve(transitions[i].id);
-			}
-		});
-	});
-}
+    addLabel(key, label) {
+        const request = new XMLHttpRequest();
+        let data = {
+            update: {
+                labels: [
+                    {
+                        add: label,
+                    },
+                ],
+            },
+        };
 
-tickets.moreInfo = function(key, message, transitionID) {
-	let transitionUrl = 'https://jira.netdirector.co.uk/rest/api/2/issue/' + key + '/transitions?expand=transitions.fields',
-		transitionData = {
-	    "update": {
-	        "comment": [
-	            {
-	                "add": {
-	                    "body": message
-	                }
-	            }
-	        ]
-	    },
-	    "transition": {
-	        "id": transitionID
-	    }
-	};
-	transitionData = JSON.stringify(transitionData);
+        request.open('PUT', `https://jira.netdirector.co.uk/rest/api/2/issue/${key}`, true);
+        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        request.onload = () => {
+            console.log(request);
+            if (request.status >= 200 && request.status < 400) {
+                console.log(`label "${label}" added to ${key}`);
+            }
+        };
 
-	console.log(key + ' set to "More Info"');
+        data = JSON.stringify(data);
+        request.send(data);
+    },
 
-	$.ajax({
-		type: 'POST',
-		url: transitionUrl, 
-		data: transitionData,
-		contentType: 'application/json',
-		dataType: 'json'
-	});
-}
+    labelOEM(issue) {
+        const { key } = issue;
+        const { labels } = issue.fields;
+        const keyRef = key.split('-')[0];
 
-tickets.addLabel = function(key, label) {
-	let transitionUrl = 'https://jira.netdirector.co.uk/rest/api/2/issue/' + key,
-		transitionData = {
-		"update": {		
-			"labels": [
-				{
-					"add": label
-				}
-			]
-		}
-	};
+        const isOEM = this.OEM
+            .filter(group => group.refs.includes(keyRef))
+            .filter(group => !labels.includes(group.label));
 
-	transitionData = JSON.stringify(transitionData);
-
-	$.ajax({
-		type: 'PUT',
-		url: transitionUrl, 
-		data: transitionData,
-		contentType: 'application/json',
-		dataType: 'json'
-	});
-
-	console.log('label "' + label + '" added to ' + key);
-}
-
-tickets.labelOEM = function(issue) {
-	let key = issue.key,
-		labels = issue.fields.labels;
-
-	for (let t = 0; t < ticketsOEM.length; t++) {
-		let ticketsRef = ticketsOEM[t].refs;
-
-		for (let r = 0; r < ticketsRef.length; r++) {
-			if (!key.startsWith(ticketsRef[r])) continue;
-			let OEMLabel = ticketsOEM[t].label,
-				hasLabel = labels.indexOf(OEMLabel);
-
-			if (hasLabel !== -1) return;
-			tickets.addLabel(key, ticketsOEM[t].label);
-		}
-	}
-}
+        if (isOEM.length) this.addLabel(key, isOEM[0].label);
+    },
+};
 
 tickets.init();
