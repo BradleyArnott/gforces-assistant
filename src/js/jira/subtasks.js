@@ -29,7 +29,7 @@ const subtasks = {
             if (!checkSubTasks) return;
             this.loopList();
             this.addButton();
-            this.createKey();
+            // this.createKey();
         });
     },
 
@@ -42,22 +42,22 @@ const subtasks = {
             this.identifyCSS(row, status);
             this.hideTeam(row, 'PM');
             this.checkComplete(row, status);
-            this.checkLabels(row);
+            // this.checkLabels(row);
         });
     },
 
-    checkLabels(el) {
-        const labelEl = el.querySelector('.labels-wrap > .labels');
-        if (labelEl.nodeName === 'SPAN') return;
-        const links = labelEl.querySelectorAll('a');
+    // checkLabels(el) {
+    //     const labelEl = el.querySelector('.labels-wrap > .labels');
+    //     if (labelEl.nodeName === 'SPAN') return;
+    //     const links = labelEl.querySelectorAll('a');
 
-        links.forEach((link) => {
-            const label = link.getAttribute('title');
-            Object.keys(this.labels).forEach((value) => {
-                if (label.indexOf(value) !== -1) el.style.backgroundColor = this.labels[value];
-            });
-        });
-    },
+    //     links.forEach((link) => {
+    //         const label = link.getAttribute('title');
+    //         Object.keys(this.labels).forEach((value) => {
+    //             if (label.indexOf(value) !== -1) el.style.backgroundColor = this.labels[value];
+    //         });
+    //     });
+    // },
 
     checkComplete(el, value) {
         const arrayPos = this.doneLabels.indexOf(value);
@@ -95,7 +95,10 @@ const subtasks = {
             if (isEnabled === 'true') {
                 btn.setAttribute('enabled', 'false');
                 btn.querySelector('span').innerHTML = 'Hide irrelevant sub-tasks';
-                $('#issuetable .issuerow').css('display', 'table-row');
+                const rows = this.table.querySelectorAll('.issuerow');
+                rows.forEach((row) => {
+                    row.style.display = 'table-row';
+                });
                 return;
             }
             const rows = this.table.querySelectorAll('.issuerow');
@@ -111,20 +114,20 @@ const subtasks = {
         });
     },
 
-    createKey() {
-        let list = '<div class="key-title"> Label colour key:</div><ul>';
+    // createKey() {
+    //     let list = '<div class="key-title"> Label colour key:</div><ul>';
 
-        Object.entries(this.labels).forEach((label) => {
-            const [text, color] = label;
-            list += `<li><div style="background:${color};"></div><span>${text}</span></li>`;
-        });
-        list += '</ul>';
+    //     Object.entries(this.labels).forEach((label) => {
+    //         const [text, color] = label;
+    //         list += `<li><div style="background:${color};"></div><span>${text}</span></li>`;
+    //     });
+    //     list += '</ul>';
 
-        const el = document.createElement('div');
-        el.className = 'custom-css-key';
-        el.innerHTML = list;
-        document.querySelector('.issue-main-column #details-module_heading').appendChild(el);
-    },
+    //     const el = document.createElement('div');
+    //     el.className = 'custom-css-key';
+    //     el.innerHTML = list;
+    //     document.querySelector('.issue-main-column #details-module_heading').appendChild(el);
+    // },
 };
 
 subtasks.init();
