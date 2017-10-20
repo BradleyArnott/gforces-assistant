@@ -93,7 +93,8 @@ const tickets = {
     },
 
     loopTickets() {
-        const rows = document.querySelectorAll('#gadget-11706-renderbox .issuerow');
+        let rows = document.querySelectorAll('#gadget-11706-renderbox .issuerow');
+        if (!rows.length) rows = document.querySelectorAll('#gadget-69203-renderbox .issuerow');
         const ticketsObj = {};
 
         rows.forEach((row) => {
@@ -213,6 +214,7 @@ const tickets = {
             const user = this.champions[index];
             if (user.name !== this.username) return;
             const table = document.querySelector(user.table);
+            if (!table) return;
             const issues = table.querySelectorAll('.issuerow').length;
             const plural = issues === 1 ? 'is' : 'are';
             const pluralTickets = issues === 1 ? 'ticket' : 'tickets';
@@ -225,7 +227,8 @@ const tickets = {
     },
 
     approval() {
-        const table = document.querySelector('#gadget-79400-renderbox');
+        let table = document.querySelector('#gadget-79400-renderbox');
+        if (!table) table = document.querySelector('#gadget-73000-renderbox');
         const approvals = table.querySelectorAll('.issuerow').length;
         const plural = approvals === 1 ? 'is' : 'are';
         const pluralTickets = approvals === 1 ? 'ticket' : 'tickets';
