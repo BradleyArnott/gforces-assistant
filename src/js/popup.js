@@ -23,9 +23,11 @@ const popup = {
         const loginData = await this.checkLogIn(data.url);
         if (loginData) {
             this.checkSplit(data);
-            this.getDeploy(data.url);
+            this.getDeploy(data.url)
+                .then((whiteLabel) => {
+                    this.checkDevMode(data, whiteLabel);
+                });
             this.setDevMode(data.url);
-            this.checkDevMode(data);
             this.buttons(data.url);
             this.dropdownButton();
             this.trailingSlashes();
@@ -133,24 +135,27 @@ const popup = {
     },
 
     getDeploy(hostname) {
-        const request = new XMLHttpRequest();
-        request.open('GET', `http://${hostname}/backend/assets/`, true);
-        request.onload = () => {
-            if (request.status >= 200 && request.status < 400) {
-                const response = request.responseText;
-                const html = this.parseHTML(response);
-                const date = html.querySelector('#Site_assets_path option[selected=selected]').innerHTML;
-                const url = html.querySelector('.nd-widget-box .alert-info').innerHTML;
-                const hash = url.split('/').slice(-1)[0];
-                const bucket = Object.keys(this.buckets).filter(string => url.includes(string));
+        return new Promise((resolve) => {
+            const request = new XMLHttpRequest();
+            request.open('GET', `http://${hostname}/backend/assets/`, true);
+            request.onload = () => {
+                if (request.status >= 200 && request.status < 400) {
+                    const response = request.responseText;
+                    const html = this.parseHTML(response);
+                    const date = html.querySelector('#Site_assets_path option[selected=selected]');
+                    const url = html.querySelector('.nd-widget-box .alert-info').innerHTML;
+                    const hash = url.split('/').slice(-1)[0];
+                    const bucket = Object.keys(this.buckets).filter(string => url.includes(string));
 
-                document.querySelector('.backendBucket').innerHTML = this.buckets[bucket];
-                document.querySelector('.backendHash').innerHTML = hash;
-                document.querySelector('.timestamp').innerHTML = date;
-            }
-        };
+                    document.querySelector('.backendBucket').innerHTML = this.buckets[bucket];
+                    document.querySelector('.backendHash').innerHTML = hash === 'white-label' ? 'No hash set' : hash;
+                    if (date) document.querySelector('.timestamp').innerHTML = date.innerHTML;
+                    resolve(hash === 'white-label');
+                }
+            };
 
-        request.send();
+            request.send();
+        });
     },
 
     modal() {
@@ -217,14 +222,16 @@ const popup = {
         });
     },
 
-    checkDevMode(data) {
+    checkDevMode(data, whiteLabel) {
         const tempBucket = data.head.match(/<link.+temp-[^"]+/g);
         if (!tempBucket) return;
         const toggle = document.querySelector('.devmode.switch');
 
-        toggle.classList.add('checked');
-        toggle.setAttribute('enabled', true);
-        this.devMode = true;
+        if (!whiteLabel) {
+            toggle.classList.add('checked');
+            toggle.setAttribute('enabled', true);
+            this.devMode = true;
+        }
     },
 
     setDevMode(hostname) {
