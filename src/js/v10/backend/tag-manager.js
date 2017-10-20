@@ -58,18 +58,18 @@ const tagManager = {
         },
     ],
 
-    init() {
+    init() {      
         document.body.addEventListener('click', (e) => {
             const el = e.target;
             if (el.id === 'add-tag' || el.classList.contains('edit-tag')) {
-                console.log(true);
-                tagManager.checkSnippet().then(() => {
-                    tagManager.addEditor();
-                    tagManager.addSearch();
-                    tagManager.searchFunction();
-                    tagManager.addButton();
-                    tagManager.removeButton();
-                });
+                this.checkSnippet()
+                    .then(() => {
+                        this.addEditor();
+                        this.addSearch();
+                        this.searchFunction();
+                        this.addButton();
+                        this.removeButton();
+                    });
             }
         });
     },

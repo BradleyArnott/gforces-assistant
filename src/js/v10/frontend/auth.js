@@ -28,8 +28,10 @@ const auth = {
                 const result = request.responseText;
                 if (result.includes('Components_Auth_LoginForm[username]')) {
                     this.attempts += 1;
-                    console.log(`Login failed - ${this.attempts}`);
-                    if (this.attempts === 3) return;
+                    if (this.attempts === 3) {
+                        console.log('Auto-login failed after 3 attempts');
+                        return;
+                    }
                     setTimeout(() => { this.login(user); }, 2000);
                 } else {
                     sessionStorage.setItem('NDAutoLog', this.date);
