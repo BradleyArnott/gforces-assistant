@@ -1,5 +1,9 @@
 const popup = {
     devMode: false,
+    buckets: {
+        'nd-auto-styles-temp-production': 'V10',
+        'nd-auto-styles-temp-vauxhall-production': 'Vauxhall',
+    },
 
     async init() {
         this.modal();
