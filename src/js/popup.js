@@ -1,7 +1,17 @@
 const popup = {
     devMode: false,
     buckets: {
+        'nd-auto-gmme-styles-temp-production': 'GMME',
+        'nd-auto-styles-temp-jardinev10-production': 'Jardine',
+        'nd-auto-styles-temp-jlr-production-2': 'JLR China',
+        'nd-auto-styles-temp-jlr-euwest1-production': 'JLR EU',
+        'nd-auto-temp-styles-jlr-japan-production': 'JLR Japan',
+        'nd-auto-styles-temp-marshall-production': 'Marshalls',
+        'nd-auto-styles-temp-mazda-production': 'Mazda',
+        'nd-auto-styles-temp-mercedesuvl-production': 'Mercedes UVL',
+        'nd-auto-styles-temp-subaru-production': 'Subaru',
         'nd-auto-styles-temp-production': 'V10',
+        'nd-auto-styles-temp-titan-production': 'V10 Australia',
         'nd-auto-styles-temp-vauxhall-production': 'Vauxhall',
     },
 
@@ -50,7 +60,6 @@ const popup = {
                     const error = html.querySelector('#login-form');
                     if (error) return;
                     document.querySelector('.backend').style.display = 'block';
-                    document.querySelector('.backendTitle').innerHTML = hostname;
                     resolve(true);
                 } else {
                     resolve(false);
@@ -131,10 +140,11 @@ const popup = {
                 const response = request.responseText;
                 const html = this.parseHTML(response);
                 const date = html.querySelector('#Site_assets_path option[selected=selected]').innerHTML;
-                const hash = html.querySelector('.nd-widget-box .alert-info').innerHTML.split('/').slice(-1)[0];
+                const url = html.querySelector('.nd-widget-box .alert-info').innerHTML;
+                const hash = url.split('/').slice(-1)[0];
+                const bucket = Object.keys(this.buckets).filter(string => url.includes(string));
 
-                console.log(html.querySelector('.nd-widget-box .alert-info').innerHTML);
-
+                document.querySelector('.backendBucket').innerHTML = this.buckets[bucket];
                 document.querySelector('.backendHash').innerHTML = hash;
                 document.querySelector('.timestamp').innerHTML = date;
             }
