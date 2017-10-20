@@ -18,24 +18,28 @@ const auth = {
     },
 
     login(user) {
-        $.ajax({
-            url: `${window.location.protocol}//${window.location.hostname}${this.path}`,
-            data: {
-                'Components_Auth_LoginForm[username]': user.username,
-                'Components_Auth_LoginForm[password]': user.password,
-            },
-            type: 'POST',
-        })
-            .done((result) => {
+        const request = new XMLHttpRequest();
+        const data = `Components_Auth_LoginForm[username]=${user.username}&Components_Auth_LoginForm[password]=${user.password}`;
+
+        request.open('POST', `${window.location.protocol}//${window.location.hostname}${this.path}`, true);
+        request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        request.onload = () => {
+            if (request.status >= 200 && request.status < 400) {
+                const result = request.responseText;
                 if (result.includes('Components_Auth_LoginForm[username]')) {
                     this.attempts += 1;
+                    console.log(`Login failed - ${this.attempts}`);
                     if (this.attempts === 3) return;
-                    setTimeout(() => { auth.login(); }, 2000);
+                    setTimeout(() => { this.login(user); }, 2000);
                 } else {
                     sessionStorage.setItem('NDAutoLog', this.date);
                 }
-            });
+            }
+        };
+
+        request.send(data);
     },
+
 
     checkExpiry() {
         const expiryTime = 24 * 3600;

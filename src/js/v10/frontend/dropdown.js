@@ -4,10 +4,9 @@ const dropdown = {
     urlSuffix: 'auto-client/',
 
     init() {
-        dropdown.setOptions().then((data) => {
-            dropdown.modal(data);
-            dropdown.buttons(data);
-        });
+        dropdown.setOptions()
+            .then(dropdown.modal)
+            .then(dropdown.buttons);
     },
 
     modal(options) {
@@ -40,6 +39,8 @@ const dropdown = {
         return new Promise(((resolve) => {
             const options = [];
             const dropdowns = document.querySelectorAll('.header-container .nav li.dropdown');
+
+            if (!dropdowns.length) return;
 
             dropdowns.forEach((el) => {
                 const title = el.querySelector('a > span').innerHTML;

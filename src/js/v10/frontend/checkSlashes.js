@@ -1,98 +1,112 @@
-var trailingSlashes = {},
-    ModulesToIgnore = [
-    'social-icons',
-    'reevoo-badge',
-    'google-map',
-    'social-widget'
-];
+const trailingSlashes = {
+    naughtyList: {},
+    ignore: [
+        'social-icons',
+        'reevoo-badge',
+        'google-map',
+        'social-widget',
+    ],
 
-trailingSlashes.check = function() {
-    $('.gforces-assistant--overlay--confirm').remove();
+    async init() {
+        await trailingSlashes.check();
+        trailingSlashes.present();
+        trailingSlashes.modalClose();
+    },
 
-    return new Promise(function(resolve, reject) {
-        var naughtyList = {},
-            id = 0;
+    check() {
+        return new Promise(((resolve) => {
+            const links = document.querySelectorAll('a');
+            let id = 0;
 
-        $('a').each(function() {
-            var theUrl = $(this).attr('href');
-            if (!theUrl) return;
-            if (theUrl === undefined) return;
-            if (theUrl == 'null') return;
-            if (theUrl.endsWith('/')) return;
-            if (theUrl.startsWith('tel:')) return;
-            if (theUrl.startsWith('#')) return;
-            if (theUrl.endsWith('#')) return;
-            if (theUrl.startsWith('javascript:')) return;
+            links.forEach((link) => {
+                const theUrl = link.getAttribute('href');
+                if (!theUrl) return;
+                if (theUrl === undefined) return;
+                if (theUrl === 'null') return;
+                if (theUrl.endsWith('/')) return;
+                if (theUrl.startsWith('tel:')) return;
+                if (theUrl.startsWith('#')) return;
+                if (theUrl.endsWith('#')) return;
+                if (theUrl.startsWith('javascript:')) return;
 
-            var parent = $(this).closest('.module');
 
-            for (module in ModulesToIgnore) {
-                if (parent.hasClass(ModulesToIgnore[module])) return;
-            }
+                const parent = this.findAncestor(link, 'module');
+                if (!parent) return;
 
-            if (naughtyList[parent[0].classList.value]) {
-                naughtyList[parent[0].classList.value].count++;
-                return;
-            }
-            naughtyList[parent[0].classList.value] = {
-                id: id,
-                el: parent,
-                value: parent[0].classList.value,
-                count: 1
-            };
-            id++;
+                const shouldIgnore = this.ignoreModules(parent);
+                if (shouldIgnore) return;
+
+                if (this.naughtyList[parent.className]) return;
+
+                this.naughtyList[parent.className] = {
+                    id,
+                    el: parent,
+                    value: parent.className,
+                };
+                id += 1;
+            });
+
+            resolve();
+        }));
+    },
+
+    findAncestor(el, cls) {
+        while ((el = el.parentElement) && !el.classList.contains(cls));
+        return el;
+    },
+
+    ignoreModules(el) {
+        const hasClass = this.ignore.filter(module => el.className.includes(module));
+        if (hasClass.length) return true;
+        return false;
+    },
+
+    loopModules() {
+        let modal = '<div class="gforces-assistant--slashes"><a href="#" class="close">X</a><div class="title">Missing trailing slashes:</div>';
+
+        Object.keys(this.naughtyList).forEach((module) => {
+            console.log(this.naughtyList[module].el);
+            this.naughtyList[module].el.setAttribute('id', `slashes-scrollto-${this.naughtyList[module].id}`);
+            this.naughtyList[module].el.style.backgroundColor = 'red';
+            const link = `<a class="link" data-id="${this.naughtyList[module].value}" href="#slashes-scrollto-${this.naughtyList[module].id}">${this.naughtyList[module].value}</a>`;
+            modal += link;
         });
-        resolve(naughtyList);
-    })  
-}
+        return modal;
+    },
 
-trailingSlashes.present = function(modules) {
-    var modal = $('<div class="gforces-assistant--slashes"><a href="#" class="close">X</a><div class="title">Missing trailing slashes:</div></div>');
+    present() {
+        if (Object.keys(this.naughtyList).length === 0) return this.perfect();
 
-    if ($.isEmptyObject(modules)) {
-        var overlayConfirm = $('<div class="gforces-assistant--overlay--confirm"><div class="box"></div></div>');
-        overlayConfirm.appendTo('body');
-        $('.gforces-assistant--overlay--confirm').fadeIn(250).delay(550).fadeOut();
-        return;
-    }
+        let data = this.loopModules(this.naughtyList);
+        data += '</div>';
+        const modal = document.createElement('div');
+        modal.innerHTML = data;
+        if (this.naughtyList.length > 10) modal.classList.add('double-width');
+        return document.body.appendChild(modal);
+    },
 
-    for (module in modules) {
-        modules[module].el.attr('id', 'assistant-scrollto-' + modules[module].id);
-        modules[module].el.css('background', 'red');
-        var link = $('<a class="link" data-id="' + modules[module].value + '" href="#assistant-scrollto-' + modules[module].id + '">' + modules[module].value + '<div class="value">' + modules[module].count + '</div></a>');
-        link.appendTo(modal);
-    }
-    if (modules.length > 10) modal.addClass('double-width');
-    modal.appendTo('body');
-}
+    perfect() {
+        const confirm = document.createElement('div');
+        confirm.className = 'gforces-assistant--overlay--confirm';
+        confirm.innerHTML = '<div class="box"></div>';
+        document.body.appendChild(confirm);
+        confirm.style.display = 'block';
 
-trailingSlashes.modalClose = function(modules) {
-    $('.gforces-assistant--slashes .close').click(function(e) {
-        e.preventDefault();
-        $(this).parent().remove();
+        setTimeout(() => {
+            confirm.style.display = 'none';
+        }, 800);
+    },
 
-        for (module in modules) {
-            modules[module].el.css('background', 'inherit');
-        }
-    })
-}
-
-trailingSlashes.clickAlert = function(modules) {
-
-    $('.gforces-assistant--slashes .link').click(function() {
-        var id = $(this).attr('data-id');
-
-        $(modules[id].el).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-    });
-}
-
-trailingSlashes.init = function() {
-
-    trailingSlashes.check().then(function(modules){
-        trailingSlashes.present(modules);
-        trailingSlashes.clickAlert(modules);
-        trailingSlashes.modalClose(modules);
-    });
-}
+    modalClose() {
+        const close = document.querySelector('.gforces-assistant--slashes .close');
+        close.addEventListener('click', (e) => {
+            e.preventDefault();
+            close.parentNode.remove();
+            Object.keys(this.naughtyList).forEach((module) => {
+                this.naughtyList[module].el.style = '';
+            });
+        });
+    },
+};
 
 trailingSlashes.init();

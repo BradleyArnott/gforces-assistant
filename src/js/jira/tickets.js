@@ -82,7 +82,7 @@ const tickets = {
                 this.approval();
                 this.myIssues();
                 this.checkWorkQueue();
-            }, 1000);
+            }, 1500);
         });
     },
 

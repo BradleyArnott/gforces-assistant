@@ -16,7 +16,6 @@ const popup = {
             this.dropdownButton();
             this.trailingSlashes();
             this.checkOverflow();
-            this.speedTest(data.url);
         }
     },
 
@@ -130,6 +129,8 @@ const popup = {
                 const date = html.querySelector('#Site_assets_path option[selected=selected]').innerHTML;
                 const hash = html.querySelector('.nd-widget-box .alert-info').innerHTML.split('/').slice(-1)[0];
 
+                console.log(html.querySelector('.nd-widget-box .alert-info').innerHTML);
+
                 document.querySelector('.backendHash').innerHTML = hash;
                 document.querySelector('.timestamp').innerHTML = date;
             }
@@ -229,32 +230,6 @@ const popup = {
                 }
             };
             request.send();
-        });
-    },
-
-    speedTest(hostname) {
-        const button = document.querySelector('.speed-test');
-
-        return new Promise((resolve) => {
-            button.addEventListener('click', () => {
-                const request = new XMLHttpRequest();
-                const params = {
-                    crossDomain: true,
-                    dataType: 'jsonp',
-                    url: hostname,
-                    k: 'A.f860abf3c5a1c9c511a1e0b39f7302b5',
-                    f: 'json',
-                    location: 'London_EC2:Chrome',
-                };
-                request.open('POST', 'http://www.webpagetest.org/runtest.php', true);
-                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-                request.send(params);
-                request.onload = () => {
-                    if (request.status >= 200 && request.status < 400) {
-                        resolve();
-                    }
-                };
-            });
         });
     },
 };

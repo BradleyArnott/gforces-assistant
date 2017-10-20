@@ -90,6 +90,9 @@
 /*  ==========================================================================
 	Template Selector 
 	========================================================================== */
+.icon-edit {
+  pointer-events: none;
+}
 .nd-form-standard > .row-fluid > div > .control-group:first-child {
   margin-right: 600px;
 }

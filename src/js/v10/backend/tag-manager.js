@@ -59,10 +59,10 @@ const tagManager = {
     ],
 
     init() {
-        const adds = document.querySelectorAll('.edit-tag, #add-tag');
-
-        adds.forEach((add) => {
-            add.addEventListener('click', () => {
+        document.body.addEventListener('click', (e) => {
+            const el = e.target;
+            if (el.id === 'add-tag' || el.classList.contains('edit-tag')) {
+                console.log(true);
                 tagManager.checkSnippet().then(() => {
                     tagManager.addEditor();
                     tagManager.addSearch();
@@ -70,7 +70,7 @@ const tagManager = {
                     tagManager.addButton();
                     tagManager.removeButton();
                 });
-            });
+            }
         });
     },
 
@@ -207,20 +207,21 @@ const tagManager = {
     },
 
     get(ID) {
+        const request = new XMLHttpRequest();
         const { ref, name } = this.tags[ID];
-        const fullURL = `https://gforcesdevtest.slsapp.com/source/netdirector-auto-resources/trunk/00.%20Misc/js/${ref}`;
-        const scriptTitle = `CSS - ${name}`;
+        const editor = document.getElementById('Snippet_content');
+        const codeMirror = document.querySelector('.CodeMirror');
 
-        $.ajax({
-            url: fullURL,
-            type: 'GET',
-        }).then((data) => {
-            $('#Snippet_title').val(scriptTitle);
-            $('#Snippet_content').val(data);
-            if ($('.CodeMirror').length) {
-                this.CMeditor.setValue($('#Snippet_content').val());
+        request.open('GET', `https://gforcesdevtest.slsapp.com/source/netdirector-auto-resources/trunk/00.%20Misc/js/${ref}`, true);
+        request.onload = () => {
+            if (request.status >= 200 && request.status < 400) {
+                document.getElementById('Snippet_title').value = `CSS - ${name}`;
+                editor.value = request.response;
+
+                if (codeMirror) this.CMeditor.setValue(editor.value);
             }
-        });
+        };
+        request.send();
     },
 };
 

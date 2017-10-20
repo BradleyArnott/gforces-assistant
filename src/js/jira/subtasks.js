@@ -115,7 +115,8 @@ const subtasks = {
         let list = '<div class="key-title"> Label colour key:</div><ul>';
 
         Object.entries(this.labels).forEach((label) => {
-            list += `<li><div style="background:${label[1]};"></div><span>${label[0]}</span></li>`;
+            const [text, color] = label;
+            list += `<li><div style="background:${color};"></div><span>${text}</span></li>`;
         });
         list += '</ul>';
 

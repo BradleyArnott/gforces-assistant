@@ -17,7 +17,6 @@
 				"css/popup.css"
 			],
 			"js": [
-				"js/lib/jquery.min.js",
 				"js/settings.js",
 				"js/v10/frontend/auth.js",
 				"js/v10/backend/tools.js"
@@ -97,7 +96,6 @@
 	],
 	"background": {
 		"scripts": [
-			"js/lib/jquery.min.js",
 			"js/lib/cryptoJS/pbkdf2.js",
 			"js/lib/cryptoJS/aes.js",
 			"js/background.js"
