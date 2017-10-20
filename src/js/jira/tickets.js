@@ -258,7 +258,7 @@ const tickets = {
 
     checkWorkQueue() {
         const request = new XMLHttpRequest();
-        request.open('GET', 'https://jira.netdirector.co.uk/rest/api/2/search?jql=status+in+(%22In+Progress%22,+Reopened,+Error,+Reported,+%22To+Do%22,+%22More+Information%22,+Queued)+AND+(labels+not+in+(CSSQueue,+ProjectCSS,+MobileFirstMigration,+css-core,+css-site-review,+css-code-review)+OR+labels+is+EMPTY)+AND+type+!%3D+%22Project+-+Design%22+AND+assignee+in+(EMPTY)+AND+NOT+reporter+in+(api.user)+AND+Department+%3D+CSS+AND+NOT+project+%3D+11300+AND+NOT+project+%3D+%22Third+Party+Code+Approval%22+AND+issuetype+!%3D+%22QA+Sub-Task%22+ORDER+BY+cf%5B11004%5D+ASC', true);
+        request.open('GET', 'https://jira.netdirector.co.uk/rest/api/2/search?jql=status+in+(%22In+Progress%22,+Reopened,+Error,+Reported,+%22To+Do%22,+%22More+Information%22,+Queued)+AND+(labels+not+in+(CSSQueue,+ProjectCSS,+MobileFirstMigration,+css-core,+css-site-review,+css-code-review)+OR+labels+is+EMPTY)+AND+type+!%3D+%22Project+-+Design%22+AND+assignee+in+(EMPTY)+AND+NOT+reporter+in+(api.user)+AND+Department+%3D+CSS+AND+NOT+project+%3D+11300+AND+NOT+project+%3D+%22Third+Party+Code+Approval%22+AND+issuetype+!%3D+%22QA+Sub-Task%22+ORDER+BY+updated+DESC', true);
         request.onload = () => {
             if (request.status >= 200 && request.status < 400) {
                 const data = JSON.parse(request.response);
@@ -276,7 +276,7 @@ const tickets = {
 
     clearNotDue(issue) {
         this.getTransitions(issue.key).then((data) => {
-            const message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date. 
+            const message = `*Automated message:* This ticket has been set to 'More Info', because it is in the CSS MS ticket queue without a due date & time. 
                             If the time is now after 09:30 AM, please set the due date to no earlier than the next working day. 
                             If this ticket is yet to be quoted on, please move it to the quote queue.
                             If this is QA, it may have accidentally been set to the Type 'Sub-task' instead of 'QA Sub-task.'`;
@@ -364,7 +364,6 @@ const tickets = {
         request.open('PUT', `https://jira.netdirector.co.uk/rest/api/2/issue/${key}`, true);
         request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
         request.onload = () => {
-            console.log(request);
             if (request.status >= 200 && request.status < 400) {
                 console.log(`label "${label}" added to ${key}`);
             }
