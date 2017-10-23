@@ -3,6 +3,11 @@ const overflow = {
 
     async init() {
         await this.get();
+
+        if (!Object.keys(this.naughtyList).length) {
+            this.perfect();
+            return;
+        }
         this.present();
         this.modalClose();
     },
@@ -41,8 +46,6 @@ const overflow = {
     },
 
     present() {
-        if (Object.keys(this.naughtyList).length === 0) return this.perfect();
-
         let data = this.loopModules(this.naughtyList);
         data += '</div>';
         const modal = document.createElement('div');

@@ -27,6 +27,7 @@ const trailingSlashes = {
                 if (theUrl.startsWith('tel:')) return;
                 if (theUrl.startsWith('#')) return;
                 if (theUrl.endsWith('#')) return;
+                /* eslint-disable no-script-url */
                 if (theUrl.startsWith('javascript:')) return;
 
 
@@ -65,7 +66,6 @@ const trailingSlashes = {
         let modal = '<div class="gforces-assistant--slashes"><a href="#" class="close">X</a><div class="title">Missing trailing slashes:</div>';
 
         Object.keys(this.naughtyList).forEach((module) => {
-            console.log(this.naughtyList[module].el);
             this.naughtyList[module].el.setAttribute('id', `slashes-scrollto-${this.naughtyList[module].id}`);
             this.naughtyList[module].el.style.backgroundColor = 'red';
             const link = `<a class="link" data-id="${this.naughtyList[module].value}" href="#slashes-scrollto-${this.naughtyList[module].id}">${this.naughtyList[module].value}</a>`;

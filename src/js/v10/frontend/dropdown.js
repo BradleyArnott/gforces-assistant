@@ -73,21 +73,24 @@ const dropdown = {
     },
 
     buttons(options) {
-        const button = document.querySelector('.gforces-assistant--modal .btn');
+        const buttons = document.querySelectorAll('.gforces-assistant--modal .btn');
 
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
+        buttons.forEach((button) => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
 
-            if (button.classList.contains('confirm')) {
-                const dropdownValue = document.querySelector('.gforces-assistant--modal option:checked').innerHTML;
-                const downloadImages = document.querySelector('.gforces-assistant--modal .checkbox-images').checked;
-                const useTitle = document.querySelector('.gforces-assistant--modal .checkbox-title').checked;
-                const varName = document.querySelector('.gforces-assistant--modal .variable').innerHTML ? document.querySelector('.gforces-assistant--modal .variable').innerHTML : '@dropdown-items';
-                this.confirm(options, downloadImages, useTitle, dropdownValue, varName);
-            }
+                if (button.classList.contains('confirm')) {
+                    const dropdownValue = document.querySelector('.gforces-assistant--modal option:checked').innerHTML;
+                    const downloadImages = document.querySelector('.gforces-assistant--modal .checkbox-images').checked;
+                    const useTitle = document.querySelector('.gforces-assistant--modal .checkbox-title').checked;
+                    const varName = document.querySelector('.gforces-assistant--modal .variable').innerHTML ? document.querySelector('.gforces-assistant--modal .variable').innerHTML : '@dropdown-items';
+                    this.confirm(options, downloadImages, useTitle, dropdownValue, varName);
+                }
 
-            document.querySelector('.gforces-assistant--modal').remove();
-            document.querySelector('.gforces-assistant--overlay').remove();
+                document.querySelector('.gforces-assistant--modal').remove();
+                document.querySelector('.gforces-assistant--overlay').remove();
+
+            });
         });
     },
 
