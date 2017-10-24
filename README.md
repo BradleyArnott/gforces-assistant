@@ -1,6 +1,6 @@
 # GForces CSS Assistant #
 
-<img style="float: right;" src="image/example.png">
+<img align="right" style="float: right;" src="image/example.png">
 The GForces CSS Assistant is a chrome extension for use by GForces frontend developers. It holds a variety of features that help make daily life easier.
 
 ## Getting set up ##
