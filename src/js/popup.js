@@ -20,19 +20,22 @@ const popup = {
         this.getToggles();
 
         const data = await this.checkPage();
-        const loginData = await this.checkLogIn(data.url);
-        if (loginData) {
-            this.checkSplit(data);
-            this.getDeploy(data.url)
-                .then((whiteLabel) => {
-                    this.checkDevMode(data, whiteLabel);
-                });
-            this.setDevMode(data.url);
-            this.buttons(data.url);
-            this.dropdownButton();
-            this.trailingSlashes();
-            this.checkOverflow();
-        }
+        this.checkLogIn(data.url)
+            .then(() => {
+                this.checkSplit(data);
+                this.getDeploy(data.url)
+                    .then((whiteLabel) => {
+                        this.checkDevMode(data, whiteLabel);
+                    });
+                this.setDevMode(data.url);
+                this.buttons(data.url);
+                this.dropdownButton();
+                this.trailingSlashes();
+                this.checkOverflow();
+            })
+            .catch(() => {
+                this.loginFailure();
+            });
     },
 
     parseHTML(str) {
@@ -52,19 +55,46 @@ const popup = {
         }));
     },
 
+    loginFailure() {
+        let shouldLogin = false;
+        V10settings.get('autoLogin')
+            .then((setting) => {
+                if (!setting) return;
+                shouldLogin = true;
+            })
+            .then(() => {
+                if (!shouldLogin) return;
+                V10settings.get('loginFailed')
+                    .then((setting) => {
+                        if (setting || setting === undefined) {
+                            const loginFailed = document.querySelector('.login-failed');
+                            loginFailed.style.display = 'block';
+
+                            loginFailed.querySelector('.btn').addEventListener('click', (e) => {
+                                e.preventDefault();
+                                loginFailed.remove();
+                            });
+                        }
+                    });
+            });
+    },
+
     checkLogIn(hostname) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const request = new XMLHttpRequest();
             request.open('GET', `http://${hostname}/backend/`, true);
             request.onload = () => {
                 if (request.status >= 200 && request.status < 400) {
                     const html = this.parseHTML(request.responseText);
                     const error = html.querySelector('#login-form');
-                    if (error) return;
+                    if (error) {
+                        reject();
+                        return;
+                    }
                     document.querySelector('.backend').style.display = 'block';
-                    resolve(true);
+                    resolve();
                 } else {
-                    resolve(false);
+                    reject();
                 }
             };
             request.send();

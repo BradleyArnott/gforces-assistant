@@ -253,3 +253,29 @@ img {
 .modal .cancel:hover {
   background: #cb273e;
 }
+.login-failed {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  padding: 15px;
+  width: 70%;
+  -webkit-transform: translateX(-50%);
+      -ms-transform: translateX(-50%);
+          transform: translateX(-50%);
+  border-radius: 3px;
+  background: #fff;
+  border: 1px solid #cbcbcb;
+}
+.login-failed ul {
+  padding-left: 20px;
+}
+.login-failed .button {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+.login-failed .btn {
+  display: inline-block;
+  padding: 0 10px;
+}

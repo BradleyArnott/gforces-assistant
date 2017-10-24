@@ -12,6 +12,7 @@ const globalJIRA = {
         newItem += '</div>';
 
         const position = document.querySelector('.aui-header-primary .aui-nav > li:last-child');
+        if (!position) return;
         const parent = position.parentNode;
         const menu = document.createElement('li');
 
