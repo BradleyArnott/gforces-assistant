@@ -14,6 +14,7 @@ On JIRA:
 - Adjusted styling
 - Organise and filter the MS ticket queue
 - Automatically reject MS tickets without quotes or due dates
+- Highlight MS ticket quotes that are outside of SLA
 - Automatically label OEM tickets
 - Organise and filter QA sub-tasks in the projects queue
 - If a champion of an OEM or device, show quick-reference ticket count
@@ -52,6 +53,10 @@ Google Chrome
 - Hash, and deployment date & time isn't accurate for sites on the old asset structure
 
 ## Release Notes ##
+
+### 0.22.0 ###
+- Added buttons to dynamic elements
+- MS Ticket quotes in JIRA are now highlighted if over SLA
 
 ### 0.20.0 ###
 Removed jQuery dependancy

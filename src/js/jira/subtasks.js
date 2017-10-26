@@ -14,22 +14,21 @@ const subtasks = {
         'Resolved',
         'Rejected',
     ],
-    labels: {
-        repeatissue: '#ffb355',
-        'css-qa-config': '#7e82ff',
-        'css-qa-content': '#7e82ff',
-        'css-qa-setup': '#7e82ff',
-        'css-qa-dev': '#ffa4a4',
-        'css-core': '#d5d832',
-        'css-scope-change': '#ff6c6c',
-    },
+    labels: [
+        'repeatissue',
+        'css-qa-config',
+        'css-qa-content',
+        'css-qa-setup',
+        'css-qa-dev',
+        'css-core',
+        'css-scope-change',
+    ],
 
     init() {
         V10settings.get('checkSubTasks').then((checkSubTasks) => {
             if (!checkSubTasks) return;
             this.loopList();
             this.addButton();
-            // this.createKey();
         });
     },
 
@@ -42,22 +41,18 @@ const subtasks = {
             this.identifyCSS(row, status);
             this.hideTeam(row, 'PM');
             this.checkComplete(row, status);
-            // this.checkLabels(row);
+            this.checkLabels(row);
         });
     },
 
-    // checkLabels(el) {
-    //     const labelEl = el.querySelector('.labels-wrap > .labels');
-    //     if (labelEl.nodeName === 'SPAN') return;
-    //     const links = labelEl.querySelectorAll('a');
-
-    //     links.forEach((link) => {
-    //         const label = link.getAttribute('title');
-    //         Object.keys(this.labels).forEach((value) => {
-    //             if (label.indexOf(value) !== -1) el.style.backgroundColor = this.labels[value];
-    //         });
-    //     });
-    // },
+    checkLabels(el) {
+        const labelEl = el.querySelector('.labels-wrap > .labels');
+        if (labelEl.nodeName === 'SPAN') return;
+        const labels = Array.from(labelEl.querySelectorAll('a'));
+        const labelString = labels.reduce((string, label) => `${string} ${label.getAttribute('title')}`, '');
+        el.classList.add('has-label');
+        el.setAttribute('title', labelString);
+    },
 
     checkComplete(el, value) {
         const arrayPos = this.doneLabels.indexOf(value);
@@ -113,21 +108,6 @@ const subtasks = {
             btn.querySelector('span').innerHTML = 'Show all sub-tasks';
         });
     },
-
-    // createKey() {
-    //     let list = '<div class="key-title"> Label colour key:</div><ul>';
-
-    //     Object.entries(this.labels).forEach((label) => {
-    //         const [text, color] = label;
-    //         list += `<li><div style="background:${color};"></div><span>${text}</span></li>`;
-    //     });
-    //     list += '</ul>';
-
-    //     const el = document.createElement('div');
-    //     el.className = 'custom-css-key';
-    //     el.innerHTML = list;
-    //     document.querySelector('.issue-main-column #details-module_heading').appendChild(el);
-    // },
 };
 
 subtasks.init();

@@ -82,6 +82,7 @@ const tickets = {
                 this.approval();
                 this.myIssues();
                 this.checkWorkQueue();
+                this.checkQuoteQueue();
             }, 1500);
         });
     },
@@ -275,6 +276,18 @@ const tickets = {
             }
         };
         request.send();
+    },
+
+    checkQuoteQueue() {
+        const time = moment().unix();
+        let rows = document.querySelectorAll('#gadget-11703-chrome .issuerow');
+        if (!rows.length) rows = document.querySelectorAll('#gadget-69210-chrome .issuerow');
+
+        rows.forEach((row) => {
+            const updated = row.querySelector('.updated time').getAttribute('datetime');
+            const unix = moment(updated).unix();
+            if ((unix + 3600) < time) row.style.backgroundColor = this.colours.late;
+        });
     },
 
     clearNotDue(issue) {

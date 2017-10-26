@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Beau August",
-	"version": "0.20.7",
+	"version": "0.22.0",
 
 	"icons": { 
 		"210": "img/icon.png" 
@@ -59,6 +59,13 @@
 			],
 			"js": [
 				"js/jira/subtasks.js"
+			],
+			"run_at": "document_end"
+		},
+		{
+			"matches": ["*://*/backend/dynamic-elements/update/*"],
+			"js": [
+				"js/v10/backend/dynamic-elements.js"
 			],
 			"run_at": "document_end"
 		},
