@@ -15,6 +15,7 @@ const globalJIRA = {
         newItem += '<ul id="report" class="aui-list-truncate">';
         newItem += '<li><a href="/issues/?jql=labels%20%3D%20css-automated-nodue">No Due Date</a></li>';
         newItem += '<li><a href="/issues/?jql=labels%20%3D%20css-automated-noquote">No Quote</a></li>';
+        newItem += '<li><a href="/issues/?jql=labels%20%3D%20css-escalation">Escalations</a></li>';
         newItem += '</div>';
         newItem += '<div class="aui-dropdown2-section">';
         newItem += '</ul>';

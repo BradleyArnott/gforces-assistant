@@ -47,6 +47,7 @@ const tickets = {
             label: 'css-vauxhall',
             refs: [
                 'VVB', // Master
+                'VMA', // Master amends
                 'BEVB', // Bellingers
                 'BVB', // Beadles
                 'GVB', // Go Vauxhall
@@ -68,7 +69,9 @@ const tickets = {
                 'GMME', // Master
                 'GCREB', // Chevrolet
                 'GCNCC', // Cadillac
-                'UB-', // UMA
+                'UB', // UMA
+                'AJAB', // Al Jomaih
+                'GOVS', // OVS
             ],
         },
     ],
@@ -233,7 +236,7 @@ const tickets = {
         const approvals = table.querySelectorAll('.issuerow').length;
         const plural = approvals === 1 ? 'is' : 'are';
         const pluralTickets = approvals === 1 ? 'ticket' : 'tickets';
-        const text = `There ${plural} <strong>${approvals}</strong> third-party approval ${pluralTickets}`;
+        const text = (approvals !== 0) ? `There ${plural} <strong>${approvals}</strong> third-party approval ${pluralTickets}` : 'There are no third party approval tickets';
         const el = document.createElement('div');
         el.className = 'ticket-count approval';
         el.innerHTML = `<div class="inner">${text}</div>`;

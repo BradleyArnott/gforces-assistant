@@ -55,7 +55,7 @@ Google Chrome
 ## Release Notes ##
 
 ### 0.22.0 ###
-- Added buttons to dynamic elements
+- Added "all" buttons to dynamic elements
 - MS Ticket quotes in JIRA are now highlighted if over SLA
 
 ### 0.20.0 ###

@@ -357,6 +357,9 @@ table td {
 .ticket-count:hover {
   text-decoration: none;
 }
+.ticket-count strong {
+  font-size: 15px;
+}
 .ticket-count .inner {
   padding: 0 20px;
   line-height: 38px;
