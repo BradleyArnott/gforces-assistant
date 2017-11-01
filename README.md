@@ -30,7 +30,7 @@ On V10 Sites (frontend):
 - Quick dev-mode button
 - Dropdown sprite generator
 - Check for links without trailing slashes
-- Check for elements that are overfloing the boundaries of the window
+- Check for elements that are overflowing the boundaries of the window
 
 
 On V10 Sites (admin):
@@ -40,6 +40,7 @@ On V10 Sites (admin):
 - Styles and functionality added to tag management, to write code in-browser
 - Quick-search templates within tag management
 - Access commonly-used JS snippets through tag-management (stored in SVN)
+- Added features to dynamic elements (Add & Remove all)
 
 ## Requirements ##
 
