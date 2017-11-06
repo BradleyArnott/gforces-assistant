@@ -102,7 +102,9 @@ const tickets = {
         const ticketsObj = {};
 
         rows.forEach((row) => {
-            const due = row.querySelector('.customfield_11004 time').getAttribute('datetime');
+            const time = row.querySelector('.customfield_11004 time');
+            if (time.innerHTML === '') return;
+            const due = time.getAttribute('datetime');
             const updated = row.querySelector('.updated time').getAttribute('datetime');
             const timeData = {
                 timeUnix: moment().unix(),
