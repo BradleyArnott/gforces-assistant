@@ -6,14 +6,14 @@
 <body>
 	<div class="gforcesHeader">
 		<img src="img/icon128.png" alt="GForces Chrome Assistant">
-		<div>GForces Assistant</div>
+		<div class="title">GForces Assistant</div>
+		<a href="#" class="options">Update password</a>
 	</div>
 
 	<div class="settings">
 
 		<div class="switchContainer has-options">
 			<div class="title">Auto-login</div>
-			<a href="#" class="options"><img src="img/options.png" alt="Setting options"></a>
 			<div class="switch" data-option="autoLogin" enabled="false">
 				<div class="icon tick"></div>
 				<div class="icon cross"></div>
@@ -52,21 +52,25 @@
 
 		<div class="splitTests">SPLIT TESTS RUNNING</div>
 
-		<div class="backendBucket"></div>
-		<div class="backendHash"></div>
+		<div class="backendDetails">
+			<div class="backendBucket">Checking bucket...</div>
+			<div class="backendHash">Grabbing hash...</div>
 
-		<div class="switchContainer has-label">
-			<div class="title">Last Deploy</div>
-			<div class="timestamp"></div>		
-		</div>
+			<div class="developerMode">
+				<div class="switchContainer full-width has-label">
+					<div class="title">Last Deployment</div>
+					<div class="timestamp"></div>		
+				</div>
 
-		<div class="switchContainer">
-			<div class="title">Dev mode</div>
-			<div class="switch devmode" enabled="false">
-				<div class="icon tick"></div>
-				<div class="icon cross"></div>
-				<div class="slider checked"></div>
-			</div>			
+				<div class="switchContainer full-width">
+					<div class="title">Dev mode</div>
+					<div class="switch devmode" enabled="false">
+						<div class="icon tick"></div>
+						<div class="icon cross"></div>
+						<div class="slider checked"></div>
+					</div>		
+				</div>	
+			</div>
 		</div>
 
 		<div class="buttonContainer">
@@ -76,13 +80,10 @@
 			<div class="button"><a data-path="/backend/dynamic-elements/" target="_blank" class="btn">Dynamic Elements</a></div>
 			<div class="button"><a data-path="/backend/assets/index/" target="_blank" class="btn">Assets</a></div>		
 			<div class="button"><a data-path="/backend/assets/deploy/" target="_blank" class="btn">Deploy</a></div>	
-		</div>
-		<div class="buttonContainer">	
 			<div class="button frontend sprite"><a class="btn">Dropdown Sprite</a></div>
 			<div class="button frontend trailing-slashes"><a class="btn">Trailing Slashes</a></div>	
 			<div class="button frontend overflow-elements"><a class="btn">Check Overflow</a></div>	
 		</div>
-
 	</div>
 
 	<div class="modal">
@@ -94,11 +95,13 @@
 			<label for="password">Password</label>
 			<input class="password" type="password">
 		</div>
-		<div class="button">
-			<a href="" class="btn confirm">Confirm</a>
-		</div>
-		<div class="button">
-			<a href="" class="btn cancel">Cancel</a>
+		<div class="buttons">
+			<div class="button">
+				<a href="" class="btn confirm">Confirm</a>
+			</div>
+			<div class="button">
+				<a href="" class="btn cancel">Cancel</a>
+			</div>
 		</div>
 	</div>
 

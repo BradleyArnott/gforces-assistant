@@ -1,9 +1,30 @@
+.settings {
+	margin: 0 -20px;
+
+	&:after {
+		content: '';
+		display: table;
+		clear: both;
+	}
+}
+
 .switchContainer {
-	padding-top: 20px;
+	float: left;
+	box-sizing: border-box;
+	padding: 5px 20px 0;
+	width: 50%;
 	font-size: 0;
 
-	+ .switchContainer {
-		padding-top: 5px;
+	&:nth-child(2n) {
+		border-left: 1px solid #bdbdbd;
+	}
+
+	&:nth-child(-n + 2) {
+		padding-top: 10px;
+	}
+
+	&:nth-child(n + 3) {
+		padding-bottom: 10px;
 	}
 
 	> * {
@@ -12,57 +33,55 @@
 		box-sizing: border-box;
 	}
 
+	&.full-width {
+		float: none;
+		padding: 5px 0 0;
+		width: 100%;
+		border: none;
+	}
+
 	&.has-label {
 
 		.title {
-			width: ~'calc(100% - 140px)';
+			width: ~'calc(100% - 120px)';
 		}
 
 		.timestamp {
 			float: right;
-			padding: 0 8px;
-			line-height: 19px;
 			font-size: 12px;
-			background: #fff;
-			border-radius: 2px;
-		}
-	}
-
-	&.has-options {
-
-		.title {
-			width: ~'calc(100% - 100px)';
 		}
 	}
 
 	.title {
 		padding-right: 15px;
 		width: ~'calc(100% - 63px)';
-		font-size: 14px;
-	}
-
-	.options {
-		padding: 0 8px;
-		width: 37px;
-		opacity: .5;
-		transition: all .3s;
-
-		&:hover {
-			opacity: 1;
-		}
+		font-weight: bold;
+		font-size: 12px;
 	}
 }
 
 .backend {
 	display: none;
-	margin-top: 20px;
+	padding-top: 10px;
 	border-top: 1px solid #bdbdbd;
+
+	&:after {
+		content: '';
+		display: table;
+		clear: both;
+	}
+}
+
+.backendDetails {
+	float: left;
+	box-sizing: border-box;
+	padding-right: 15px;
+	width: 60%;
 }
 
 .backendBucket {
-	padding-top: 10px;
-	min-height: 19px;
 	text-align: center;
+	min-height: 19px;
 }
 
 .backendHash {
@@ -80,6 +99,14 @@
 	background: #FF9800;
 
     &.active {
-    	display: block;
+		display: block;
+		
+		~ .backendDetails {
+			padding-top: 20px;
+		}
     }
+}
+
+.developerMode {
+	padding-top: 10px;
 }
