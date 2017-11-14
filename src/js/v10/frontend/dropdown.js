@@ -33,6 +33,7 @@ const dropdown = {
 
         overlay.style.display = 'block';
         modal.style.display = 'block';
+        return options;
     },
 
     setOptions() {
@@ -51,7 +52,7 @@ const dropdown = {
         }));
     },
 
-    confirm(options, downloadImages, useTitle, dropdownValue, varName) {
+    confirmAction(options, downloadImages, useTitle, dropdownValue, varName) {
         let dropdownEl;
 
         if (downloadImages) dropdown.grabImages();
@@ -84,7 +85,7 @@ const dropdown = {
                     const downloadImages = document.querySelector('.gforces-assistant--modal .checkbox-images').checked;
                     const useTitle = document.querySelector('.gforces-assistant--modal .checkbox-title').checked;
                     const varName = document.querySelector('.gforces-assistant--modal .variable').innerHTML ? document.querySelector('.gforces-assistant--modal .variable').innerHTML : '@dropdown-items';
-                    this.confirm(options, downloadImages, useTitle, dropdownValue, varName);
+                    dropdown.confirmAction(options, downloadImages, useTitle, dropdownValue, varName);
                 }
 
                 document.querySelector('.gforces-assistant--modal').remove();
