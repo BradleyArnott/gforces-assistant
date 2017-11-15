@@ -50,10 +50,14 @@ Google Chrome
 
 - Tag management editor occassionally incorrectly modifies the wrong line on first init
 - Firefox compatibility is spotty at best
-- No alert for if your email & password combo is wrong/out of date
 - Hash, and deployment date & time isn't accurate for sites on the old asset structure
 
 ## Release Notes ##
+
+### 1.0.0 ###
+- New layout to make room for further features
+- Fixed dropdown script bug (it didn't work at all)
+- Fixed JIRA ticket counter, when ticket doesn't have Due Date
 
 ### 0.23.0 ###
 - Added labels for Escalations in JIRA
