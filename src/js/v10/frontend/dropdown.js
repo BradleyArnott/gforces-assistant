@@ -96,7 +96,7 @@ const dropdown = {
     grabImages() {
         const images = document.querySelectorAll('.list-item img');
 
-        images.each((image) => {
+        images.forEach((image) => {
             const src = image.getAttribute('src');
             if (src.search(this.urlPrefix) === -1) return;
             if (src.search(this.urlSuffix) === -1) return;
