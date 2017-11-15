@@ -16,7 +16,7 @@ const dropdown = {
 
         const modal = document.createElement('div');
         modal.className = 'gforces-assistant--modal';
-        modal.innerHTML = '<label for="dropdown">Dropdown select</label><select class="dropdown-list"></select><label for="variable">Variable name</label><input class="variable" placeholder="eg. @new-cars" type="text"></input><label for="images">Extract Listing Images from current page</label><input class="checkbox-images" type="checkbox" name="images"><label for="title">Use title instead of href</label><input class="checkbox-title" type="checkbox" name="title"><div class="button"><a href="" class="btn confirm">Confirm</a></div><div class="button"><a href="" class="btn cancel">Cancel</a></div>';
+        modal.innerHTML = '<label for="dropdown">Dropdown select</label><select class="dropdown-list"></select><label for="variable">Variable name</label><input class="variable" placeholder="eg. @new-cars" type="text"></input><input class="checkbox-images" type="checkbox" name="images"><label for="images">Extract Listing Images from current page</label><label for="title"><div class="button"><a href="" class="btn confirm">Confirm</a></div><div class="button"><a href="" class="btn cancel">Cancel</a></div>';
         document.body.appendChild(modal);
 
         const confirm = document.createElement('div');
@@ -52,7 +52,7 @@ const dropdown = {
         }));
     },
 
-    confirmAction(options, downloadImages, useTitle, dropdownValue, varName) {
+    confirmAction(options, downloadImages, dropdownValue, varName) {
         let dropdownEl;
 
         if (downloadImages) dropdown.grabImages();
@@ -62,7 +62,7 @@ const dropdown = {
             dropdownEl = option.el;
         });
 
-        this.generateSprite(dropdownEl, useTitle, varName).then((data) => {
+        this.generateSprite(dropdownEl, varName).then((data) => {
             dropdown.copyVariable(data);
             const confirm = document.querySelector('.gforces-assistant--overlay--confirm');
             confirm.style.display = 'block';
@@ -83,9 +83,8 @@ const dropdown = {
                 if (button.classList.contains('confirm')) {
                     const dropdownValue = document.querySelector('.gforces-assistant--modal option:checked').innerHTML;
                     const downloadImages = document.querySelector('.gforces-assistant--modal .checkbox-images').checked;
-                    const useTitle = document.querySelector('.gforces-assistant--modal .checkbox-title').checked;
                     const varName = document.querySelector('.gforces-assistant--modal .variable').innerHTML ? document.querySelector('.gforces-assistant--modal .variable').innerHTML : '@dropdown-items';
-                    dropdown.confirmAction(options, downloadImages, useTitle, dropdownValue, varName);
+                    dropdown.confirmAction(options, downloadImages, dropdownValue, varName);
                 }
 
                 document.querySelector('.gforces-assistant--modal').remove();
@@ -126,14 +125,14 @@ const dropdown = {
         textArea.remove();
     },
 
-    generateSprite(el, useTitle, varName) {
+    generateSprite(el, varName) {
         return new Promise(((resolve) => {
             const menuItems = el.querySelectorAll('.dropdown-menu a');
             let variableString = `${varName}: \n\t"",`;
             const menuLength = menuItems.length;
 
             menuItems.forEach((item, index) => {
-                const attribute = useTitle ? item.getAttribute('title') : item.href.match('[^/]*(?=/$)');
+                const attribute = item.getAttribute('title');
                 variableString += `\n\t"${attribute}"`;
 
                 if (index !== menuLength - 1) {

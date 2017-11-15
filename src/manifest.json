@@ -14,7 +14,7 @@
 		{
 			"matches": ["<all_urls>"],
 			"css": [
-				"css/popup.css"
+				"css/modal.css"
 			],
 			"js": [
 				"js/settings.js",
