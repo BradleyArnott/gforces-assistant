@@ -54,6 +54,12 @@ Google Chrome
 
 ## Release Notes ##
 
+### 1.0.2
+- Let it snow!
+
+### 1.0.1
+- Fixed Tag Management bug whereby text-editor would select in correct line.
+
 ### 1.0.0 ###
 - New layout to make room for further features
 - Fixed dropdown script bug (it didn't work at all)

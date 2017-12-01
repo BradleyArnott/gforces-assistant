@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Beau August",
-	"version": "1.0.1",
+	"version": "1.0.2",
 
 	"icons": { 
 		"210": "img/icon.png" 
@@ -26,6 +26,8 @@
 		{
 			"matches": ["https://jira.netdirector.co.uk/*"],
 			"js": [
+				"js/lib/jquery.min.js",
+				"js/lib/snow.js",
 				"js/jira/global.js"
 			],
 			"run_at": "document_end"
