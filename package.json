@@ -1,14 +1,12 @@
 {
   "name": "gforces-assistant",
-  "version": "0.23.1",
+  "version": "1.0.1",
   "description": "Assistant to help with daily GForces CSS tasks",
   "main": "index.js",
   "author": "Beau August",
   "license": "ISC",
-  "dependencies": {
-    "babel-core": "^6.26.0"
-  },
   "devDependencies": {
+    "babel-core": "^6.26.0",
     "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",

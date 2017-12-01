@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Beau August",
-	"version": "1.0.0",
+	"version": "1.0.1",
 
 	"icons": { 
 		"210": "img/icon.png" 
@@ -73,7 +73,7 @@
 			"matches": ["*://*/backend/tag-management/index/"],
 			"css": [
 				"css/codemirror/codemirror.css",
-				"css/codemirror/monokai.css",
+				"css/codemirror/one-dark.css",
 				"css/codemirror/show-hint.css",
 				"css/codemirror/lint.css",
 				"css/v10/tag-manager.css"
