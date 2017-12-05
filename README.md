@@ -54,6 +54,9 @@ Google Chrome
 
 ## Release Notes ##
 
+### 1.0.3
+- Removed the Snow :(
+
 ### 1.0.2
 - Let it snow!
 
