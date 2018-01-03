@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Beau August",
-	"version": "1.0.3",
+	"version": "1.0.4",
 
 	"icons": { 
 		"210": "img/icon.png" 

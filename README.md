@@ -48,11 +48,13 @@ Google Chrome
 
 ## Known Issues ##
 
-- Tag management editor occassionally incorrectly modifies the wrong line on first init
 - Firefox compatibility is spotty at best
 - Hash, and deployment date & time isn't accurate for sites on the old asset structure
 
 ## Release Notes ##
+
+### 1.0.4
+- Tag that was being checked to verify V10 site had been moved, breaking auto-login features
 
 ### 1.0.3
 - Removed the Snow :(
@@ -61,7 +63,7 @@ Google Chrome
 - Let it snow!
 
 ### 1.0.1
-- Fixed Tag Management bug whereby text-editor would select in correct line.
+- Fixed Tag Management bug whereby text-editor would select incorrect line.
 
 ### 1.0.0 ###
 - New layout to make room for further features

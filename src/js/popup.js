@@ -48,8 +48,8 @@ const popup = {
         const isOnND = '<link href="https://images.netdirector.co.uk" rel="preconnect">';
         return new Promise(((resolve) => {
             chrome.runtime.sendMessage({ action: 'getPageData' }, (data) => {
-                const DOMHead = data[0].head;
-                if (DOMHead.indexOf(isOnND) === -1) return;
+                const DOMBody = data[0].body;
+                if (DOMBody.indexOf(isOnND) === -1) return;
                 resolve(data[0]);
             });
         }));
@@ -84,16 +84,19 @@ const popup = {
             const request = new XMLHttpRequest();
             request.open('GET', `http://${hostname}/backend/`, true);
             request.onload = () => {
+                console.log('what');
                 if (request.status >= 200 && request.status < 400) {
                     const html = this.parseHTML(request.responseText);
                     const error = html.querySelector('#login-form');
                     if (error) {
+                        console.log(error);
                         reject();
                         return;
                     }
                     document.querySelector('.backend').style.display = 'block';
                     resolve();
                 } else {
+                    console.log('Whats your problem');
                     reject();
                 }
             };
