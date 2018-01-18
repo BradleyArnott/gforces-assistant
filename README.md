@@ -52,6 +52,8 @@ Google Chrome
 - Hash, and deployment date & time isn't accurate for sites on the old asset structure
 
 ## Release Notes ##
+### 1.0.5
+- Tag that was being checked to verify V10 site had been moved **BACK**, breaking auto-login features
 
 ### 1.0.4
 - Tag that was being checked to verify V10 site had been moved, breaking auto-login features
