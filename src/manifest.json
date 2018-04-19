@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Beau August",
-	"version": "0.20.7",
+	"version": "1.0.5",
 
 	"icons": { 
 		"210": "img/icon.png" 
@@ -14,7 +14,7 @@
 		{
 			"matches": ["<all_urls>"],
 			"css": [
-				"css/popup.css"
+				"css/modal.css"
 			],
 			"js": [
 				"js/settings.js",
@@ -63,10 +63,17 @@
 			"run_at": "document_end"
 		},
 		{
+			"matches": ["*://*/backend/dynamic-elements/update/*"],
+			"js": [
+				"js/v10/backend/dynamic-elements.js"
+			],
+			"run_at": "document_end"
+		},
+		{
 			"matches": ["*://*/backend/tag-management/index/"],
 			"css": [
 				"css/codemirror/codemirror.css",
-				"css/codemirror/monokai.css",
+				"css/codemirror/one-dark.css",
 				"css/codemirror/show-hint.css",
 				"css/codemirror/lint.css",
 				"css/v10/tag-manager.css"

@@ -36,7 +36,6 @@ const overflow = {
         let modal = '<div class="gforces-assistant--slashes"><a href="#" class="close">X</a><div class="title">Overflowing Content:</div>';
 
         Object.keys(this.naughtyList).forEach((module) => {
-            console.log(this.naughtyList[module].el);
             this.naughtyList[module].el.setAttribute('id', `overflow-scrollto-${this.naughtyList[module].id}`);
             this.naughtyList[module].el.style.backgroundColor = 'red';
             const link = `<a class="link" data-id="${this.naughtyList[module].value}" href="#overflow-scrollto-${this.naughtyList[module].id}">${this.naughtyList[module].value}</a>`;

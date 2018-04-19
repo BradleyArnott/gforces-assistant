@@ -1,85 +1,118 @@
+.settings {
+    margin: 0 -20px;
+
+    &:after {
+        content: '';
+        display: table;
+        clear: both;
+    }
+}
+
 .switchContainer {
-	padding-top: 20px;
-	font-size: 0;
+    float: left;
+    box-sizing: border-box;
+    padding: 5px 20px 0;
+    width: 50%;
+    font-size: 0;
 
-	+ .switchContainer {
-		padding-top: 5px;
-	}
+    &:nth-child(2n) {
+        border-left: 1px solid #bdbdbd;
+    }
 
-	> * {
-		display: inline-block;
-		vertical-align: middle;
-		box-sizing: border-box;
-	}
+    &:nth-child(-n + 2) {
+        padding-top: 10px;
+    }
 
-	&.has-label {
+    &:nth-child(n + 3) {
+        padding-bottom: 10px;
+    }
 
-		.title {
-			width: ~'calc(100% - 140px)';
-		}
+    > * {
+        display: inline-block;
+        vertical-align: middle;
+        box-sizing: border-box;
+    }
 
-		.timestamp {
-			float: right;
-			padding: 0 8px;
-			line-height: 19px;
-			font-size: 12px;
-			background: #fff;
-			border-radius: 2px;
-		}
-	}
+    &.full-width {
+        float: none;
+        padding: 8px 0 0;
+        width: 100%;
+        border: none;
+    }
 
-	&.has-options {
+    &.has-label {
 
-		.title {
-			width: ~'calc(100% - 100px)';
-		}
-	}
+        .title {
+            width: ~'calc(100% - 120px)';
+        }
 
-	.title {
-		padding-right: 15px;
-		width: ~'calc(100% - 63px)';
-		font-size: 14px;
-	}
+        .timestamp {
+            float: right;
+            font-size: 12px;
+        }
 
-	.options {
-		padding: 0 8px;
-		width: 37px;
-		opacity: .5;
-		transition: all .3s;
+        .page-id {
+            float: right;
+            font-size: 12px;
+        }
+    }
 
-		&:hover {
-			opacity: 1;
-		}
-	}
+    .title {
+        padding-right: 15px;
+        width: ~'calc(100% - 63px)';
+        font-weight: bold;
+        font-size: 12px;
+    }
 }
 
 .backend {
-	display: none;
-	margin-top: 20px;
-	border-top: 1px solid #bdbdbd;
+    display: none;
+    padding-top: 10px;
+    border-top: 1px solid #bdbdbd;
+
+    &:after {
+        content: '';
+        display: table;
+        clear: both;
+    }
+}
+
+.backendDetails {
+    float: left;
+    box-sizing: border-box;
+    padding-right: 15px;
+    width: 60%;
 }
 
 .backendBucket {
-	padding-top: 10px;
-	min-height: 19px;
-	text-align: center;
+    text-align: center;
+    min-height: 19px;
 }
 
 .backendHash {
-	text-align: center;
-	padding-top: 10px;
-	font-size: 10px;
-	height: 1.4 * 10px;
+    text-align: center;
+    padding-top: 10px;
+    font-size: 10px;
+    height: 1.4 * 10px;
 }
 
 .splitTests {
-	display: none;
+    display: none;
+    margin-bottom: 10px;
     text-align: center;
     line-height: 26px;
     font-weight: bold;
-	background: #FF9800;
+    background: #FF9800;
 
     &.active {
-    	display: block;
+        display: block;
+        
+        ~ .backendDetails {
+            padding-top: 10px;
+        }
     }
+}
+
+.developerMode {
+    padding-top: 10px;
 }

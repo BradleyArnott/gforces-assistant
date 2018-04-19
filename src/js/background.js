@@ -14,8 +14,7 @@ const background = {
                 }
 
                 chrome.storage.local.set({
-                    label: 'passphrase',
-                    value: passphrase,
+                    passphrase,
                 });
             }
         });
@@ -45,10 +44,12 @@ const background = {
             const pageUrl = window.location.hostname;
             const pageHead = document.head.innerHTML;
             const pageDOM = document.body.innerHTML;
+            const bodyClassList = document.body.classList;
             const data = {
                 url: pageUrl,
                 head: pageHead,
                 body: pageDOM,
+                bodyClassList: [...bodyClassList],
             };
 
             return data;
@@ -100,7 +101,7 @@ const background = {
     setAuth(data) {
         this.get('passphrase')
             .then((result) => {
-                const passphrase = result.value;
+                const { passphrase } = result;
                 const { username, password } = data;
                 const encrypted = this.encrypt(password, passphrase);
                 const userData = {
@@ -117,19 +118,16 @@ const background = {
     getAuth() {
         return new Promise(((resolve) => {
             this.get('passphrase')
-                .then((passphrase) => {
-                    const { value } = passphrase;
-                    this.get('userData')
-                        .then((data) => {
-                            if (data.userData.username === undefined) return;
-                            const { username, password: encrypted } = data.userData;
-                            const decrypted = this.decrypt(encrypted, value);
-                            const authData = {};
+                .then((data) => {
+                    const { passphrase, userData } = data;
+                    if (userData === undefined) return;
+                    const { username, password: encrypted } = data.userData;
+                    const decrypted = this.decrypt(encrypted, passphrase);
+                    const authData = {};
 
-                            authData.username = username;
-                            authData.password = decrypted.toString(CryptoJS.enc.Utf8);
-                            resolve(authData);
-                        });
+                    authData.username = username;
+                    authData.password = decrypted.toString(CryptoJS.enc.Utf8);
+                    resolve(authData);
                 });
         }));
     },

@@ -12,6 +12,8 @@ module.exports = {
        "no-param-reassign": [2, { "props": false }]
     },
     "globals": {
+        "V10settings": false,
+        "moment": false,
         "chrome": false
     }
 };

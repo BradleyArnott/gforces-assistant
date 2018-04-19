@@ -58,7 +58,7 @@ const tagManager = {
         },
     ],
 
-    init() {      
+    init() {
         document.body.addEventListener('click', (e) => {
             const el = e.target;
             if (el.id === 'add-tag' || el.classList.contains('edit-tag')) {
@@ -159,9 +159,8 @@ const tagManager = {
             tabSize: 4,
             indentUnit: 4,
             indentWithTabs: true,
-            theme: 'monokai',
+            theme: 'one-dark',
             keyMap: 'sublime',
-            lineWrapping: true,
             gutters: ['CodeMirror-lint-markers'],
             lint: true,
             lintOnChange: true,

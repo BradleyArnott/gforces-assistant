@@ -20,19 +20,24 @@ const popup = {
         this.getToggles();
 
         const data = await this.checkPage();
-        const loginData = await this.checkLogIn(data.url);
-        if (loginData) {
-            this.checkSplit(data);
-            this.getDeploy(data.url)
-                .then((whiteLabel) => {
-                    this.checkDevMode(data, whiteLabel);
-                });
-            this.setDevMode(data.url);
-            this.buttons(data.url);
-            this.dropdownButton();
-            this.trailingSlashes();
-            this.checkOverflow();
-        }
+        this.checkLogIn(data.url)
+            .then(() => {
+                this.checkSplit(data);
+                this.getDeploy(data.url)
+                    .then((whiteLabel) => {
+                        this.checkDevMode(data, whiteLabel);
+                    });
+                this.setDevMode(data.url);
+                this.buttons(data.url);
+                this.dropdownButton();
+                this.trailingSlashes();
+                this.checkOverflow();
+                this.getPageId(data);
+                this.darkTheme();
+            })
+            .catch(() => {
+                this.loginFailure();
+            });
     },
 
     parseHTML(str) {
@@ -45,26 +50,53 @@ const popup = {
         const isOnND = '<link href="https://images.netdirector.co.uk" rel="preconnect">';
         return new Promise(((resolve) => {
             chrome.runtime.sendMessage({ action: 'getPageData' }, (data) => {
-                const DOMHead = data[0].head;
-                if (DOMHead.indexOf(isOnND) === -1) return;
+                const DOMBody = data[0].head;
+                if (DOMBody.indexOf(isOnND) === -1) return;
                 resolve(data[0]);
             });
         }));
     },
 
+    loginFailure() {
+        let shouldLogin = false;
+        V10settings.get('autoLogin')
+            .then((setting) => {
+                if (!setting) return;
+                shouldLogin = true;
+            })
+            .then(() => {
+                if (!shouldLogin) return;
+                V10settings.get('loginFailed')
+                    .then((setting) => {
+                        if (setting || setting === undefined) {
+                            const loginFailed = document.querySelector('.login-failed');
+                            loginFailed.style.display = 'block';
+
+                            loginFailed.querySelector('.btn').addEventListener('click', (e) => {
+                                e.preventDefault();
+                                loginFailed.remove();
+                            });
+                        }
+                    });
+            });
+    },
+
     checkLogIn(hostname) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const request = new XMLHttpRequest();
             request.open('GET', `http://${hostname}/backend/`, true);
             request.onload = () => {
                 if (request.status >= 200 && request.status < 400) {
                     const html = this.parseHTML(request.responseText);
                     const error = html.querySelector('#login-form');
-                    if (error) return;
+                    if (error) {
+                        reject();
+                        return;
+                    }
                     document.querySelector('.backend').style.display = 'block';
-                    resolve(true);
+                    resolve();
                 } else {
-                    resolve(false);
+                    reject();
                 }
             };
             request.send();
@@ -132,6 +164,34 @@ const popup = {
                 action: 'checkOverflow',
             });
         });
+    },
+
+    getPageId(data) {
+        const theId = Array.from(data.bodyClassList).find(cls => cls.startsWith('id-'));
+        document.querySelector('.page-id').innerHTML = theId;
+    },
+
+    darkTheme() {
+        var cb = document.getElementById('darkThemeCheck');
+        var page = document.getElementById('pageWrap');
+        
+        var checked = function(bool) {
+            if (bool) {
+                page.setAttribute('class', 'dark');
+                localStorage.setItem('checkedDark', true);
+            } else {
+                page.removeAttribute('class', 'dark');
+                localStorage.removeItem('checkedDark');
+            }
+        }
+        
+        cb.addEventListener('change', function () {
+            checked(cb.checked);
+        }); 
+        
+        cb.checked = localStorage.getItem('checkedDark');
+        checked(localStorage.getItem('checkedDark'));
+
     },
 
     getDeploy(hostname) {
