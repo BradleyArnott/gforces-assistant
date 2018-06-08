@@ -6,6 +6,9 @@ html {
   line-height: 1.6;
   direction: ltr;
 }
+body {
+  height: calc(100% - 50px) !important;
+}
 a,
 a:hover {
   color: initial;
@@ -211,6 +214,45 @@ a:hover {
 .nd-edit div[data-module].tabs > .nd-module-btns:after {
   content: "Tabs";
 }
+.nd-edit div[class*="layout-"] > .nd-module-btns:after {
+  content: "Layout";
+}
+.nd-edit div.layout-1 > .nd-module-btns:after {
+  content: "Layout 1";
+}
+.nd-edit div.layout-2 > .nd-module-btns:after {
+  content: "Layout 2";
+}
+.nd-edit div.layout-3 > .nd-module-btns:after {
+  content: "Layout 3";
+}
+.nd-edit div.layout-4 > .nd-module-btns:after {
+  content: "Layout 4";
+}
+.nd-edit div.layout-5 > .nd-module-btns:after {
+  content: "Layout 5";
+}
+.nd-edit div.layout-6 > .nd-module-btns:after {
+  content: "Layout 6";
+}
+.nd-edit div.layout-7 > .nd-module-btns:after {
+  content: "Layout 7";
+}
+.nd-edit div.layout-8 > .nd-module-btns:after {
+  content: "Layout 8";
+}
+.nd-edit div.layout-9 > .nd-module-btns:after {
+  content: "Layout 9";
+}
+.nd-edit div.layout-10 > .nd-module-btns:after {
+  content: "Layout 10";
+}
+.nd-edit div.layout-11 > .nd-module-btns:after {
+  content: "Layout 11";
+}
+.nd-edit div.layout-12 > .nd-module-btns:after {
+  content: "Layout 12";
+}
 .nd-edit div[data-module].modal {
   margin: 0 !important;
   width: auto !important;
@@ -369,47 +411,11 @@ a:hover {
 .nd-edit div[title="NewFeatures"] > .nd-module-btns:after {
   content: "NewFeatures" !important;
 }
+.nd-edit div[title="Media"] > .nd-module-btns:after {
+  content: "Media" !important;
+}
 .nd-edit .sticky-module[data-module] > .nd-module-btns:after {
   content: "Sticky Module";
-}
-.nd-edit div[class*="layout-"] > .nd-module-btns:after {
-  content: "Layout";
-}
-.nd-edit div.layout-1 .nd-module-btns:after {
-  content: "Layout 1";
-}
-.nd-edit div.layout-2 .nd-module-btns:after {
-  content: "Layout 2";
-}
-.nd-edit div.layout-3 .nd-module-btns:after {
-  content: "Layout 3";
-}
-.nd-edit div.layout-4 .nd-module-btns:after {
-  content: "Layout 4";
-}
-.nd-edit div.layout-5 .nd-module-btns:after {
-  content: "Layout 5";
-}
-.nd-edit div.layout-6 .nd-module-btns:after {
-  content: "Layout 6";
-}
-.nd-edit div.layout-7 .nd-module-btns:after {
-  content: "Layout 7";
-}
-.nd-edit div.layout-8 .nd-module-btns:after {
-  content: "Layout 8";
-}
-.nd-edit div.layout-9 .nd-module-btns:after {
-  content: "Layout 9";
-}
-.nd-edit div.layout-10 .nd-module-btns:after {
-  content: "Layout 10";
-}
-.nd-edit div.layout-11 .nd-module-btns:after {
-  content: "Layout 11";
-}
-.nd-edit div.layout-12 .nd-module-btns:after {
-  content: "Layout 12";
 }
 .nd-edit div.ui-state-highlight {
   border: 2px dashed #179517 !important;
@@ -506,6 +512,50 @@ a:hover {
 }
 .nd-edit-wireframe .modal {
   display: none;
+}
+.nd-edit-wireframe .modal .modal-header {
+  display: none;
+}
+.nd-edit-wireframe .modal .modal-body {
+  position: relative;
+}
+.nd-edit-wireframe .modal .modal-body:before {
+  content: "Modal Body";
+  color: #fff;
+  font-weight: bold !important;
+  padding: 0 10px;
+  line-height: 35px !important;
+  font-size: 12px !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  background-color: #f39c12;
+  font-family: Arial, Helvetica, sans-serif !important;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  width: 100%;
+}
+.nd-edit-wireframe .modal .modal-footer {
+  position: relative;
+  margin-top: 20px;
+}
+.nd-edit-wireframe .modal .modal-footer:before {
+  content: "Modal Footer";
+  color: #fff;
+  font-weight: bold !important;
+  padding: 0 10px;
+  line-height: 35px !important;
+  font-size: 12px !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  background-color: #f39c12;
+  font-family: Arial, Helvetica, sans-serif !important;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  width: 100%;
 }
 .nd-edit-wireframe [data-module].footer-container,
 .nd-edit-wireframe [data-module].header-container {
@@ -975,9 +1025,6 @@ a:hover {
 }
 .nd-edit-wireframe div.span12.ui-sortable:before {
   content: "Span12";
-}
-.nd-edit-wireframe #wrap > .modal {
-  display: none;
 }
 .nd-edit-wireframe .ui-sortable-helper {
   max-height: 200px;
