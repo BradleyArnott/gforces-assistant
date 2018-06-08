@@ -429,6 +429,12 @@ a:hover {
 .nd-edit .cycle .nd-module-btns {
   display: none !important;
 }
+.nd-edit .listing[data-module] .list-item {
+  display: none;
+}
+.nd-edit .listing[data-module] .list-item:first-child {
+  display: block;
+}
 .icon-question-sign {
   display: inline-block;
   width: 14px;
@@ -761,7 +767,10 @@ a:hover {
     width: calc(100% - 20px) !important;
   }
 }
-.nd-edit-wireframe .span5 .span4 {
+.nd-edit-wireframe [class^="span"]:not(.span12) .span4,
+.nd-edit-wireframe [class^="span"]:not(.span12) .span3,
+.nd-edit-wireframe [class^="span"]:not(.span12) .span2,
+.nd-edit-wireframe [class^="span"]:not(.span12) .span1 {
   width: calc(100% - 20px) !important;
 }
 .nd-edit-wireframe .header-container header.nd-edit,
@@ -798,6 +807,8 @@ a:hover {
   opacity: 1 !important;
   -ms-flex-pack: start;
       justify-content: start;
+  -ms-flex-wrap: nowrap !important;
+      flex-wrap: nowrap !important;
 }
 .nd-edit-wireframe .nd-module-btns > * {
   -ms-flex-positive: 0 !important;
@@ -965,6 +976,19 @@ a:hover {
 .nd-edit-wireframe .tabs[data-module] .tab-inset {
   padding: 15px 0;
   border: 1px solid #edf2f9;
+}
+.nd-edit-wireframe .listing[data-module] {
+  padding: 60px 10px 20px;
+  height: auto !important;
+}
+.nd-edit-wireframe .listing[data-module] .list-item {
+  display: none;
+}
+.nd-edit-wireframe .listing[data-module] .list-item:first-child {
+  display: block;
+}
+.nd-edit-wireframe .listing[data-module] > .inner {
+  display: block !important;
 }
 .nd-edit-wireframe div[class*="span"].ui-sortable {
   box-sizing: border-box;
@@ -1267,6 +1291,7 @@ a:hover {
   box-shadow: none;
 }
 .nd-dropdown-menu > li > a {
+  color: #000;
   margin: 0;
   display: block;
   text-decoration: none;
