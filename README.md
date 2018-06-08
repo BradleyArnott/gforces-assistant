@@ -54,6 +54,9 @@ Google Chrome
 
 ## Release Notes ##
 
+### 1.1.0
+- Added new backend styles and updated add and clone buttons to match
+
 ### 1.0.7
 - Added jira styles for the project dashboard and a button to easily reach the top navigation backend of V10
 
@@ -82,7 +85,7 @@ Google Chrome
 
 ### 0.23.0 ###
 - Added labels for Escalations in JIRA
-- QA Sub-tasks now have icons and title attributes applied if there are labels applied 
+- QA Sub-tasks now have icons and title attributes applied if there are labels applied
 ### 0.22.0 ###
 - Added "all" buttons to dynamic elements
 - MS Ticket quotes in JIRA are now highlighted if over SLA

@@ -6,8 +6,8 @@
 	"author": "Bradley Arnott",
 	"version": "1.0.7",
 
-	"icons": { 
-		"210": "img/icon.png" 
+	"icons": {
+		"210": "img/icon.png"
 	},
 
 	"content_scripts": [
@@ -40,7 +40,7 @@
 				"js/jira/tickets.js"
 			],
 			"run_at": "document_end"
-		},	
+		},
 		{
 			"matches": ["https://jira.netdirector.co.uk/secure/RapidBoard.jspa*"],
 			"js": [
@@ -99,7 +99,10 @@
 		"js/v10/backend/templates.js",
 		"js/v10/backend/order.js",
 		"js/v10/backend/clone.js",
-		"css/v10/editor.css"
+		"css/v10/templateEditor.css",
+		"css/v10/editor.css",
+		"css/images/template-editor/glyphicons-halflings.png",
+		"css/images/template-editor/glyphicons-halflings-white.png"
 	],
 	"background": {
 		"scripts": [

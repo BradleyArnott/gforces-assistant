@@ -15,8 +15,8 @@ const cloneButton = {
                 if (!clone) {
                     const newButton = document.createElement('a');
                     newButton.className = 'js-module-clone nd-clone nd-module-remove';
-                    newButton.style.cssText = 'border-radius: 0 0 3px 3px; background: #49ddaa !important; margin-right: 3px !important;';
-                    newButton.innerHTML = '<i class="nd-icon-plus nd-icon-invert"></i>';
+                    newButton.style.cssText = 'background: #49ddaa !important;';
+                    newButton.innerHTML = '<i class="nd-icon-plus nd-icon-invert" style="background-position: -408px -96px;"></i>';
                     button.appendChild(newButton);
                 }
             });

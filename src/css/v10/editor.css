@@ -1,32 +1,6 @@
 /*  ==========================================================================
-	Order Modal 
-	========================================================================== */
-.order-modal-overlay {
-  display: none;
-  position: fixed;
-  z-index: 2999;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-.order-modal {
-  display: none;
-  position: fixed;
-  z-index: 3000;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
-  width: 300px;
-  border: 1px solid #cacaca;
-  border-radius: 3px;
-  padding: 5px 5px 50px;
-  background: #fff;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-}
+	Order Modal
+  ========================================================================== */
 .order-modal span {
   display: block;
   padding: 5px 10px;
@@ -37,28 +11,9 @@
 .order-modal span:last-child {
   border: none;
 }
-.order-modal a {
-  position: absolute;
-  bottom: 10px;
-  width: 42%;
-  text-align: center;
-  line-height: 30px;
-  background: #e5e5e5;
-  color: #404040;
-  text-decoration: none;
-}
-.order-modal a ~ a {
-  right: 10px;
-}
-.order-modal a:hover {
-  background: #ccc;
-}
 /*  ==========================================================================
-	Template Editor 
+	Template Editor
 	========================================================================== */
-* {
-  pointer-events: auto !important;
-}
 .setting_markup textarea {
   min-width: 100%;
   min-height: 140px;
