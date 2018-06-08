@@ -54,6 +54,9 @@ Google Chrome
 
 ## Release Notes ##
 
+### 1.1.1
+- Fixed tabs styling for new editor styles
+
 ### 1.1.0
 - Added new backend styles and updated add and clone buttons to match
 

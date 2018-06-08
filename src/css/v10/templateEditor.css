@@ -905,14 +905,14 @@ a:hover {
   top: 0;
   background: #c0392b;
 }
-.nd-edit-wireframe .tab-pane {
+.nd-edit-wireframe .tabs[data-module] .tab-pane {
   display: none;
   padding: 2px;
 }
-.nd-edit-wireframe .tab-pane.active {
+.nd-edit-wireframe .tabs[data-module] .tab-pane.active {
   display: block;
 }
-.nd-edit-wireframe .tab-inset {
+.nd-edit-wireframe .tabs[data-module] .tab-inset {
   padding: 15px 0;
   border: 1px solid #edf2f9;
 }
