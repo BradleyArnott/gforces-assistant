@@ -435,6 +435,21 @@ a:hover {
 .nd-edit .listing[data-module] .list-item:first-child {
   display: block;
 }
+.nd-edit .nd-tab-remove {
+  background-color: #c0392b;
+}
+.nd-edit .nd-tab-add {
+  cursor: pointer;
+  display: block;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  padding: 0 10px;
+  -ms-flex-item-align: stretch;
+      align-self: stretch;
+  background-color: #27ae60;
+}
 .icon-question-sign {
   display: inline-block;
   width: 14px;
@@ -1094,6 +1109,9 @@ a:hover {
 }
 .nd-icon-circle-arrow-left {
   background-position: -264px -144px;
+}
+.nd-icon-plus {
+  background-position: -408px -96px;
 }
 .nd-btn {
   position: relative;
