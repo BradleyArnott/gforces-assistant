@@ -541,6 +541,7 @@ a:hover {
   position: relative;
 }
 .nd-edit-wireframe .modal .modal-body:before {
+  box-sizing: border-box;
   content: "Modal Body";
   color: #fff;
   font-weight: bold !important;
@@ -562,6 +563,7 @@ a:hover {
   margin-top: 20px;
 }
 .nd-edit-wireframe .modal .modal-footer:before {
+  box-sizing: border-box;
   content: "Modal Footer";
   color: #fff;
   font-weight: bold !important;
@@ -955,13 +957,13 @@ a:hover {
   width: 100%;
   -ms-flex-pack: distribute;
       justify-content: space-around;
+  padding-bottom: 5px;
 }
 .nd-edit-wireframe .tabs[data-module] > .tab-nav li {
   -ms-flex: 1 1 auto;
       flex: 1 1 auto;
   text-align: center;
   position: relative;
-  padding-bottom: 5px;
 }
 .nd-edit-wireframe .tabs[data-module] > .tab-nav li.active a {
   border-bottom: solid 10px #2980b9;
