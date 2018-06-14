@@ -1,0 +1,52 @@
+[
+  {
+    "heading": "ND require",
+    "description": "wrapper to run our code after V10 has loaded certain files",
+    "code": "nd.auto.require(['jquery'], function($) {\n\t// CODE GOES HERE \n});"
+  },
+  {
+    "heading": "Editor Check",
+    "description": "check if we are running in the frontend",
+    "code": "if($('[href*=\"/templateEditor.css\"]').length == 0) {\n\t// CODE GOES HERE \n}"
+  },
+  {
+    "heading": "Check element exists on page",
+    "description": "check to see if element exists on page before running script",
+    "code": "var checkElementExistsInterval = setInterval(function() {\n\tif ($('ELEMENT_SELECTOR').length) {\n\t\t// CODE GOES HERE clearInterval(checkElementExistsInterval); \n\t} \n}, 300);"
+  },
+  {
+    "heading": "Javascript onload",
+    "description": "native javascript onload wrap",
+    "code": "window.onload = function(e) {\n\t// CODE GOES HERE \n}"
+  },
+  {
+    "heading": "jQuery onload",
+    "description": "jquery version of onload",
+    "code": "$(window).load(function() {\n\t// CODE GOES HERE \n}"
+  },
+  {
+    "heading": "Global variable",
+    "description": "make a variable available in the window global scope, usually needed for 3rd party scripts. Do not use willy nilly.",
+    "code": "window.[VARIABLE_NAME] = [VARIABLE_VALUE];"
+  },
+  {
+    "heading": "Javascript GET",
+    "description": "native javascript to load external file, try using 'externalScriptsLoader' first.",
+    "code": "var request = new XMLHttpRequest();\nrequest.open('GET', URL, true);\nrequest.onload = function() {\n\tif (request.status >= 200 && request.status < 400) {\n\t\t// SUCCESS\n\t} else {\n\t\t// ERROR\n\t}\n};\nrequest.send();"
+  },
+  {
+    "heading": "jQuery get",
+    "description": "jquery version of get script",
+    "code": "$.get('URL')\n.done(function(response) {\n\t// SUCCESS\n})\n.fail(function(error) {\n\t// ERROR\n})"
+  },
+  {
+    "heading": "Self invoking function",
+    "description": "this function will call itself making it run asap",
+    "code": "(function() {\n\t// CODE GOES HERE\n})();"
+  },
+  {
+    "heading": "jQuery each",
+    "description": "loops through a collection of DOM items",
+    "code": "$('SELECTOR').each(function() {\n\t// CODE GOES HERE\n\t// $(this) is the current item\n});"
+  }
+]

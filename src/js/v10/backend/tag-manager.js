@@ -1,3 +1,6 @@
+
+const cheatSheetMarkup = '<div data-toggle="collapse" data-target="#nd-accordion-box" class="nd-widget-title nd-widget-title-accordion collapsed"><span class="icon nd-icon-right"> <a href="#nd-accordion-box" data-toggle="collapse" class="accordion-toggle icon-down collapsed"></a></span><h2> <i class="icon-info-sign icon-green "></i>Tag Managment Cheatsheet</h2></div><div data-toggle="collapse" class="nd-widget-accordion collapse" id="nd-accordion-box" style="height: 0px;"><div class="nd-widget-content"> <div class="row-fluid"> <div class="span12"> <div class="alert alert-info">The below examples are to help with adding scripts into tag management</div></div></div><div class="row-fluid"> <div class="span12"> <div id="grid" class="grid"> </div></div></div></div></div><style>.grid{column-count: 4; background: #333; color: #fff; height: 100%; padding: 20px; overflow: auto; font-size: 14px;}.grid-item{break-inside: avoid; page-break-inside: avoid; padding: 10px;}.heading{color: #d7ba7d;}.description{color: #888;}</style>';
+
 const tagManager = {
     CMeditor: '',
     tags: [
@@ -69,6 +72,7 @@ const tagManager = {
                         this.searchFunction();
                         this.addButton();
                         this.removeButton();
+                        this.addCheatSheet();
                     });
             }
         });
@@ -125,7 +129,7 @@ const tagManager = {
         button.href = '#';
         button.setAttribute('title', 'Add');
         button.innerHTML = 'Use predefined code';
-        document.body.appendChild(button);
+        document.getElementById('tag-form').querySelector('.control-group').appendChild(button);
 
         button.addEventListener('click', (e) => {
             e.preventDefault();
@@ -153,7 +157,8 @@ const tagManager = {
     },
 
     addEditor() {
-        this.CMeditor = CodeMirror.fromTextArea(document.getElementById('Snippet_content'), {
+        const editor = document.getElementById('Snippet_content');
+        this.CMeditor = CodeMirror.fromTextArea(editor, {
             mode: 'javascript',
             lineNumbers: true,
             tabSize: 4,
@@ -167,8 +172,48 @@ const tagManager = {
         });
 
         const save = () => this.CMeditor.save();
+        if (!editor.value.trim()) this.loadDefaultScript();
         this.CMeditor.on('change', save);
         document.querySelector('.nd-form-standard > .row-fluid > .span8').classList.remove('span8');
+    },
+
+    loadDefaultScript() {
+        const request = new XMLHttpRequest();
+        const editor = document.getElementById('Snippet_content');
+        const codeMirror = document.querySelector('.CodeMirror');
+        request.open('GET', chrome.extension.getURL('js/v10/backend/default-script.js'), true);
+        request.onload = () => {
+            if (request.status >= 200 && request.status < 400) {
+                editor.value = request.response;
+                if (codeMirror) this.CMeditor.setValue(editor.value);
+            }
+        };
+        request.send();
+    },
+
+    addCheatSheet() {
+        const tagForm = document.getElementById('tag-form');
+        const content = cheatSheetMarkup;
+        const widget = document.createElement('div');
+        widget.classList.add('nd-widget-box');
+        widget.innerHTML = content;
+        tagForm.appendChild(widget);
+
+        const request = new XMLHttpRequest();
+        request.open('GET', chrome.extension.getURL('js/v10/backend/cheatsheet.json'), true);
+        request.onload = () => {
+            if (request.status >= 200 && request.status < 400) {
+                const grid = document.getElementById('grid');
+                const html = JSON.parse(request.response).map(v => `<div class="grid-item">
+                    <div class="heading">${v.heading}</div>
+                    <div class="description">${v.description}</div>
+                    <pre class="language-javascript"><code class="language-javascript">${v.code}</code></pre>
+                </div>`);
+                grid.innerHTML = html.join('');
+                Prism.highlightAll();
+            }
+        };
+        request.send();
     },
 
     scriptClick() {

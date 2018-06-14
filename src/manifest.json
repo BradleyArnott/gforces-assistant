@@ -4,7 +4,7 @@
 	"short_name": "GFA",
 	"description": "Assistant to help with daily GForces CSS tasks",
 	"author": "Bradley Arnott",
-	"version": "1.1.4",
+	"version": "1.1.5",
 
 	"icons": {
 		"210": "img/icon.png"
@@ -76,8 +76,8 @@
 				"css/codemirror/one-dark.css",
 				"css/codemirror/show-hint.css",
 				"css/codemirror/lint.css",
+				"css/prism-tomorrow.min.css",
 				"css/v10/tag-manager.css"
-
 			],
 			"js": [
 				"js/lib/codemirror/codemirror.js",
@@ -90,15 +90,18 @@
 				"js/lib/codemirror/show-hint.js",
 				"js/lib/codemirror/lint.js",
 				"js/lib/codemirror/javascript-lint.js",
+				"js/lib/prism.min.js",
 				"js/v10/backend/tag-manager.js"
 			],
 			"run_at": "document_end"
 		}
 	],
 	"web_accessible_resources": [
+		"js/v10/backend/cheatsheet.json",
 		"js/v10/backend/templates.js",
 		"js/v10/backend/order.js",
 		"js/v10/backend/clone.js",
+		"js/v10/backend/default-script.js",
 		"css/v10/templateEditor.css",
 		"css/v10/editor.css",
 		"css/images/template-editor/glyphicons-halflings.png",

@@ -1,7 +1,8 @@
+#tag-form {
+  position: relative;
+}
 .css-assistant--button {
-  position: absolute;
-  top: 5px;
-  right: 12px;
+  margin-top: 10px;
 }
 .custom-css-js--close {
   position: absolute;
@@ -70,7 +71,7 @@
   font-size: 13px;
 }
 /*  ==========================================================================
-	Code Mirror 
+	Code Mirror
 	========================================================================== */
 .CodeMirror {
   height: 600px;
@@ -88,7 +89,7 @@
   background: #696969;
 }
 /*  ==========================================================================
-	Template Selector 
+	Template Selector
 	========================================================================== */
 .icon-edit {
   pointer-events: none;
@@ -98,7 +99,7 @@
 }
 .nd-form-standard > .row-fluid > div > .control-group:last-child {
   position: absolute;
-  top: 129px;
+  top: 76px;
   z-index: 1000;
   right: 43px;
   width: 500px;
