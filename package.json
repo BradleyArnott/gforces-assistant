@@ -1,6 +1,6 @@
 {
   "name": "gforces-assistant",
-  "version": "1.1.63",
+  "version": "1.1.64",
   "description": "Assistant to help with daily GForces CSS tasks",
   "main": "index.js",
   "author": "Beau August",
