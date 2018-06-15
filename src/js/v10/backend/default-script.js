@@ -5,7 +5,7 @@ nd.auto.require(['jquery', 'externalScriptsLoader'], function($, externalScripts
     // check we are not in the editor before running anything
     if ($('[href*="/templateEditor.css"]').length === 0) {
         var scriptName = 'SCRIPT_NAME'
-        console.log('CSS - ' . scriptName);
+        console.log('CSS - ' + scriptName);
         // START YOUR CODE HERE
     }
 });
