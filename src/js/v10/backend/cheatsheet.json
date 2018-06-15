@@ -7,7 +7,7 @@
   {
     "heading": "Editor Check",
     "description": "check if we are running in the frontend",
-    "code": "if($('[href*=\"/templateEditor.css\"]').length == 0) {\n\t// CODE GOES HERE \n}"
+    "code": "if($('[href*=\"/templateEditor.css\"]').length == 0) {\n\t// CODE GOES HERE \n};"
   },
   {
     "heading": "Check element exists on page",
@@ -17,12 +17,12 @@
   {
     "heading": "Javascript onload",
     "description": "native javascript onload wrap",
-    "code": "window.onload = function(e) {\n\t// CODE GOES HERE \n}"
+    "code": "window.onload = function(e) {\n\t// CODE GOES HERE \n};"
   },
   {
     "heading": "jQuery onload",
     "description": "jquery version of onload",
-    "code": "$(window).load(function() {\n\t// CODE GOES HERE \n}"
+    "code": "$(window).load(function() {\n\t// CODE GOES HERE \n});"
   },
   {
     "heading": "Global variable",
@@ -37,7 +37,7 @@
   {
     "heading": "jQuery get",
     "description": "jquery version of get script",
-    "code": "$.get('URL')\n.done(function(response) {\n\t// SUCCESS\n})\n.fail(function(error) {\n\t// ERROR\n})"
+    "code": "$.get('URL')\n.done(function(response) {\n\t// SUCCESS\n})\n.fail(function(error) {\n\t// ERROR\n});"
   },
   {
     "heading": "Self invoking function",
