@@ -27,7 +27,7 @@
   {
     "heading": "Global variable",
     "description": "make a variable available in the window global scope, usually needed for 3rd party scripts. Do not use willy nilly.",
-    "code": "window.[VARIABLE_NAME] = [VARIABLE_VALUE];"
+    "code": "window.VARIABLE_NAME = VARIABLE_VALUE;"
   },
   {
     "heading": "Javascript GET",
