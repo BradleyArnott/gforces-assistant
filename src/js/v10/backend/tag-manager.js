@@ -59,6 +59,11 @@ const tagManager = {
             name: 'Scrolling footer toggle',
             ref: 'footer-toggle-scroll.js',
         },
+        {
+            id: 11,
+            name: 'Import Common Scripts',
+            ref: '_ND/getCommon.js',
+        },
     ],
 
     init() {
