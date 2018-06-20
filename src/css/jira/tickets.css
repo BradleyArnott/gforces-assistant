@@ -419,3 +419,10 @@ table td {
 .ticket-count.approval .inner {
   background: #a2e1ff;
 }
+.flagged {
+  background: #ff6666;
+  color: #fff;
+}
+.flagged a {
+  color: #fff;
+}

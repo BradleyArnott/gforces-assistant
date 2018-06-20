@@ -81,7 +81,7 @@ const tickets = {
             if (!checkTickets) return;
             setTimeout(() => {
                 this.loopTables();
-                this.championTickets();
+                // this.championTickets();
                 this.approval();
                 this.myIssues();
                 this.checkWorkQueue();
@@ -99,29 +99,45 @@ const tickets = {
     loopTickets() {
         let rows = document.querySelectorAll('#gadget-11706-renderbox .issuerow');
         if (!rows.length) rows = document.querySelectorAll('#gadget-69203-renderbox .issuerow');
+        if (!rows.length) rows = document.querySelectorAll('#gadget-61815-renderbox .issuerow');
         const ticketsObj = {};
 
         rows.forEach((row) => {
-            const time = row.querySelector('.customfield_11004');
-            if (time.innerHTML === '') return;
-            const due = time.querySelector('time').getAttribute('datetime');
-            const updated = row.querySelector('.updated time').getAttribute('datetime');
-            const timeData = {
-                timeUnix: moment().unix(),
-                date: moment(due).format('MM DD YYYY'),
-                dateUnix: moment(due).unix(),
-                updatedDate: moment(updated).format('MM DD YYYY'),
-                updatedTime: moment(updated).format('HH:mm'),
-            };
-
-            this.group(timeData, row, ticketsObj);
-            this.good(timeData, row);
-            this.late(timeData, row);
-            this.modified(timeData, row);
-            this.tToday += this.today(timeData, row);
-            this.tNext += this.next(timeData, row);
+            this.time(row, ticketsObj);
+            this.checkFlag(row);
         });
         this.colorGroups(ticketsObj);
+    },
+
+    time(row, ticketsObj) {
+        const time = row.querySelector('.customfield_11004');
+        if (!time) return;
+        if (time.innerHTML === '') return;
+        const due = time.querySelector('time').getAttribute('datetime');
+        const updated = row.querySelector('.updated time').getAttribute('datetime');
+        const timeData = {
+            timeUnix: moment().unix(),
+            date: moment(due).format('MM DD YYYY'),
+            dateUnix: moment(due).unix(),
+            updatedDate: moment(updated).format('MM DD YYYY'),
+            updatedTime: moment(updated).format('HH:mm'),
+        };
+
+        this.group(timeData, row, ticketsObj);
+        this.good(timeData, row);
+        this.late(timeData, row);
+        this.modified(timeData, row);
+        this.tToday += this.today(timeData, row);
+        this.tNext += this.next(timeData, row);
+    },
+
+    checkFlag(el) {
+        const element = el.querySelector(".customfield_21100");
+        if (!element) return;
+        const markup = '🚩';
+        if (!element.innerHTML.match('Impediment')) return;
+        element.querySelector('span').innerHTML = markup;
+        element.parentElement.style.backgroundColor = '#fdaaaa';
     },
 
     checkNext() {
@@ -233,7 +249,7 @@ const tickets = {
     },
 
     approval() {
-        let table = document.querySelector('#gadget-79400-renderbox');
+        let table = document.querySelector('#gadget-79400-renderbox') || document.querySelector('#gadget-93401-renderbox');
         if (!table) table = document.querySelector('#gadget-73000-renderbox');
         const approvals = table.querySelectorAll('.issuerow').length;
         const plural = approvals === 1 ? 'is' : 'are';
